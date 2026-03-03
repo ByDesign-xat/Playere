@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ByDesign Autoplay + History + DJ</title>
+<title>ByAlfa</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
@@ -94,7 +94,7 @@ body,html{margin:0;padding:0;width:100%;min-height:100vh;background:#020202;colo
             <i class="fa-solid fa-users" style="font-size: 12px; color: var(--accent);"></i>
             <span id="countMobile" style="font-size: 14px; font-weight: 800; color: white;">..</span>
         </div>
-        <div class="cover-box"><img id="album-art" src="https://xatimg.com/image/LCIeGyuATlBD.png"></div>
+        <div class="cover-box"><img id="album-art" src="https://xatimg.com/image/nBnbvYlJsd6V.png"></div>
         <div class="meta-static">
             <b id="song-title">Radio Sociale</b>
             <span id="artist-name">Încărcare...</span>
@@ -123,7 +123,7 @@ audio.crossOrigin="anonymous";
 audio.autoplay=true;
 let isPlaying=false;
 let window_lS="";
-const defaultLogo="https://xatimg.com/image/LCIeGyuATlBD.png";
+const defaultLogo="https://xatimg.com/image/nBnbvYlJsd6V.png";
 let songHistory=[];
 
 audio.onplay=()=>{isPlaying=true;document.getElementById('playBtn').innerHTML='<i class="fa-solid fa-pause"></i>';initVisualizer();}
@@ -187,7 +187,7 @@ function toggleHistory(){
 }
 
 // --- PROTECT SCRIPT ---
-const protectionMessage="Stop Copyright ByDesign";
+const protectionMessage="Stop Copyright ByAlfa";
 document.addEventListener("contextmenu", e=>{e.preventDefault();alert(protectionMessage);});
 document.addEventListener("selectstart", e=>{e.preventDefault();});
 document.addEventListener("keydown", e=>{e.preventDefault();alert(protectionMessage);});
