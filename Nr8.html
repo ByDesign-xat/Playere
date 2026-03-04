@@ -189,6 +189,23 @@ const _0xstream=["aHR0cHM6Ly9yYWRpby5zb25pY3BhbmVsLnJvOjEwOTIyL3N0cmVhbQ=="];
 const STREAM=atob(_0xstream[0]);
 const STATS="https://radio.sonicpanel.ro:10922/stats?json=1&callback=statsCallback";
 
+/* 🛡️ PROTEÇÃO PREMIUM (XAT BACKGROUND SAFE) */
+function ambienteAutorizado(){
+  try{
+    const ref=(document.referrer||"").toLowerCase();
+    const host=(window.location.hostname||"").toLowerCase();
+    const protocol=location.protocol;
+
+    if(ref.includes("xat.com")) return true; /* aici pusi link unde sa fie protejat*/
+    if(host.includes("xat.com")) return true;
+    if(protocol==="file:" || host==="" || host==="localhost") return true;
+
+    return false;
+  }catch(e){
+    return true;
+  }
+}
+
 const player=document.getElementById("player");
 const cover=document.getElementById("mini-cover");
 const playBtn=document.getElementById("playBtn");
@@ -252,6 +269,7 @@ playBtn.onclick=async()=>{
  if(!audio){
   audio=new Audio(STREAM);
   audio.crossOrigin="anonymous";
+
 
 
   audioCtx=new (window.AudioContext||window.webkitAudioContext)();
@@ -351,5 +369,3 @@ document.addEventListener("keydown", function(e) {
 </script>
 </body>
 </html>
-
-
