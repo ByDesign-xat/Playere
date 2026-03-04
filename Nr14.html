@@ -304,15 +304,20 @@ function drawVisualizer() {
 
             let y = canvas.height - (s + 1) * segmentHeight;
 
-            let color;
+let percent = s / segments;
+let color;
 
-            if (s < segments * 0.6) {
-                color = "#00f2ff";      // cyan
-            } else if (s < segments * 0.85) {
-                color = "#a0ffff";      // cyan deschis
-            } else {
-                color = "#ffffff";      // alb
-            }
+if (percent <= 0.2) {
+    color = "#00f2ff";      // 1
+} else if (percent <= 0.4) {
+    color = "#00c8ff";      // 2
+} else if (percent <= 0.6) {
+    color = "#00ff30";      // 3
+} else if (percent <= 0.8) {
+    color = "#ff0000";      // 4
+} else {
+    color = "#ffffff";      // 5
+}
 
             ctx.fillStyle = color;
 
