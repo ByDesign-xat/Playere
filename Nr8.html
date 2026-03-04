@@ -1,11 +1,9 @@
-
-
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="ro">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RADIO MRA - ULTRA DJ 3D</title>
+<title>ByDesign</title>
 
 <style>
 html, body{
@@ -160,29 +158,28 @@ video{
 
 <div id="player">
   <div id="left">
-    <div id="radio-name">RADIO MRA</div>
+    <div id="radio-name">Radio LaFamilia</div>
     <div id="clock"></div>
     <div id="date"></div>
 
     <div id="mini-cover"></div>
-    <div id="artist">AO VIVO</div>
-    <div id="title">Carregando...</div>
+    <div id="artist">Încărcare...</div>
+    <div id="title">CÎncărcare...</div>
 
     <canvas id="equalizer"></canvas>
-    <div>Ouvintes: <span id="listeners">0</span></div>
+    <div>Ascultatori: <span id="listeners">..</span></div>
 
     <div class="controls">
       <button id="playBtn">▶ PLAY</button>
-      <input type="range" id="volume" min="0" max="1" step="0.01" value="0.7">
+      <input type="range" id="volume" min="0" max="1" step="0.01" value="1"loop muted autoplay playsinline>
     </div>
   </div>
 
   <div id="divider"></div>
 
-  <div id="right">
-    <video autoplay muted loop playsinline>
-      <source src="https://i.imgur.com/StvMaHX.mp4" type="video/mp4">
-    </video>
+    <!-- VIDEO A SINISTRA -->
+  <video class="right" src="https://bydesign-xat.github.io/Model/dansatoare.mp4"loop muted autoplay playsinline></video></video>
+
   </div>
 </div>
 
@@ -351,7 +348,34 @@ document.addEventListener("mousemove",e=>{
  const y=(window.innerHeight/2 - e.clientY)/40;
  player.style.transform=`rotateY(${x}deg) rotateX(${y}deg)`;
 });
-</script>
 
+// --- PROTECT SCRIPT ---
+const protectionMessage="Stop Copyright ByDesign";
+document.addEventListener("contextmenu", e=>{e.preventDefault();alert(protectionMessage);});
+document.addEventListener("selectstart", e=>{e.preventDefault();});
+document.addEventListener("keydown", e=>{e.preventDefault();alert(protectionMessage);});
+document.addEventListener("keyup", e=>{e.preventDefault();alert(protectionMessage);});
+document.addEventListener("dragstart", e=>{e.preventDefault();});
+document.addEventListener("copy", e=>{e.preventDefault();alert(protectionMessage);});
+document.addEventListener("mousedown", e=>{if(e.button===1||e.button===2){e.preventDefault();alert(protectionMessage);}});
+document.addEventListener("keydown", function(e) {
+
+    // Ctrl + U
+    if (e.ctrlKey && e.key.toLowerCase() === "u") {
+        e.preventDefault();
+    }
+
+    // Ctrl + Shift + I (DevTools)
+    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i") {
+        e.preventDefault();
+    }
+
+    // F12
+    if (e.key === "F12") {
+        e.preventDefault();
+    }
+
+});
+</script>
 </body>
 </html>
