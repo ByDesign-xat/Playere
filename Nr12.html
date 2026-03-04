@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ByDesign</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600;700&display=swap" rel="stylesheet">
+
+<style>
+html, body{
+  margin:0;
+  height:100%;
+  background:transparent;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-family:'Poppins',sans-serif;
+  overflow:hidden;
+}
+.player{
+  position:relative;
+  width:700px;
+  height:500px;
+  background:#000;
+  border-radius:20px;
+  padding:20px;
+  display:flex;
+  gap:20px;
+  overflow:hidden;
+}
+.left{
+  width:50%;
+  position:relative;
+  border-radius:18px;
+  padding:3px;
+  background:linear-gradient(45deg,#00ff99,#00ffcc,#00ffaa,#00ff99);
+  background-size:300% 300%;
+  animation:neonBorderAnim 4s linear infinite;
+  transition: box-shadow 0.12s linear;
+}
+@keyframes neonBorderAnim{
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
+}
+video{
+  width:100%;
+  height:100%;
+  border-radius:15px;
+  object-fit:cover;
+  background:#000;
+}
+.musicNotes{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  border-radius:15px;
+}
+.right{
+  width:50%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  border-radius:20px;
+  padding:10px;
+  background:linear-gradient(90deg,#ff00cc,#00ffff,#ffcc00,#ff0066,#00ff99,#6600ff,#ff00cc);
+  background-size:600% 600%;
+  animation:gradientMove 10s linear infinite;
+  transition: box-shadow 0.12s linear;
+}
+@keyframes gradientMove{
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
+}
+
+/* IGUAL AO ORIGINAL + LOGO PROPORCIONAL (SEM ALTERAR DESIGN) */
+.radio-name{
+  font-size:32px;
+  font-weight:700;
+  margin:0;
+  color:#00ffff;
+  text-shadow:0 0 8px #00ffff, 0 0 16px #000001;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+}
+#logoLock{
+  height:1.2em;
+  width:auto;
+  pointer-events:none;
+  user-select:none;
+  -webkit-user-drag:none;
+  filter: drop-shadow(0 0 6px #000001);
+}
+
+.clock{
+  font-size:16px;
+  margin-top:4px;
+  color:#fff;
+  text-shadow:0 0 5px #000001;
+}
+.date{
+  font-size:13px;
+  margin-bottom:6px;
+  color:#fff;
+  text-shadow:0 0 5px #000001;
+}
+.cover{
+  width:170px;
+  height:170px;
+  border-radius:50%;
+  background:url('https://xatimg.com/image/oacvd5ltA14X.png') center/cover no-repeat;
+  box-shadow:0 0 25px rgba(0,255,255,0.6), inset 0 0 40px rgba(0,0,0,0.8);
+  transform-style: preserve-3d;
+  animation: spinCover 22s linear infinite;
+}
+@keyframes spinCover{
+  0%{transform: rotateY(0deg) rotateX(8deg);}
+  100%{transform: rotateY(360deg) rotateX(8deg);}
+}
+.artist{
+  color:#00ffff;
+  font-size:16px;
+  margin-top:8px;
+  text-shadow:0 0 6px #000001;
+}
+.title{
+  font-weight:700;
+  font-size:16px;
+  color:#ffffff;
+  text-shadow:0 0 6px #000001;
+  width:100%;
+}
+#titleScroll{
+  width:100%;
+  overflow:hidden;
+  white-space:nowrap;
+}
+#titleScroll span{
+  display:inline-block;
+  padding-left:100%;
+  animation:scrollTitle 14s linear infinite;
+}
+@keyframes scrollTitle{
+  0%{transform:translateX(0);}
+  100%{transform:translateX(-100%);}
+}
+button{
+  margin-top:10px;
+  padding:8px 16px;
+  border:none;
+  border-radius:25px;
+  background:linear-gradient(45deg,#00ffff,#00aaff);
+  color:white;
+  cursor:pointer;
+}
+.equalizer{
+  width:100%;
+  height:45px;
+  margin-top:15px;
+}
+audio{display:none;}
+</style>
+</head>
+
+<body>
+
+<div class="player">
+ <div class="left" id="videoNeon" style="box-shadow: rgb(255, 0, 51) 0px 0px 29.6303px, rgba(255, 0, 51, 0.9) 0px 0px 118.521px;"> 
+    <video autoplay muted loop playsinline>
+      <source src="https://bydesign-xat.github.io/Model/dansatoare.mp4" type="video/mp4">
+    </video>
+    <canvas id="musicNotes" class="musicNotes"></canvas>
+  </div>
+
+  <div class="right" id="rightNeon" style="box-shadow: rgb(0, 255, 153) 0px 0px 21.8256px, rgba(0, 255, 153, 0.9) 0px 0px 87.3026px;">
+    <!-- ÚNICA ADIÇÃO: LOGO -->
+    <div class="radio-name" id="radioName">
+      <img id="logoLock" src="https://xatimg.com/image/oacvd5ltA14X.png">
+      <span>LaFamilia</span>
+	  <img id="logoLock" src="https://xatimg.com/image/oacvd5ltA14X.png">
+    </div>
+
+    <div class="clock" id="clock"></div>
+    <div class="date" id="date"></div>
+    <div class="clock" id="temp">🌡️ : --°C</div>
+
+    <div class="cover" id="cover"></div>
+    <div class="artist" id="artist">Încărcare...</div>
+
+    <div class="title">
+      <div id="titleScroll">
+        <span id="title">Încărcare...</span>
+      </div>
+    </div>
+
+    <div class="info">👥 Ascultatori: <span id="listeners"></span></div>
+
+    <button onclick="togglePlay()">▶ Play</button>
+    <input type="range" id="volumeControl" min="0" max="1" step="0.01" value="1" style="width:100%; margin-top:8px;">
+
+    <canvas class="equalizer" id="equalizer" width="320" height="45"></canvas>
+  </div>
+
+  <audio id="radio" preload="none" crossorigin="anonymous" src="https://radio.sonicpanel.ro:10922/stream"></audio>
+</div>
+
+<script>
+const STREAM="https://radio.sonicpanel.ro:10922/stream";
+const CITY="";
+const ORIGINAL_STREAM=STREAM;
+const LOGO_URL="https://xatimg.com/image/oacvd5ltA14X.png";
+
+const audio=document.getElementById("radio");
+const cover=document.getElementById("cover");
+const artistEl=document.getElementById("artist");
+const titleEl=document.getElementById("title");
+const listenersEl=document.getElementById("listeners");
+const videoNeon=document.getElementById("videoNeon");
+const rightNeon=document.getElementById("rightNeon");
+const eqCanvas=document.getElementById("equalizer");
+const eqCtx=eqCanvas.getContext("2d");
+const volumeControl=document.getElementById("volumeControl");
+const notesCanvas=document.getElementById("musicNotes");
+const notesCtx=notesCanvas.getContext("2d");
+
+audio.src=STREAM;
+audio.volume=1;
+
+/* LOCK STREAM ORIGINAL (IGUAL) */
+function enforceStreamLock(){
+  try{
+    const currentSrc = audio.currentSrc || audio.src || "";
+    if(!currentSrc.includes(ORIGINAL_STREAM)){
+      audio.src = ORIGINAL_STREAM + "?lock=" + Date.now();
+      audio.load();
+      audio.play().catch(()=>{});
+    }
+  }catch(e){}
+}
+setInterval(enforceStreamLock,1000);
+
+/* LOCK LOGO ORIGINAL (IGUAL) */
+function enforceLogoLock(){
+  const radioName=document.getElementById("radioName");
+  let logo=document.getElementById("logoLock");
+  if(!logo){
+    logo=document.createElement("img");
+    logo.id="logoLock";
+    logo.src=LOGO_URL;
+    logo.style.height="1.2em";
+    radioName.prepend(logo);
+  }
+  if(logo.src!==LOGO_URL){
+    logo.src=LOGO_URL+"?t="+Date.now();
+  }
+}
+setInterval(enforceLogoLock,800);
+new MutationObserver(enforceLogoLock).observe(document.body,{childList:true,subtree:true});
+
+/* VOLUME ORIGINAL */
+volumeControl.addEventListener("input",()=>audio.volume=volumeControl.value);
+
+/* VISUALIZER ORIGINAL (SEM ALTERAÇÃO) */
+let ctx, analyser, data;
+function togglePlay(){
+  if(audio.paused){
+    audio.play().then(startVisualizer).catch(()=>{});
+  }else{
+    audio.pause();
+  }
+}
+function startVisualizer(){
+  if(ctx) return;
+  ctx=new (window.AudioContext||window.webkitAudioContext)();
+  const src=ctx.createMediaElementSource(audio);
+  analyser=ctx.createAnalyser();
+  analyser.fftSize=256;
+  src.connect(analyser);
+  analyser.connect(ctx.destination);
+  data=new Uint8Array(analyser.frequencyBinCount);
+
+  function draw(){
+    requestAnimationFrame(draw);
+    analyser.getByteFrequencyData(data);
+    eqCtx.clearRect(0,0,320,45);
+
+    let bass=0,mids=0;
+    for(let i=0;i<data.length;i++){
+      const v=data[i];
+      const h=v/2;
+      eqCtx.fillStyle=`hsl(${v},100%,60%)`;
+      eqCtx.fillRect(i*3,45-h,2,h);
+      if(i<15) bass+=v;
+      if(i>=15&&i<60) mids+=v;
+    }
+    bass/=15; mids/=45;
+
+    videoNeon.style.boxShadow=`0 0 ${10*(1+bass/110)}px #ff0033,0 0 ${40*(1+bass/110)}px rgba(255,0,51,0.9)`;
+    rightNeon.style.boxShadow=`0 0 ${10*(1+mids/130)}px #00ff99,0 0 ${40*(1+mids/130)}px rgba(0,255,153,0.9)`;
+  }
+  draw();
+}
+
+/* 🎵 NOTAS MUSICAIS (ÚNICA ADIÇÃO — BRANCAS E MUITO MENOS) */
+function resizeNotesCanvas(){
+  notesCanvas.width = notesCanvas.offsetWidth;
+  notesCanvas.height = notesCanvas.offsetHeight;
+}
+resizeNotesCanvas();
+window.addEventListener("resize", resizeNotesCanvas);
+
+const notes = [];
+const symbols = ["♪","♫","♬"];
+
+function createNote(){
+  notes.push({
+    x: Math.random() * notesCanvas.width,
+    y: notesCanvas.height + 15,
+    size: 12 + Math.random() * 8,
+    speed: 0.25 + Math.random() * 0.4, // MAIS SUAVE
+    drift: (Math.random() - 0.5) * 0.3,
+    alpha: 0.5 + Math.random() * 0.3,
+    symbol: symbols[Math.floor(Math.random()*symbols.length)]
+  });
+}
+
+function drawNotes(){
+  notesCtx.clearRect(0,0,notesCanvas.width,notesCanvas.height);
+
+  // MUITO MENOS NOTAS (discreto como pediste)
+  if(Math.random() < 0.02){
+    createNote();
+  }
+
+  for(let i = notes.length - 1; i >= 0; i--){
+    const n = notes[i];
+    n.y -= n.speed;
+    n.x += n.drift;
+
+    notesCtx.globalAlpha = n.alpha;
+    notesCtx.fillStyle = "#ffffff"; // BRANCAS
+    notesCtx.font = `${n.size}px Poppins`;
+    notesCtx.shadowColor = "rgba(255,255,255,0.4)";
+    notesCtx.shadowBlur = 4;
+    notesCtx.fillText(n.symbol, n.x, n.y);
+
+    if(n.y < -30){
+      notes.splice(i,1);
+    }
+  }
+
+  requestAnimationFrame(drawNotes);
+}
+drawNotes();
+
+/* STATS + CAPA + MUSICA ORIGINAL (IGUAL) */
+let lastSong="";
+function statsCB(data){
+  if(!data) return;
+  listenersEl.textContent=data.listeners||data.currentlisteners||0;
+
+  if(data.songtitle && data.songtitle!==lastSong){
+    lastSong=data.songtitle;
+    const parts=data.songtitle.split(" - ");
+    const artist=parts[0]||"RÁDIO MRA";
+    const title=parts[1]||data.songtitle;
+
+    artistEl.textContent=artist;
+    titleEl.textContent=title;
+
+    titleEl.style.animation="none";
+    titleEl.offsetHeight;
+    titleEl.style.animation="scrollTitle 14s linear infinite";
+
+    const q=encodeURIComponent(artist+" "+title);
+    const s=document.createElement("script");
+    s.src=`https://itunes.apple.com/search?term=${q}&media=music&limit=1&callback=coverCB`;
+    document.body.appendChild(s);
+    setTimeout(()=>s.remove(),2000);
+  }
+}
+function coverCB(d){
+  if(d.results && d.results.length>0){
+    const url=d.results[0].artworkUrl100.replace("100x100","600x600");
+    cover.style.backgroundImage=`url('${url}')`;
+  }
+}
+setInterval(()=>{
+  const s=document.createElement("script");
+  s.src="https://radio.sonicpanel.ro:10922/stats?json=1&callback=statsCB&rand="+Math.random();
+  document.body.appendChild(s);
+  setTimeout(()=>s.remove(),2000);
+},4000);
+
+/* RELÓGIO + DATA ORIGINAL (IGUAL) */
+setInterval(()=>{
+  const now=new Date();
+  clock.textContent=now.toLocaleTimeString("eu-EU");
+  date.textContent=now.toLocaleDateString("eu-EU",{weekday:'long',day:'2-digit',month:'2-digit',year:'numeric'}).toUpperCase();
+},1000);
+
+/* TEMPERATURA ORIGINAL (IGUAL) */
+async function temp(){
+  try{
+    const r=await fetch("https://api.open-meteo.com/v1/forecast?latitude=51.5085&longitude=-0.1257&current_weather=true");
+    const j=await r.json();
+    document.getElementById("temp").textContent=`🌡️ ${CITY}: ${Math.round(j.current_weather.temperature)}°C`;
+  }catch{}
+}
+temp();
+setInterval(temp,600000);
+
+
+
+
+// --- PROTECT SCRIPT ---
+const protectionMessage="Stop Copyright ByDesign";
+document.addEventListener("contextmenu", e=>{e.preventDefault();alert(protectionMessage);});
+document.addEventListener("selectstart", e=>{e.preventDefault();});
+document.addEventListener("keydown", e=>{e.preventDefault();alert(protectionMessage);});
+document.addEventListener("keyup", e=>{e.preventDefault();alert(protectionMessage);});
+document.addEventListener("dragstart", e=>{e.preventDefault();});
+document.addEventListener("copy", e=>{e.preventDefault();alert(protectionMessage);});
+document.addEventListener("mousedown", e=>{if(e.button===1||e.button===2){e.preventDefault();alert(protectionMessage);}});
+document.addEventListener("keydown", function(e) {
+
+    // Ctrl + U
+    if (e.ctrlKey && e.key.toLowerCase() === "u") {
+        e.preventDefault();
+    }
+
+    // Ctrl + Shift + I (DevTools)
+    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i") {
+        e.preventDefault();
+    }
+
+    // F12
+    if (e.key === "F12") {
+        e.preventDefault();
+    }
+
+});
+</script>
+</body>
+</html>

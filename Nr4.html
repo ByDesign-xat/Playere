@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<head>
+<meta charset="UTF-8">
+<title>ByDesign</title>
+<style>
+body{
+  margin:0;
+  height:100vh;
+  background:;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-family:Arial,sans-serif;
+  overflow:hidden;
+}
+
+/* CONTENITORE ESTERNO - ora con video a sinistra */
+.main-container{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.video-left{
+  width:180px; /* puoi aumentare o diminuire */
+  height:550px;
+  object-fit:cover;
+  border-radius:20px;
+  box-shadow:0 0 15px rgba(255,0,150,.6);
+}
+
+/* CONTENITORE PLAYER */
+.cerchio-woofer{
+  width:650px;
+  height:550px;
+  position:relative;
+  background:#000;
+  overflow:hidden;
+  border-radius:40px;
+  box-shadow:0 0 30px rgba(255,0,150,.4);
+  transition:box-shadow .05s linear;
+}
+
+.cerchio-woofer::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  border-radius:40px;
+  border:14px solid transparent;
+  border-image:linear-gradient(90deg,#ff00ff,#00ffff,#ff0088,#00ffcc,#ff00ff) 1;
+  filter:blur(10px);
+  pointer-events:none;
+  z-index:5;
+}
+
+.inner-content{
+  position:absolute;
+  inset:14px;
+  background:#000;
+  overflow:hidden;
+  border-radius:30px;
+}
+
+.base{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  position:absolute;
+}
+
+/* WOOFER */
+.woofer{
+  width:200px;
+  height:200px;
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%) scale(.85);
+  transition:transform .05s linear;
+  z-index:3;
+  filter:drop-shadow(0 0 25px #ff00aa);
+}
+
+/* COVER */
+#cover-art{
+  width:130px;
+  height:130px;
+  position:absolute;
+  top:-1111115%;
+  left:14%;
+  transform:translate(-50%,-50%);
+  object-fit:cover;
+  border-radius:50%;
+  box-shadow:0 0 30px rgba(255,100,200,.8);
+  opacity:1;
+  transition:opacity .6s;
+  animation:rotateDisc 20s linear infinite;
+  z-index:4;
+}
+
+@keyframes rotateDisc{
+  from{transform:translate(-50%,-50%) rotate(0);}
+  to{transform:translate(-50%,-50%) rotate(360deg);}
+}
+
+/* INFO BAR */
+.info-bar{
+  position:absolute;
+  bottom:25px;
+  left:0;
+  right:0;
+  padding:10px 60px 10px 20px;
+  background:linear-gradient(to top,rgba(0,0,0,.85),transparent);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:14px;
+  z-index:10;
+}
+
+/* TESTI ARCOBALENO */
+.gradient-text{
+  font-weight:bold;
+  background:linear-gradient(90deg,#ff0044,#ffcc00,#00ff99,#00ccff,#9966ff,#ff00cc);
+  background-size:300% 300%;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation:rainbow 6s linear infinite;
+}
+
+.player-controls{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  transform:translateX(-20px);
+}
+
+#play,#stop{
+  width:42px;
+  height:42px;
+  border:none;
+  border-radius:50%;
+  background:#ff0044;
+  color:#fff;
+  font-size:18px;
+  cursor:pointer;
+}
+
+#vol{ width:120px; }
+
+/* SCROLLER TITOLI */
+.title-marquee{
+  width:50%;
+  max-width:700px;
+  overflow:hidden;
+  white-space:nowrap;
+  margin:18px auto 0;
+}
+
+#title{
+  display:inline-block;
+  font-weight:bold;
+  animation:marqueeAlt 8s ease-in-out infinite alternate;
+}
+
+@keyframes marqueeAlt{
+  0%{transform:translateX(0);}
+  100%{transform:translateX(-50%);}
+}
+
+/* VISITATORI */
+.listeners-box{
+  position:absolute;
+  top:81%;
+  left:50%;
+  transform:translateX(-50%);
+  padding:4px 10px;
+  font-size:12px;
+  border-radius:10px;
+  background:#1a1a1a;
+  color:#ff66cc;
+  z-index:12;
+  text-align:center;
+  min-width:160px;
+  box-shadow:0 0 10px rgba(255,0,136,.6);
+  font-weight:bold;
+}
+
+.listeners-box::before{
+  content:'';
+  display:block;
+  height:2px;
+  width:100%;
+  margin-bottom:4px;
+  background:linear-gradient(90deg,#ff0088,#ff66cc,#ff0088);
+  box-shadow:0 0 8px #ff0088;
+}
+</style>
+</head>
+<body>
+
+<div class="main-container">
+  <!-- VIDEO A SINISTRA -->
+  <video class="video-left" src="https://bydesign-xat.github.io/Model/dansatoare.mp4"loop muted autoplay playsinline></video>></video>
+
+  <!-- PLAYER -->
+  <div class="cerchio-woofer">
+    <div class="inner-content">
+      <img class="base" src="https://bydesign-xat.github.io/Model/dj.mp4"loop muted autoplay playsinline>
+      <img class="woofer" src="https://xatimg.com/image/X4OYaGwQePk6.gif">
+      <img id="cover-art">
+    </div>
+
+    <div class="listeners-box">
+      Ascultatori: <span id="listeners">...</span>
+    </div>
+
+    <div class="info-bar">
+      <span id="city" class="gradient-text"></span>
+
+      <div class="player-controls">
+        <button id="play">▶</button>
+        <input type="range" id="vol" min="0" max="1" step="0.01" value="1">
+        <button id="stop">■</button>
+      </div>
+
+      <span id="datetime" class="gradient-text"></span>
+    </div>
+
+    <div class="title-marquee">
+      <div id="title" class="gradient-text">Încărcare...</div>
+    </div>
+  </div>
+</div>#
+  <!-- VIDEO A SINISTRA -->
+  <video class="video-left" src="https://bydesign-xat.github.io/Model/dansatoare.mp4" loop muted autoplay playsinline></video>
+
+<audio id="audio" crossorigin="anonymous"></audio>
+
+
+<script>
+const STREAM="https://radio.sonicpanel.ro:10922/stream";
+const audio=document.getElementById("audio");
+audio.src=STREAM;
+
+const woofer=document.querySelector(".woofer");
+const box=document.querySelector(".cerchio-woofer");
+const cover=document.getElementById("cover-art");
+const titleEl=document.getElementById("title");
+const cityEl=document.getElementById("city");
+const datetimeEl=document.getElementById("datetime");
+const listenersEl=document.getElementById("listeners");
+
+let ctx,analyser,dataArray,source,isPlaying=false;
+
+function initAudio(){
+  if(ctx) return;
+  ctx=new (window.AudioContext||window.webkitAudioContext)();
+  analyser=ctx.createAnalyser();
+  analyser.fftSize=512;
+  source=ctx.createMediaElementSource(audio);
+  source.connect(analyser);
+  analyser.connect(ctx.destination);
+  dataArray=new Uint8Array(analyser.frequencyBinCount);
+}
+
+function animate(){
+  if(!isPlaying) return;
+  analyser.getByteFrequencyData(dataArray);
+  let bass=0;
+  for(let i=0;i<40;i++) bass+=dataArray[i];
+  bass/=40;
+
+  let scale=.85+(bass/255)*.35;
+  woofer.style.transform=`translate(-50%,-50%) scale(${scale})`;
+  woofer.style.filter=`drop-shadow(0 0 ${bass/1.5}px #ff00aa)`;
+  box.style.boxShadow=`0 0 ${30+bass}px rgba(255,0,200,.8)`;
+
+  requestAnimationFrame(animate);
+}
+
+play.onclick=async()=>{
+  initAudio();
+  await ctx.resume();
+  audio.play();
+  isPlaying=true;
+  animate();
+};
+
+stop.onclick=async()=>{
+  audio.pause();
+  await ctx.resume()
+  isPlaying=true;
+};
+
+vol.oninput=e=>audio.volume=e.target.value;
+
+/* NOW PLAYING */
+async function nowPlaying(){
+  try{
+    const r=await fetch("https://radio.sonicpanel.ro/cp/get_info.php?p=8132");
+    const d=await r.json();
+    titleEl.textContent=(d.title||"LIVE RADIO")+"     ";
+    if(d.cover && d.cover.length>0){
+      cover.src=d.cover;
+    } else {
+      cover.src="";
+    }
+  }catch{
+    cover.src="";
+  }
+}
+
+/* CITTÀ REALE + BANDIERINA + NOME */
+async function getCity(){
+  try{
+    const r = await fetch("https://ipapi.co/json/");  
+    const d = await r.json("https://ipapi.co/json/");  
+    let city = d.city || "--";  
+    let country = d.country_code || "";
+    let flag = "";
+    if(country.length===2){
+      flag = country.toUpperCase().replace(/./g,c=>String.fromCodePoint(127397+c.charCodeAt()));
+    }
+    cityEl.textContent=`📡 ${flag} ${city}`;
+  }catch{
+    cityEl.textContent="";
+  }
+}
+
+/* DATE */
+function updateDate(){
+  const d=new Date();
+  datetimeEl.textContent=
+    d.toLocaleDateString("eu-EU",{weekday:"short",day:"2-digit",month:"long",year:"numeric"})+
+    " - "+d.toLocaleTimeString("eu-EU");
+}
+
+/* LISTENERS */
+async function getListeners(){
+  try{
+    const r=await fetch("https://radio.sonicpanel.ro/cp/get_info.php?p=8132");
+    const d=await r.json();
+    listenersEl.textContent=d.listeners||0;
+  }catch{
+    listenersEl.textContent="--";
+  }
+}
+
+setInterval(nowPlaying,20000);
+setInterval(updateDate,1000);
+setInterval(getListeners,20000);
+setInterval(getCity,20000);
+
+nowPlaying();
+getCity();
+updateDate();
+getListeners();
+</script>
+</body>
+</html>

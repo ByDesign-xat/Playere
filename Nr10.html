@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ByDesign</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --main-color:#00ff88;
+  --bg-color:#05060a;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Orbitron',sans-serif;transition:0.3s;}
+html,body{background:transparent;height:100%;}
+body{display:flex;justify-content:center;align-items:center;}
+
+.player{
+  width:1000px;
+  background:var(--bg-color);
+  border:3px solid var(--main-color);
+  border-radius:25px;
+  display:flex;
+  box-shadow:0 0 30px var(--main-color);
+  overflow:hidden;
+  position:relative;
+}
+
+.left{
+  width:300px;
+  padding:20px;
+  border-right:1px solid var(--main-color);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  color:var(--main-color);
+  gap:10px;
+  background:var(--bg-color);
+}
+
+.clock{
+  width:100%;
+  padding:10px;
+  border:2px solid var(--main-color);
+  border-radius:15px;
+  text-align:center;
+}
+
+.weather{
+  font-size:13px;
+  margin-top:6px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  color:var(--main-color);
+}
+
+.live-tag{
+  background:#ff3b3b;
+  color:#fff;
+  font-size:14px;
+  font-weight:bold;
+  padding:6px 12px;
+  border-radius:20px;
+  box-shadow:0 0 5px #ff3b3b;
+}
+
+.cover-container{width:200px;height:200px;margin-top:10px;}
+.cover-container img{
+  width:100%;height:100%;
+  border-radius:50%;
+  border:3px solid var(--main-color);
+  object-fit:cover;
+  box-shadow:0 0 20px var(--main-color);
+  animation:spin 12s linear infinite;
+}
+@keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+
+.song{text-align:center;margin-top:10px;}
+.song h3{color:#fff;font-size:18px;}
+.song p{color:var(--main-color);font-size:14px;}
+
+.listeners{text-align:center;font-size:13px;margin-top:5px;}
+
+.controls{
+  display:flex;align-items:center;gap:10px;width:100%;
+  justify-content:center;margin-top:15px;
+}
+.play-btn{
+  width:60px;height:60px;background:var(--main-color);
+  border-radius:50%;display:flex;justify-content:center;align-items:center;
+  cursor:pointer;box-shadow:0 0 25px var(--main-color);
+}
+.play-btn span{font-size:24px;color:#000;}
+
+.volume{flex:1;}
+input[type=range]{width:100%;accent-color:var(--main-color);}
+
+.right{
+  flex:1;padding:20px;position:relative;color:white;
+  display:flex;flex-direction:column;background:var(--bg-color);
+}
+
+.title{text-align:center;font-size:34px;font-weight:bold;margin-bottom:15px;}
+
+.side-buttons{
+  position:absolute;
+  top:15px;
+  right:15px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  z-index:9999;
+}
+.side-buttons div{
+  width:14px;height:14px;border-radius:50%;
+  cursor:pointer;box-shadow:0 0 10px currentColor;
+}
+.green{background:#00ff88;}
+.blue{background:#00ccff;}
+.red{background:#ff3b3b;}
+.purple{background:#cc00ff;}
+.orange{background:#ff9900;}
+.yellow{background:#ffff00;}
+
+.video-container{
+  width:100%;
+  height:420px;
+  border-radius:20px;
+  overflow:hidden;
+}
+video{width:100%;height:100%;object-fit:cover;}
+
+.equalizer{
+  margin-top:12px;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  width:100%;
+  height:70px;
+  gap:3px;
+}
+
+.equalizer span{
+  width:4px;
+  background:var(--main-color);
+  box-shadow:0 0 8px var(--main-color);
+  border-radius:3px;
+  height:10px;
+}
+
+.logo-ball{
+  position:absolute;
+  bottom:5px;
+  right:20px;
+  width:85px;height:85px;
+  border-radius:50%;
+  overflow:hidden;
+  border:3px solid var(--main-color);
+  box-shadow:0 0 20px var(--main-color);
+}
+.logo-ball-1{
+  position:absolute;
+  bottom:5px;
+  right:580px;
+  width:85px;height:85px;
+  border-radius:50%;
+  overflow:hidden;
+  border:3px solid var(--main-color);
+  box-shadow:0 0 20px var(--main-color);
+}
+
+audio{display:none;}
+
+</style>
+</head>
+<body>
+
+<div class="player">
+  <div class="left">
+    <div class="clock">
+      <div id="time">--:--:--</div>
+      <div id="date">--/--/----</div>
+      <div class="weather">
+        <span id="weatherIcon">🌤️</span>
+        <span id="weatherText">: --°C</span>
+      </div>
+    </div>
+
+    <div class="live-tag">Online</div>
+
+    <div class="cover-container">
+      <img id="cover" src="https://xatimg.com/image/oacvd5ltA14X.png">
+    </div>
+
+    <div class="song">
+      <h3 id="title">Încărcare...</h3>
+      <p id="artist">Încărcare...</p>
+    </div>
+
+    <div class="listeners" id="listeners">👥 - Ascultatorii</div>
+
+    <div class="controls">
+      <div class="play-btn" onclick="togglePlay()">
+        <span id="playIcon">▶</span>
+      </div>
+      <div class="volume">
+        <input type="range" min="0" max="1" step="0.01" value="1" id="volume">
+      </div>
+    </div>
+  </div>
+
+  <div class="right">
+    <div class="title" id="radioName">LaFamilia</div>
+
+    <div class="side-buttons">
+      <div class="green" onclick="changeColor('#00ff88')"></div>
+      <div class="blue" onclick="changeColor('#00ccff')"></div>
+      <div class="red" onclick="changeColor('#ff3b3b')"></div>
+      <div class="purple" onclick="changeColor('#cc00ff')"></div>
+      <div class="orange" onclick="changeColor('#ff9900')"></div>
+      <div class="yellow" onclick="changeColor('#ffff00')"></div>
+    </div>
+
+    <div class="video-container">
+      <video autoplay muted loop playsinline>
+        <source src="https://bydesign-xat.github.io/Model/dj.mp4" type="video/mp4">
+      </video>
+    </div>
+	    <div class="logo-ball">
+      <img src="https://xatimg.com/image/eQclCkaKDJdZ.gif" width="100%" height="100%">
+    </div>
+
+    <div class="equalizer" id="equalizer"></div>
+
+    <div class="logo-ball-1">
+      <img src="https://xatimg.com/image/eQclCkaKDJdZ.gif" width="100%" height="100%">
+    </div>
+  </div>
+</div>
+
+
+<audio id="audio" crossorigin="anonymous"></audio>
+
+<script>
+/* STREAM ORIGINAL PROTEGIDA */
+const ORIGINAL_STREAM = "https://radio.sonicpanel.ro:10922/stream";
+const ORIGINAL_NAME = "LaFamilia";
+const audio = document.getElementById("audio");
+audio.src = ORIGINAL_STREAM;
+
+/* PROTEÇÃO INVISÍVEL URL + NOME */
+function protectCore(){
+  if(audio.src !== ORIGINAL_STREAM){
+    audio.src = ORIGINAL_STREAM;
+    audio.load();
+  }
+  if(radioName.textContent.trim() !== ORIGINAL_NAME){
+    radioName.textContent = ORIGINAL_NAME;
+  }
+}
+setInterval(protectCore,1500);
+
+/* AUTO RECONNECT ICECAST */
+audio.onerror = () => {
+  setTimeout(()=>{
+    audio.src = ORIGINAL_STREAM;
+    audio.load();
+    audio.play().catch(()=>{});
+  },3000);
+};
+
+/* PLAY + VOLUME */
+volume.oninput=()=>audio.volume=volume.value;
+function togglePlay(){
+  if(audio.paused){
+    audio.play();
+    initEQ();
+    playIcon.textContent="❚❚";
+  }else{
+    audio.pause();
+    playIcon.textContent="▶";
+  }
+}
+
+/* RELÓGIO PORTUGAL */
+setInterval(()=>{
+  const now=new Date();
+  time.textContent=now.toLocaleTimeString("eu-EU",{timeZone:"Europe/London"});
+  date.textContent=now.toLocaleDateString("eu-EU",{timeZone:"Europe/London"});
+},1000);
+
+/* TEMPO Europa */
+async function updateWeather(){
+  try{
+    const r=await fetch("https://api.open-meteo.com/v1/forecast?latitude=51.5085&longitude=-0.1257&current_weather=true&timezone=Europe/London");
+    const d=await r.json();
+    weatherText.textContent=`Europa: ${Math.round(d.current_weather.temperature)}°C`;
+    weatherIcon.textContent=d.current_weather.is_day? "☀️":"🌙";
+  }catch{}
+}
+updateWeather();
+setInterval(updateWeather,600000);
+
+/* EQUALIZER REAL */
+for(let i=0;i<50;i++){equalizer.appendChild(document.createElement("span"));}
+let ctx, analyser, srcNode, data;
+function initEQ(){
+  if(ctx) return;
+  ctx=new (window.AudioContext||window.webkitAudioContext)();
+  analyser=ctx.createAnalyser();
+  srcNode=ctx.createMediaElementSource(audio);
+  srcNode.connect(analyser);
+  analyser.connect(ctx.destination);
+  data=new Uint8Array(analyser.frequencyBinCount);
+  animateEQ();
+}
+function animateEQ(){
+  requestAnimationFrame(animateEQ);
+  if(!analyser||audio.paused) return;
+  analyser.getByteFrequencyData(data);
+  equalizer.querySelectorAll("span").forEach((b,i)=>{
+    b.style.height=(data[i%data.length]/255*70+5)+"px";
+  });
+}
+
+/* STATS ICECAST CORRIGIDO (MÚSICA + CAPA + OUVINTES) */
+let statsScript=null;
+let currentSong="";
+function statsCB(data){
+  if(!data) return;
+
+  const listenersCount = data.listeners || data.currentlisteners || data.uniques || 0;
+  listeners.textContent=`👥 ${listenersCount} Ascultatorii`;
+
+  if(data.songtitle && data.songtitle!==currentSong){
+    currentSong=data.songtitle;
+    const parts=data.songtitle.split(" - ");
+    artist.textContent=parts[0]||"";
+    title.textContent=parts[1]||data.songtitle;
+    fetchCover(data.songtitle);
+  }
+}
+
+function updateStats(){
+  if(statsScript){statsScript.remove();}
+  statsScript=document.createElement("script");
+  statsScript.src=`https://radio.sonicpanel.ro:10922/stats?json=1&callback=statsCB&rand=${Math.random()}`;
+  document.body.appendChild(statsScript);
+}
+updateStats();
+setInterval(updateStats,5000);
+
+/* CAPA AUTOMÁTICA */
+let lastCover="";
+function fetchCover(track){
+  if(track===lastCover) return;
+  lastCover=track;
+  const s=document.createElement("script");
+  s.src=`https://itunes.apple.com/search?term=${encodeURIComponent(track)}&media=music&limit=1&callback=coverCB`;
+  document.body.appendChild(s);
+}
+function coverCB(d){
+  if(d.results && d.results[0]){
+    cover.src=d.results[0].artworkUrl100.replace('100x100','600x600');
+  }
+}
+
+function changeColor(c){document.documentElement.style.setProperty('--main-color',c);}
+
+
+
+// --- PROTECT SCRIPT ---
+const protectionMessage="Stop Copyright ByDesign";
+document.addEventListener("contextmenu", e=>{e.preventDefault();alert(protectionMessage);});
+document.addEventListener("selectstart", e=>{e.preventDefault();});
+document.addEventListener("keydown", e=>{e.preventDefault();alert(protectionMessage);});
+document.addEventListener("keyup", e=>{e.preventDefault();alert(protectionMessage);});
+document.addEventListener("dragstart", e=>{e.preventDefault();});
+document.addEventListener("copy", e=>{e.preventDefault();alert(protectionMessage);});
+document.addEventListener("mousedown", e=>{if(e.button===1||e.button===2){e.preventDefault();alert(protectionMessage);}});
+document.addEventListener("keydown", function(e) {
+
+    // Ctrl + U
+    if (e.ctrlKey && e.key.toLowerCase() === "u") {
+        e.preventDefault();
+    }
+
+    // Ctrl + Shift + I (DevTools)
+    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i") {
+        e.preventDefault();
+    }
+
+    // F12
+    if (e.key === "F12") {
+        e.preventDefault();
+    }
+
+});
+</script>
+</body>
+</html>

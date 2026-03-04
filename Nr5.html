@@ -1,0 +1,450 @@
+<!DOCTYPE html>>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=620, height=520, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ByDesign</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Orbitron',sans-serif;}
+
+body{
+width:660px;
+height:460px;
+overflow:hidden;
+display:flex;
+justify-content:center;
+align-items:center;
+background:transparent;
+color:#fff;
+position:relative;
+}
+
+/* FUNDO BLUR */
+.bg-blur{
+position:absolute;
+inset:0;
+background-size:cover;
+background-position:center;
+filter:blur(40px) brightness(0.25);
+transform:scale(1.2);
+z-index:0;
+transition:background-image 0.8s ease;
+}
+
+/* PLAYER */
+.player{
+width:620px;
+height:420px;
+padding:16px;
+border-radius:26px;
+background:rgba(10,10,10,0.78);
+backdrop-filter:blur(20px);
+border:2px solid #ff0000;
+box-shadow:0 0 12px #ff0000,0 0 30px #ff0000,0 0 70px rgba(255,0,0,0.6);
+display:flex;
+flex-direction:column;
+gap:12px;
+position:relative;
+overflow:hidden;
+z-index:1;
+}
+
+/* 🌊 ONDA DE BRILHO REATIVA (NOVO PREMIUM) */
+.player::after{
+content:"";
+position:absolute;
+top:-50%;
+left:-60%;
+width:50%;
+height:200%;
+background:linear-gradient(
+120deg,
+transparent 0%,
+rgba(255,0,0,0.05) 30%,
+rgba(255,120,120,0.45) 50%,
+rgba(255,0,0,0.05) 70%,
+transparent 100%
+);
+transform:rotate(15deg);
+animation:shineWave 6s linear infinite;
+pointer-events:none;
+z-index:6;
+mix-blend-mode:screen;
+}
+
+/* Pulso do brilho com a música */
+.player.shine-pulse::after{
+animation-duration:2.5s;
+opacity:1;
+}
+
+@keyframes shineWave{
+0%{left:-60%;opacity:0;}
+10%{opacity:1;}
+50%{left:120%;opacity:0.9;}
+100%{left:120%;opacity:0;}
+}
+
+/* AURA ORIGINAL */
+.player::before{
+content:"";
+position:absolute;
+inset:-80px;
+border-radius:40px;
+z-index:-1;
+filter:blur(90px);
+opacity:0.9;
+animation:aura 18s infinite ease-in-out;
+}
+
+@keyframes aura{
+0%{background:radial-gradient(circle,rgba(0,0,0,0.9),transparent 70%);}
+25%{background:radial-gradient(circle,rgba(255,0,0,0.9),transparent 70%);}
+50%{background:radial-gradient(circle,rgba(0,255,120,0.6),transparent 70%);}
+75%{background:radial-gradient(circle,rgba(255,0,0,1),transparent 70%);}
+100%{background:radial-gradient(circle,rgba(0,0,0,0.9),transparent 70%);}
+}
+
+.header{
+text-align:center;
+font-size:1.6em;
+font-weight:900;
+letter-spacing:4px;
+color:#ff1a1a;
+text-shadow:0 0 10px rgba(255,0,0,0.6);
+}
+
+.datetime{
+margin-top:4px;
+font-size:0.65em;
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:2px;
+}
+
+#weather{opacity:0.9;font-size:0.9em;}
+
+.content{
+flex:1;
+display:flex;
+gap:16px;
+align-items:center;
+}
+
+.left-panel{
+flex:1;
+display:flex;
+align-items:center;
+gap:18px;
+}
+
+.disc{
+width:150px;
+height:150px;
+border-radius:50%;
+border:5px solid #ff0000;
+background:url('https://xatimg.com/image/oacvd5ltA14X.png') center/cover no-repeat;
+animation:spin 12s linear infinite;
+animation-play-state:paused;
+box-shadow:0 0 25px rgba(255,0,0,0.6),0 0 60px rgba(255,0,0,0.8);
+transition:background-image 0.6s ease;
+}
+
+.disc.playing{https://xatimg.com/image/oacvd5ltA14X.png
+animation:spin 12s linear infinite, glow 1.2s infinite;
+}
+
+@keyframes spin{
+from{transform:rotate(0deg);}
+to{transform:rotate(360deg);}
+}
+
+@keyframes glow{
+0%{box-shadow:0 0 25px rgba(255,0,0,0.6);}
+50%{box-shadow:0 0 80px rgba(255,0,0,1);}
+100%{box-shadow:0 0 25px rgba(255,0,0,0.6);}
+}
+
+.track-title{
+font-size:1em;
+font-weight:bold;
+max-width:240px;
+overflow:hidden;
+white-space:nowrap;
+}
+
+.track-title span{
+display:inline-block;
+padding-right:60px;
+}
+
+.scroll{animation:scroll 12s linear infinite;}
+@keyframes scroll{0%{transform:translateX(0);}100%{transform:translateX(-100%);}}
+
+.track-artist{
+font-size:0.8em;
+color:#ffb3b3;
+margin-bottom:6px;
+}
+
+.listeners{
+display:flex;
+align-items:center;
+gap:8px;
+font-size:0.8em;
+margin-bottom:6px;
+}
+
+.live-dot{
+width:8px;height:8px;border-radius:50%;
+background:#ff0000;
+box-shadow:0 0 10px #ff0000;
+animation:pulse 1s infinite;
+}
+
+@keyframes pulse{0%{opacity:1;}50%{opacity:0.3;}100%{opacity:1;}}
+
+.equalizer{display:flex;gap:2px;height:14px;}
+.equalizer span{
+width:3px;height:5px;background:#ff0000;
+box-shadow:0 0 8px #ff0000;
+animation:equalize 1s infinite ease-in-out;
+animation-play-state:paused;
+}
+.equalizer span:nth-child(2){animation-delay:0.2s;}
+.equalizer span:nth-child(3){animation-delay:0.4s;}
+.equalizer span:nth-child(4){animation-delay:0.3s;}
+.equalizer span:nth-child(5){animation-delay:0.1s;}
+
+@keyframes equalize{
+0%{height:5px;}
+25%{height:12px;}
+50%{height:8px;}
+75%{height:14px;}
+100%{height:6px;}
+}
+
+.controls{margin-top:8px;display:flex;gap:10px;}
+.play-btn{
+width:44px;height:44px;border-radius:50%;
+border:none;cursor:pointer;
+background:#ff0000;color:white;font-size:18px;
+box-shadow:0 0 20px #ff0000;
+}
+
+#volume{width:110px;accent-color:red;}
+
+.history-panel{
+width:170px;height:100%;
+background:rgba(0,0,0,0.45);
+border-radius:14px;padding:10px;
+border:1px solid rgba(255,0,0,0.3);
+overflow-y:auto;
+}
+
+.history-title{text-align:center;color:#ff0000;margin-bottom:8px;font-size:0.7em;}
+.history-item{display:flex;gap:6px;margin-bottom:6px;font-size:0.68em;align-items:center;}
+.history-cover{width:26px;height:26px;border-radius:5px;background-size:cover;background-position:center;}
+
+
+</style>
+</head>
+
+<body>
+
+<div class="bg-blur" id="bgBlur"></div>
+
+<div class="player" id="player">
+<div class="header">
+Radio LaFamilia
+<div class="datetime">
+<span id="clock"></span>
+<span id="date"></span>
+<h4><p>DJ LIVE: <span id="sonic_dj">Încărcare...</span></p></h4>
+<h6><p>Bpm: <span id="sonic_bitrate">Încărcare...</span></p></h6>
+<span id="weather">
+</div>
+</div>
+<head><script id='sonic_js' data-port='8132' src='https://radio.sonicpanel.ro/cp/widgets.js?r=667'></script></head>
+<div class="content">
+<div class="left-panel">
+<div class="disc" id="disc"></div>
+
+<div>
+<div class="track-title"><span id="title">Incarca...</span></div>
+<div class="track-artist" id="artist">Încărcare...</div>
+
+<div class="listeners">
+<div class="live-dot"></div>
+<span>ON AIR</span>
+
+<div class="equalizer" id="equalizer">
+<span></span><span></span><span></span><span></span><span></span>
+</div>
+
+<span><span id="listeners">..</span> Ascultatori</span>
+</div>
+
+<div class="controls">
+<button class="play-btn" id="playBtn">▶</button>
+<input type="range" id="volume" min="0" max="1" step="0.01" value="1">
+</div>
+</div>
+</div>
+
+<div class="history-panel">
+<div class="history-title">Istoric</div>
+<div id="historyList"></div>
+</div>
+</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+
+const __ENCODED="aHR0cHM6Ly9yYWRpby5zb25pY3BhbmVsLnJvOjEwOTIyL3N0cmVhbQ==";
+const __STREAM=atob(__ENCODED);
+
+const stream=new Audio(__STREAM);
+stream.volume=1;
+
+const player=document.getElementById("player");
+const disc=document.getElementById("disc");
+const bgBlur=document.getElementById("bgBlur");
+const titleSpan=document.getElementById("title");
+const artistEl=document.getElementById("artist");
+const listenersEl=document.getElementById("listeners");
+const equalizer=document.getElementById("equalizer");
+const historyList=document.getElementById("historyList");
+
+document.getElementById("playBtn").onclick=function(){
+if(stream.paused){
+stream.play().catch(()=>{});
+disc.style.animationPlayState="running";
+disc.classList.add("playing");
+setEqualizer(true);
+player.classList.add("shine-pulse");
+this.innerHTML="❚❚";
+}else{
+stream.pause();
+disc.style.animationPlayState="paused";
+disc.classList.remove("playing");
+setEqualizer(false);
+player.classList.remove("shine-pulse");
+this.innerHTML="▶";
+}
+};
+
+document.getElementById("volume").oninput=e=>stream.volume=e.target.value;
+
+function setEqualizer(active){
+equalizer.querySelectorAll("span").forEach(bar=>{
+bar.style.animationPlayState=active?"running":"paused";
+});
+}
+
+function updateClock(){
+const now=new Date();
+clock.textContent=now.toLocaleTimeString('eu-EU');
+date.textContent=now.toLocaleDateString('eu-EU',{
+weekday:'long',day:'2-digit',month:'2-digit',year:'numeric'
+}).toUpperCase();
+}
+setInterval(updateClock,1000);
+updateClock();
+
+function updateWeather(){
+$.getJSON("https://wttr.in/Lisboa?format=j1", d=>{
+if(d && d.current_condition){
+weather.textContent="Lisboa • "+d.current_condition[0].temp_C+"°C";
+}
+});
+}
+updateWeather();
+setInterval(updateWeather,600000);
+
+let lastTrack="";
+const coverCache={};
+
+async function fetchCover(song){
+if(coverCache[song]) return coverCache[song];
+return new Promise(res=>{
+$.ajax({
+url:`https://itunes.apple.com/search?term=${encodeURIComponent(song)}&media=music&limit=1&country=pt`,
+dataType:'jsonp',
+success:data=>{
+let cover="https://xatimg.com/image/oacvd5ltA14X.png";
+if(data.results && data.results.length>0){
+cover=data.results[0].artworkUrl100.replace('100x100','600x600');
+}
+coverCache[song]=cover;
+res(cover);
+},
+error:()=>res("https://xatimg.com/image/oacvd5ltA14X.png")
+});
+});
+}
+
+function addHistory(title,artist,cover){
+const item=document.createElement("div");
+item.className="history-item";
+item.innerHTML=`<div class="history-cover" style="background-image:url('${cover}')"></div><div>${title}<br><small>${artist}</small></div>`;
+historyList.prepend(item);
+if(historyList.children.length>10){
+historyList.removeChild(historyList.lastChild);
+}
+}
+
+function updateRadio(){
+$.ajax({
+url:"https://radio.sonicpanel.ro:10922/stats?json=1",
+dataType:'jsonp',
+jsonp:'callback',
+success:async data=>{
+if(!data) return;
+
+const listenersCount=data.currentlisteners||data.listeners||0;
+listenersEl.textContent=listenersCount;
+
+if(listenersCount>0){
+player.classList.add("shine-pulse");
+}else{
+player.classList.remove("shine-pulse");
+}
+
+let raw=data.songtitle||"";
+if(!raw||raw===lastTrack) return;
+lastTrack=raw;
+
+let artist="LIVE",title=raw;
+if(raw.includes(" - ")){
+const p=raw.split(" - ");
+artist=p[0];
+title=p.slice(1).join(" - ");
+}
+
+artistEl.textContent=artist;
+titleSpan.textContent=title;
+
+const cover=await fetchCover(raw);
+disc.style.backgroundImage=`url('${cover}')`;
+bgBlur.style.backgroundImage=`url('${cover}')`;
+
+addHistory(title,artist,cover);
+}
+});
+}
+
+setInterval(updateRadio,8000);
+updateRadio();
+</script>
+
+
+
+
+</body>
+</html>

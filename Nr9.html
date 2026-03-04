@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ByDesign Autoplay + History + DJ</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+:root { --accent:#2fed7e; --accent-rgb:47,237,126; --beat:1; }
+body,html{margin:0;padding:0;width:100%;min-height:100vh;background:#020202;color:white;font-family:'Plus Jakarta Sans',sans-serif;display:flex;justify-content:center;align-items:center;overflow:hidden;touch-action:none;}
+.ambient-glow{position:absolute;width:120%;height:120%;background:radial-gradient(circle at 50% 50%, rgba(var(--accent-rgb),0.12) 0%, transparent 60%);transform:scale(var(--beat));transition:transform 0.3s cubic-bezier(0.175,0.885,0.32,1.275);z-index:0;filter:blur(80px);pointer-events:none;}
+.main-container{width:95%;max-width:680px;height:420px;background:rgba(18,18,24,0.94);border-radius:32px;display:flex;overflow:hidden;position:relative;border:1px solid rgba(var(--accent-rgb),0.4);box-shadow:0 50px 100px -20px rgba(0,0,0,0.9);z-index:10;transition:border-color 0.5s ease;backdrop-filter:blur(10px);}
+.sidebar{width:85px;background:rgba(0,0,0,0.4);display:flex;flex-direction:column;align-items:center;padding:25px 0;border-left:1px solid rgba(255,255,255,0.05);order:3;position:relative;}
+.colors{display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:20px;}
+.c-btn{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid rgba(255,255,255,0.1);transition:0.3s;}
+.c-btn:hover{transform:scale(1.2);}
+.social-links{display:flex;flex-direction:column;align-items:center;gap:15px;margin-top:auto;margin-bottom:45px;}
+.social-links a{color:var(--accent);font-size:24px;transition:0.3s;opacity:0.8;}
+.social-links a:hover{opacity:1;transform:scale(1.1);}
+#brand-label{position:absolute;bottom:5px;left:-500px;font-weight:800;color:var(--accent);font-size:13px;letter-spacing:2px;}
+.left-panel{width:220px;background:rgba(0,0,0,0.25);padding:30px 20px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;border-right:1px solid rgba(255,255,255,0.05);order:1;position:relative;}
+.cover-box{width:135px;height:135px;border-radius:24px;overflow:hidden;border:2px solid var(--accent);background:#000;transform:scale(var(--beat));transition:transform 0.2s cubic-bezier(0.175,0.885,0.32,1.275);}
+#album-art{width:100%;height:100%;object-fit:cover;}
+.meta-static{text-align:center;margin:10px 0;width:100%;}
+#song-title{display:block;color:#ffffff;font-size:19px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#artist-name{display:block;color:var(--accent);text-transform:uppercase;font-size:12px;font-weight:600;letter-spacing:1px;margin-top:4px;}
+.btn-play{width:78px;height:78px;border-radius:50%;background:transparent;color:var(--accent);border:2px solid var(--accent);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:26px;transition:0.3s;outline:none;}
+.btn-play:hover{background:var(--accent);color:#050505 !important;}
+.mobile-listeners{display:none;}
+.vol-container{display:flex;align-items:center;gap:12px;}
+#volRange{accent-color:var(--accent);cursor:pointer;width:80px;}
+#volIcon{color:var(--accent);font-size:16px;opacity:0.7;}
+.content{flex:1;display:flex;flex-direction:column;position:relative;min-width:0;order:2;}
+.top-marquee-container{height:75px;width:100%;background:rgba(0,0,0,0.3);display:flex;align-items:center;overflow:hidden;position:relative;border-bottom:1px solid rgba(255,255,255,0.05);}
+#trackTitle{font-size:18px;font-weight:800;text-transform:uppercase;color:var(--accent);white-space:nowrap;position:absolute;animation:marquee-anim 18s linear infinite;}
+@keyframes marquee-anim{0%{transform:translateX(400px);}100%{transform:translateX(-100%);}}
+.hero-section{height:170px;margin:10px;border-radius:20px;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,0.08);}
+.hero-section img{width:100%;height:100%;object-fit:cover;opacity:0.6;}
+.listeners-box{position:absolute;bottom:12px;left:15px;background:rgba(0,0,0,0.8);padding:6px 16px;border-radius:12px;border:1px solid var(--accent);display:flex;align-items:center;gap:8px;}
+.listeners-text{font-size:9px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;}
+.dj-box{position:absolute;bottom:12px;left:auto;right:15px;background:rgba(0,0,0,0.8);padding:6px 16px;border-radius:12px;border:1px solid var(--accent);display:flex;align-items:center;gap:6px;display:none;}
+.dj-text{font-size:9px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;}
+.viz-box{width:100%;height:90px;padding:0 20px;margin-top:auto;margin-bottom:15px;}
+#visualizer { width: calc(100% + 5px); height: 100%; margin-left: -20px; bottom: -15px; }
+#history-btn{position:absolute;right:10px;bottom:15px;background:rgba(var(--accent-rgb),0.9);color:#000;padding:6px 12px;border-radius:12px;border:none;cursor:pointer;font-weight:700;z-index:20;transition:0.3s;}
+#history-btn:hover{background:rgba(var(--accent-rgb),1);}
+#history-panel{position:absolute;right:15px;bottom:55px;background:rgba(0,0,0,0.9);color:var(--accent);padding:12px;border-radius:12px;border:1px solid var(--accent);width:200px;font-size:14px;display:none;flex-direction:column;gap:6px;}
+#history-panel span{white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}
+</style>
+</head>
+<body>
+<div class="ambient-glow"></div>
+
+<div class="main-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="colors">
+            <div class="c-btn" style="background:#2fed7e" onclick="setTheme('#2fed7e')"></div>
+            <div class="c-btn" style="background:#34d1ff" onclick="setTheme('#34d1ff')"></div>
+            <div class="c-btn" style="background:#ff4757" onclick="setTheme('#ff4757')"></div>
+            <div class="c-btn" style="background:#f1c40f" onclick="setTheme('#f1c40f')"></div>
+            <div class="c-btn" style="background:#e056fd" onclick="setTheme('#e056fd')"></div>
+            <div class="c-btn" style="background:#e67e22" onclick="setTheme('#e67e22')"></div>
+            <div class="c-btn" style="background:#ffffff" onclick="setTheme('#ffffff')"></div>
+        </div>
+        <div class="social-links">
+            <a href="https://dedicatiipanel.ro/dedicatii/lafamilia/" target="_blank"><i class="fa-solid fa-envelope"></i></a>
+            <a href="https://uxat.eu/Chat" target="_blank"><i class="fa-solid fa-globe"></i></a>
+        </div>
+        <div id="brand-label">ByDesign</div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+        <div class="top-marquee-container"><span id="trackTitle">Încărcare...</span></div>
+        <div class="hero-section">
+            <img src="https://xatimg.com/image/eQclCkaKDJdZ.gif">
+            <div class="listeners-box">
+                <span id="count" style="font-size: 18px; font-weight: 800; color: var(--accent);">..</span>
+                <span class="listeners-text">Ascultatori</span>
+            </div>
+            <div class="dj-box">
+                <span id="djName" style="font-size: 14px; font-weight: 800; color: var(--accent)">..</span>
+                <span class="dj-text">DJ</span>
+            </div>
+        </div>
+        <div class="viz-box"><canvas id="visualizer"></canvas></div>
+    </div>
+
+    <!-- Left Panel -->
+    <div class="left-panel">
+        <div class="mobile-listeners">
+            <i class="fa-solid fa-users" style="font-size: 12px; color: var(--accent);"></i>
+            <span id="countMobile" style="font-size: 14px; font-weight: 800; color: white;">..</span>
+        </div>
+        <div class="cover-box"><img id="album-art" src="https://xatimg.com/image/oacvd5ltA14X.png"></div>
+        <div class="meta-static">
+            <b id="song-title">La Familia</b>
+            <span id="artist-name">Încărcare...</span>
+        </div>
+        <button class="btn-play" id="playBtn" onclick="handlePlay()"><i class="fa-solid fa-play"></i></button>
+        <div class="vol-container">
+            <i id="volIcon" class="fa-solid fa-volume-high"></i>
+            <input type="range" id="volRange" min="0" max="1" step="0.01" value="1">
+        </div>
+    </div>
+
+    <!-- HISTORY BUTTON -->
+    <button id="history-btn" onclick="toggleHistory()">History</button>
+    <div id="history-panel"></div>
+</div>
+
+<script>
+// --- PLAYER SCRIPT ---
+const canvas=document.getElementById('visualizer');
+const ctx=canvas.getContext('2d');
+let audioCtx, analyser, dataArray, peaks=[];
+const streamUrl="https://radio.sonicpanel.ro:10922/;type=mp3";
+const statsApiDirect="https://radio.sonicpanel.ro:10922/stats?sid=1&json=1";
+const audio=new Audio(streamUrl);
+audio.crossOrigin="anonymous";
+audio.autoplay=true;
+let isPlaying=false;
+let window_lS="";
+const defaultLogo="https://xatimg.com/image/oacvd5ltA14X.png";
+let songHistory=[];
+
+audio.onplay=()=>{isPlaying=true;document.getElementById('playBtn').innerHTML='<i class="fa-solid fa-pause"></i>';initVisualizer();}
+
+function setTheme(c){
+    document.documentElement.style.setProperty('--accent',c);
+    let r,g,b;if(c.toLowerCase()==='#ffffff'){r=255;g=255;b=255;}else{r=parseInt(c.slice(1,3),16);g=parseInt(c.slice(3,5),16);b=parseInt(c.slice(5,7),16);}
+    document.documentElement.style.setProperty('--accent-rgb',`${r},${g},${b}`);
+    document.querySelectorAll('.fa-solid,.fa-brands,#artist-name,#brand-label,#playBtn,.listeners-text,#trackTitle,#djName,.dj-text').forEach(el=>{if(!el.classList.contains('fa-play')&&!el.classList.contains('fa-pause')) el.style.color=c;});
+    document.querySelector('.main-container').style.borderColor=`rgba(${r},${g},${b},0.4)`;
+}
+
+function initVisualizer(){if(!audioCtx){audioCtx=new (window.AudioContext||window.webkitAudioContext)();analyser=audioCtx.createAnalyser();const source=audioCtx.createMediaElementSource(audio);source.connect(analyser);analyser.connect(audioCtx.destination);analyser.fftSize=128;dataArray=new Uint8Array(analyser.frequencyBinCount);render();}}
+
+function handlePlay(){if(audioCtx && audioCtx.state==='suspended') audioCtx.resume();if(audio.paused){audio.play();document.getElementById('playBtn').innerHTML='<i class="fa-solid fa-pause"></i>';isPlaying=true;initVisualizer();}else{audio.pause();document.getElementById('playBtn').innerHTML='<i class="fa-solid fa-play"></i>';isPlaying=false;}}
+
+async function updateMeta(){
+    try{
+        const response=await fetch(`${statsApiDirect}&nocache=${Date.now()}`,{cache:"no-store"});
+        const d=await response.json();if(!d) return;
+
+        const listeners=String(d.currentlisteners||0).padStart(2,'0');
+        document.getElementById('count').innerText=listeners;
+        document.getElementById('countMobile').innerText=listeners;
+
+        const djName=d.dj||"";
+        if(djName){document.getElementById('djName').innerText=djName;document.querySelector('.dj-box').style.display='flex';}else{document.getElementById('djName').innerText='';document.querySelector('.dj-box').style.display='none';}
+
+        if(d.songtitle && d.songtitle!==window_lS){
+            window_lS=d.songtitle;document.getElementById('trackTitle').innerText=d.songtitle.toUpperCase();
+            const parts=d.songtitle.split(' - ');const artist=(parts[0]||"RAU RADIO").trim();const song=(parts[1]||parts[0]||"ONLINE").trim();
+            document.getElementById('artist-name').innerText=artist;document.getElementById('song-title').innerText=song;
+            if(songHistory[0]!==`${artist} - ${song}`){songHistory.unshift(`${artist} - ${song}`);if(songHistory.length>5) songHistory.pop();}
+            const forbidden=/rcmo|promo|vinheta|locutor|spot|amigos unidos|radio|intervalo/i;
+            if(forbidden.test(d.songtitle)||!d.songtitle.includes("-")) document.getElementById('album-art').src=defaultLogo;else fetchArt(artist,song);
+        }
+    }catch(e){console.log("Nu se poate accesa stats",e);}
+}
+
+async function fetchArt(artist,song){try{const cleanArtist=artist.replace(/\(.*?\)|\[.*?\]|feat\.|ft\.|&|and/gi,"").trim();const cleanSong=song.replace(/\(.*?\)|\[.*?\]|remix|edit|mix|live|ao vivo/gi,"").trim();const searchTerm=encodeURIComponent(`${cleanArtist} ${cleanSong}`);const r=await fetch(`https://itunes.apple.com/search?term=${searchTerm}&limit=1&entity=song`);const j=await r.json();document.getElementById('album-art').src=(j.results&&j.results.length>0)?j.results[0].artworkUrl100.replace('100x100','600x600'):defaultLogo;}catch(e){document.getElementById('album-art').src=defaultLogo;}}
+
+function render(){requestAnimationFrame(render);if(isPlaying && analyser){analyser.getByteFrequencyData(dataArray);let bass=0;for(let i=0;i<4;i++) bass+=dataArray[i];document.documentElement.style.setProperty('--beat',1+(bass/4500));}if(window.innerWidth>600){ctx.clearRect(0,0,canvas.width,canvas.height);const col=getComputedStyle(document.documentElement).getPropertyValue('--accent');const bars=30,gap=4,bWidth=(canvas.width/bars)-gap;for(let i=0;i<bars;i++){let val=isPlaying?(dataArray[i]/255)*canvas.height*0.85:4;if(!peaks[i]||val>peaks[i]) peaks[i]=val; else peaks[i]-=0.6;ctx.fillStyle=col;ctx.beginPath();ctx.roundRect(i*(bWidth+gap),canvas.height-val,bWidth,val,[4,4,0,0]);ctx.fill();ctx.fillStyle="rgba(255,255,255,0.95)";ctx.fillRect(i*(bWidth+gap),canvas.height-peaks[i]-2,bWidth,2);}}}
+
+document.getElementById('volRange').oninput=e=>{audio.volume=e.target.value;const icon=document.getElementById('volIcon');if(audio.volume==0) icon.className="fa-solid fa-volume-xmark";else if(audio.volume<0.5) icon.className="fa-solid fa-volume-low";else icon.className="fa-solid fa-volume-high";};
+
+window.onload=()=>{if(canvas){canvas.width=canvas.offsetWidth;canvas.height=canvas.offsetHeight;}updateMeta();setInterval(updateMeta,5000);audio.play().catch(err=>console.log("Autoplay blocat:",err));};
+
+// --- HISTORY FUNCTIONS ---
+function toggleHistory(){
+    const panel=document.getElementById('history-panel');
+    if(panel.style.display==='flex'){panel.style.display='none';} 
+    else {
+        panel.style.display='flex';
+        panel.innerHTML='';
+        songHistory.forEach(s=>{
+            const sp=document.createElement('span');
+            sp.textContent=s;
+            panel.appendChild(sp);
+        });
+    }
+}
+
+// --- PROTECT SCRIPT ---
+const protectionMessage="Stop Copyright ByDesign";
+document.addEventListener("contextmenu", e=>{e.preventDefault();alert(protectionMessage);});
+document.addEventListener("selectstart", e=>{e.preventDefault();});
+document.addEventListener("keydown", e=>{e.preventDefault();alert(protectionMessage);});
+document.addEventListener("keyup", e=>{e.preventDefault();alert(protectionMessage);});
+document.addEventListener("dragstart", e=>{e.preventDefault();});
+document.addEventListener("copy", e=>{e.preventDefault();alert(protectionMessage);});
+document.addEventListener("mousedown", e=>{if(e.button===1||e.button===2){e.preventDefault();alert(protectionMessage);}});
+document.addEventListener("keydown", function(e) {
+
+    // Ctrl + U
+    if (e.ctrlKey && e.key.toLowerCase() === "u") {
+        e.preventDefault();
+    }
+
+    // Ctrl + Shift + I (DevTools)
+    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i") {
+        e.preventDefault();
+    }
+
+    // F12
+    if (e.key === "F12") {
+        e.preventDefault();
+    }
+
+});
+</script>
+</body>
+</html>

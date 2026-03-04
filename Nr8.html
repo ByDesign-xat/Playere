@@ -1,0 +1,357 @@
+
+
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RADIO MRA - ULTRA DJ 3D</title>
+
+<style>
+html, body{
+  margin:0;
+  background:transparent;
+  font-family:Arial, sans-serif;
+  color:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  perspective:1200px;
+  user-select:none;
+}
+
+#player{
+  width:720px;
+  height:520px;
+  background:linear-gradient(145deg,#0a0a0a,#111);
+  border-radius:25px;
+  border:2px solid #ff0033;
+  box-shadow:
+    0 0 15px #ff0033,
+    0 0 40px rgba(255,0,51,0.6),
+    0 40px 80px rgba(0,0,0,0.8);
+  display:flex;
+  align-items:center;
+  overflow:hidden;
+  transform-style:preserve-3d;
+  transition:transform 0.2s ease;
+  position:relative;
+}
+
+#player::after{
+  content:"";
+  position:absolute;
+  top:0;
+  left:-75%;
+  width:50%;
+  height:100%;
+  background:linear-gradient(120deg,transparent,rgba(255,255,255,0.2),transparent);
+  transform:skewX(-25deg);
+  transition:0.8s;
+}
+#player:hover::after{ left:130%; }
+
+#left{
+  width:40%;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  transform:translateZ(30px);
+}
+
+#divider{
+  width:3px;
+  height:90%;
+  border-radius:10px;
+  background:linear-gradient(to bottom,transparent,#ff0033,#ff0066,#ff0033,transparent);
+  box-shadow:0 0 10px #ff0033,0 0 30px #ff0033,0 0 60px rgba(255,0,51,0.7);
+  animation:neonPulse 2.5s infinite ease-in-out;
+  transform:translateZ(40px);
+}
+
+@keyframes neonPulse{
+  0%{opacity:0.6;}
+  50%{opacity:1;}
+  100%{opacity:0.6;}
+}
+
+#right{
+  width:auto;
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px 30px;
+  transform:translateZ(20px);
+}
+
+video{
+  width:360px;
+  height:auto;
+  max-height:460px;
+  object-fit:contain;
+  background:black;
+  border-radius:14px;
+  box-shadow:0 0 25px rgba(0,0,0,0.8),0 0 40px rgba(255,0,51,0.25);
+}
+
+#radio-name{
+  font-size:22px;
+  font-weight:bold;
+  color:#ff0055;
+  margin-bottom:10px;
+}
+
+#clock{font-size:18px;}
+#date{font-size:12px;opacity:0.7;margin-bottom:15px;}
+
+#mini-cover{
+  width:170px;
+  height:170px;
+  border-radius:50%;
+  border:4px solid #ff0055;
+  background:url('https://i.imgur.com/pVjYaD7.png') center/cover;
+  margin:15px 0;
+  box-shadow:0 0 40px #ff00ff;
+  animation:spin 12s linear infinite;
+  animation-play-state:paused;
+  transform:translateZ(50px);
+}
+
+@keyframes spin{
+  from{transform:translateZ(50px) rotate(0deg);}
+  to{transform:translateZ(50px) rotate(360deg);}
+}
+
+#artist{font-weight:bold;color:#ff0055;}
+#title{font-size:14px;margin-bottom:8px;text-align:center;}
+
+#equalizer{
+  width:100%;
+  height:30px;
+  background:#111;
+  border-radius:6px;
+  margin:15px 0;
+}
+
+.controls{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+
+#playBtn{
+  padding:10px 25px;
+  background:#ff0055;
+  border:none;
+  border-radius:20px;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+#volume{width:120px;}
+#listeners{color:#ff0055;margin-bottom:10px;}
+</style>
+</head>
+<body>
+
+<div id="player">
+  <div id="left">
+    <div id="radio-name">RADIO MRA</div>
+    <div id="clock"></div>
+    <div id="date"></div>
+
+    <div id="mini-cover"></div>
+    <div id="artist">AO VIVO</div>
+    <div id="title">Carregando...</div>
+
+    <canvas id="equalizer"></canvas>
+    <div>Ouvintes: <span id="listeners">0</span></div>
+
+    <div class="controls">
+      <button id="playBtn">▶ PLAY</button>
+      <input type="range" id="volume" min="0" max="1" step="0.01" value="0.7">
+    </div>
+  </div>
+
+  <div id="divider"></div>
+
+  <div id="right">
+    <video autoplay muted loop playsinline>
+      <source src="https://i.imgur.com/StvMaHX.mp4" type="video/mp4">
+    </video>
+  </div>
+</div>
+
+<script>
+/* 🔒 STREAM OFUSCADO */
+const _0xstream=["aHR0cHM6Ly9yYWRpby5zb25pY3BhbmVsLnJvOjEwOTIyL3N0cmVhbQ=="];
+const STREAM=atob(_0xstream[0]);
+const STATS="https://radio.sonicpanel.ro:10922/stats?json=1&callback=statsCallback";
+
+/* 🛡️ PROTEÇÃO PREMIUM (XAT BACKGROUND SAFE) */
+function ambienteAutorizado(){
+  try{
+    const ref=(document.referrer||"").toLowerCase();
+    const host=(window.location.hostname||"").toLowerCase();
+    const protocol=location.protocol;
+
+    if(ref.includes("xat.com")) return true;
+    if(host.includes("xat.com")) return true;
+    if(protocol==="file:" || host==="" || host==="localhost") return true;
+
+    return false;
+  }catch(e){
+    return true;
+  }
+}
+
+const player=document.getElementById("player");
+const cover=document.getElementById("mini-cover");
+const playBtn=document.getElementById("playBtn");
+const volume=document.getElementById("volume");
+const canvas=document.getElementById("equalizer");
+const ctx=canvas.getContext("2d");
+const artist=document.getElementById("artist");
+const title=document.getElementById("title");
+const listeners=document.getElementById("listeners");
+const clock=document.getElementById("clock");
+const dateEl=document.getElementById("date");
+
+let audio,audioCtx,analyser,dataArray,playing=false,autorizado=ambienteAutorizado();
+
+/* RELÓGIO */
+function updateClock(){
+ const now=new Date();
+ clock.textContent=now.toLocaleTimeString("pt-PT");
+ dateEl.textContent=now.toLocaleDateString("pt-PT");
+}
+setInterval(updateClock,1000);
+updateClock();
+
+/* STATS */
+function loadStats(){
+ const s=document.createElement("script");
+ s.src=STATS+"&rand="+Math.random();
+ document.body.appendChild(s);
+}
+function statsCallback(data){
+ if(!data || !autorizado) return;
+
+ listeners.textContent=data.currentlisteners||0;
+
+ if(data.songtitle){
+   const p=data.songtitle.split(" - ");
+   artist.textContent=p[0]||"RADIO MRA";
+   title.textContent=p[1]||data.songtitle;
+   fetchCover(data.songtitle);
+ }
+}
+setInterval(loadStats,8000);
+loadStats();
+
+/* CAPA */
+function fetchCover(track){
+ if(!autorizado) return;
+ const script=document.createElement("script");
+ script.src=`https://itunes.apple.com/search?term=${encodeURIComponent(track)}&media=music&limit=1&callback=coverCallback`;
+ document.body.appendChild(script);
+}
+function coverCallback(data){
+ if(data.results && data.results.length>0){
+   const url=data.results[0].artworkUrl100.replace("100x100","600x600");
+   cover.style.backgroundImage=`url('${url}')`;
+ }
+}
+
+/* PLAYER */
+playBtn.onclick=async()=>{
+ if(!audio){
+  audio=new Audio(STREAM);
+  audio.crossOrigin="anonymous";
+
+  if(!autorizado){
+    audio.volume=0;
+    playBtn.textContent="🔒 PROTEGIDO";
+    playBtn.style.background="#444";
+    playBtn.style.cursor="not-allowed";
+    artist.textContent="PLAYER PROTEGIDO";
+    title.textContent="Uso não autorizado";
+    cover.style.animationPlayState="paused";
+  }else{
+    audio.volume=volume.value;
+  }
+
+  audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+  analyser=audioCtx.createAnalyser();
+  analyser.fftSize=256;
+
+  const source=audioCtx.createMediaElementSource(audio);
+  source.connect(analyser);
+  analyser.connect(audioCtx.destination);
+
+  dataArray=new Uint8Array(analyser.frequencyBinCount);
+  canvas.width=canvas.offsetWidth;
+  canvas.height=canvas.offsetHeight;
+
+  if(autorizado) draw();
+ }
+
+ if(audioCtx.state==="suspended"){ await audioCtx.resume(); }
+
+ if(autorizado){
+  if(!playing){
+    await audio.play();
+    playBtn.textContent="⏸ PAUSE";
+    cover.style.animationPlayState="running";
+    playing=true;
+  }else{
+    audio.pause();
+    playBtn.textContent="▶ PLAY";
+    cover.style.animationPlayState="paused";
+    playing=false;
+  }
+ }
+};
+
+volume.oninput=()=>{ if(audio && autorizado) audio.volume=volume.value; };
+
+/* EQUALIZER */
+function draw(){
+ requestAnimationFrame(draw);
+ if(!analyser || !autorizado) return;
+
+ analyser.getByteFrequencyData(dataArray);
+ ctx.clearRect(0,0,canvas.width,canvas.height);
+
+ const bars=64;
+ const barWidth=canvas.width/bars;
+
+ for(let i=0;i<bars;i++){
+   let value=dataArray[i];
+   if(i<8) value*=2.2;
+   const h=(value/255)*canvas.height;
+
+   const grad=ctx.createLinearGradient(0,0,canvas.width,0);
+   grad.addColorStop(0,"#ff0055");
+   grad.addColorStop(0.5,"#00ffff");
+   grad.addColorStop(1,"#ff00ff");
+
+   ctx.fillStyle=grad;
+   ctx.fillRect(i*barWidth,canvas.height-h,barWidth-2,h);
+ }
+}
+
+/* 3D */
+document.addEventListener("mousemove",e=>{
+ const x=(window.innerWidth/2 - e.clientX)/40;
+ const y=(window.innerHeight/2 - e.clientY)/40;
+ player.style.transform=`rotateY(${x}deg) rotateX(${y}deg)`;
+});
+</script>
+
+</body>
+</html>

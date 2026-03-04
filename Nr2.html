@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>ByDesign</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* TOP SECURITY & RESET */
+        * { -webkit-user-select: none; user-select: none; outline: none; box-sizing: border-box; }
+        
+        body {
+            background: #020202; margin: 0; height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Roboto Condensed', sans-serif;
+        }
+
+        /* The Boutique Chassis */
+        .chassis {
+            position: relative; width: 600px;
+            background: linear-gradient(135deg, #0f0f0f 0%, #050505 100%);
+            border: 1px solid #1a1a1a; padding: 50px 40px; border-radius: 40px;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.9), inset 0 1px 2px rgba(255,255,255,0.05);
+            text-align: center;
+        }
+
+        /* Carbon Fiber Texture Overlay */
+        .chassis::before {
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: radial-gradient(#111 1px, transparent 1px);
+            background-size: 3px 3px; opacity: 0.2; pointer-events: none; border-radius: 40px;
+        }
+
+        h1 {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 13px; letter-spacing: 10px;
+            color: #d4af37; /* Gold */
+            margin: 0 0 40px 0; text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+
+        /* Luxury VU Glass */
+        .glass-display {
+            background: #000; height: 120px; border-radius: 20px;
+            border: 1px solid #111; margin-bottom: 40px;
+            position: relative; overflow: hidden;
+            box-shadow: inset 0 0 30px #000;
+        }
+
+        canvas { width: 100%; height: 100%; filter: drop-shadow(0 0 10px #d4af37); }
+
+        /* The Gold Engagement Switch */
+        #power-btn {
+            background: transparent; border: 2px solid #d4af37; color: #d4af37;
+            width: 80px; height: 80px; cursor: pointer;
+            font-family: 'Syncopate'; font-size: 10px; border-radius: 50%;
+            margin: 0 auto; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
+        }
+
+        #power-btn:hover { background: rgba(212, 175, 55, 0.05); transform: translateY(-3px); }
+
+        #power-btn.on {
+            background: #d4af37; color: #000;
+            box-shadow: 0 0 40px rgba(212, 175, 55, 0.4);
+            border-color: #fff;
+        }
+
+        /* Premium Fader */
+        .fader-wrap { margin-top: 40px; padding: 0 10px; }
+        .vol-fader {
+            width: 100%; height: 2px; background: #1a1a1a; appearance: none; outline: none;
+        }
+        .vol-fader::-webkit-slider-thumb {
+            appearance: none; width: 40px; height: 10px; background: #d4af37;
+            border-radius: 2px; cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        /* Signature */
+        .signature {
+            margin-top: 40px; font-size: 8px; letter-spacing: 6px; color: #333;
+            text-transform: uppercase; font-weight: 600;
+        }
+        .on ~ .signature { color: #d4af37; transition: 1.5s; }
+
+        /* Subtle Bass Pulse */
+        .pulse { animation: pulse-anim 0.2s infinite; }
+        @keyframes pulse-anim { 0% { transform: scale(1); } 50% { transform: scale(1.005); } 100% { transform: scale(1); } }
+    </style>
+</head>
+
+<body oncontextmenu="return false;">
+
+<div class="chassis" id="player">
+    <h1>Lafamilia</h1>
+
+    
+    <div class="glass-display">
+        <canvas id="visualizer"></canvas>>
+    </div>
+    <h1><p> <span id="sonic_title">Încărcare...</span></p></h1>
+
+
+    <button id="power-btn">PLAY</button>
+    
+    <div class="fader-wrap">
+        <input type="range" id="volume" class="vol-fader" min="0" max="1" step="0.01" value="1">
+    </div>
+    
+    <div class="signature">Stop Copyright ByDesign</div>
+	<h1><p>Ascultatori: <span id="sonic_listeners"></span></p></h1
+	
+</div>
+
+
+<head>
+<script id='sonic_js' data-port='8132' src='https://radio.sonicpanel.ro/cp/widgets.js?r=667'></script>
+<head>
+
+<script>
+// Security Layer
+$(document).keydown(function(e){if(e.keyCode==123 || (e.ctrlKey && e.shiftKey && (e.keyCode==73 || e.keyCode==74)) || (e.ctrlKey && (e.keyCode==85 || e.keyCode==83))) return false;});
+
+$(document).ready(function() {
+    const stream = "https://radio.sonicpanel.ro:10922/stream";
+    let audioCtx, analyzer, source;
+    const audio = new Audio();
+    audio.crossOrigin = "anonymous";
+
+    function initEngine() {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        source = audioCtx.createMediaElementSource(audio);
+        analyzer = audioCtx.createAnalyser();
+        
+        // --- STEVE'S GOLDEN AUDIO CHAIN ---
+        const highPass = audioCtx.createBiquadFilter();
+        highPass.type = "highpass"; highPass.frequency.value = 40; // Clean sub-rumble
+
+        const brilliance = audioCtx.createBiquadFilter();
+        brilliance.type = "highshelf"; brilliance.frequency.value = 5000; brilliance.gain.value = 6;
+
+        const masterComp = audioCtx.createDynamicsCompressor();
+        masterComp.threshold.value = -15; masterComp.ratio.value = 4;
+
+        const finalLimiter = audioCtx.createDynamicsCompressor();
+        finalLimiter.threshold.value = -0.1;
+
+        source.connect(highPass); highPass.connect(brilliance);
+        brilliance.connect(masterComp); masterComp.connect(finalLimiter);
+        finalLimiter.connect(analyzer); analyzer.connect(audioCtx.destination);
+        
+        render();
+    }
+
+    function render() {
+        requestAnimationFrame(render);
+        const dataArray = new Uint8Array(analyzer.frequencyBinCount);
+        analyzer.getByteTimeDomainData(dataArray);
+        
+        const canvas = document.getElementById('visualizer');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#d4af37';
+        ctx.beginPath();
+        
+        let x = 0;
+        let sliceWidth = canvas.width / analyzer.frequencyBinCount;
+        for (let i = 0; i < analyzer.frequencyBinCount; i++) {
+            let v = dataArray[i] / 128.0;
+            let y = v * canvas.height / 2;
+            if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            x += sliceWidth;
+        }
+        ctx.stroke();
+
+        // Pulse effect on Bass
+        const freqData = new Uint8Array(analyzer.frequencyBinCount);
+        analyzer.getByteFrequencyData(freqData);
+        if (freqData[2] > 210) $('#player').addClass('pulse');
+        else $('#player').removeClass('pulse');
+    }
+
+    $('#power-btn').click(function() {
+        if (!audioCtx) initEngine();
+        if (audio.paused) {
+            audio.src = stream + "?live=" + Date.now();
+            audio.play();
+            audioCtx.resume();
+            $(this).addClass('on').text('STOP');
+        } else {
+            audio.pause(); audio.src = "";
+            $(this).removeClass('on').text('PLAY');
+        }
+    });
+
+    $('#volume').on('input', function() { audio.volume = $(this).val(); });
+});
+</script>
+</body>
+</html>

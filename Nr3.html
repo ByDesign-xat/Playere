@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>ByDesign</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* Anti-Selection & Cursor Protection */
+        * {
+            -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
+            -webkit-user-drag: none;
+        }
+        
+        body {
+            background: #000; margin: 0; height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Roboto Condensed', sans-serif; overflow: hidden;
+        }
+
+        .master-box {
+            position: relative; z-index: 10; width: 450px;
+            background: rgba(5, 5, 5, 0.95);
+            border: 2px solid #1a1a1a; padding: 40px; border-radius: 5px;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 1); text-align: center;
+            border-top: 4px solid #00f2ff;
+        }
+
+        /* Τα υπόλοιπα CSS παραμένουν ίδια */
+        .glitch-active { animation: glitch-anim 0.2s infinite; filter: hue-rotate(90deg) contrast(150%); }
+        @keyframes glitch-anim { 0% { transform: translate(0); } 20% { transform: translate(-5px, 5px); } 100% { transform: translate(0); } }
+        .display { background: #000; height: 100px; border: 1px solid #111; margin-bottom: 25px; }
+        canvas { width: 100%; height: 100%; }
+        h1 { font-size: 14px; letter-spacing: 6px; color: #00f2ff; margin-bottom: 30px; }
+        .btn-group { display: flex; gap: 10px; justify-content: center; }
+        #power-btn, #request-btn { background: transparent; border: 1px solid #00f2ff; color: #00f2ff; padding: 12px 20px; cursor: pointer; font-family: 'Syncopate'; font-size: 10px; transition: 0.3s; }
+        #power-btn.on { background: #00f2ff; color: #000; box-shadow: 0 0 20px #00f2ff; }
+        #request-btn { border-color: #ff0055; color: #ff0055; text-decoration: none; }
+        .vol-range { margin-top: 30px; width: 100%; accent-color: #00f2ff; }
+		
+		        .custom-alert {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            padding: 15px 25px;
+            background: rgba(10, 5, 0, 0.95);
+            border: 2px solid var(--glow-color);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1.1em;
+            text-shadow: 0 0 8px var(--glow-color);
+            box-shadow: 0 0 20px rgba(255, 103, 0, 0.7);
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+		
+    </style>
+</head>
+
+<body oncontextmenu="return false;"> <div class="master-box" id="main-ui">
+    <h1>LaFamilia</h1>
+    <div class="display"><canvas id="osc"></canvas></div>
+	<h1><p>Ascultatori: <span id="sonic_listeners">Încărcare...</span></p></h1>
+	<h1><p> <span id="sonic_title">Încărcare...</span></p></h1>
+    <div class="btn-group">
+        <button id="power-btn">Play</button>
+        <a href="https://xat.me/xdesignx" target="_blank" id="request-btn">Buy</a>
+    </div>
+    <input type="range" id="volume" class="vol-range" min="0" max="1" step="0.01" value="1">
+</div>
+
+<head>
+<script id='sonic_js' data-port='8132' src='https://radio.sonicpanel.ro/cp/widgets.js?r=667'></script>
+<head>
+
+        <div id="custom-alert" class="custom-alert">Stop Copyright ByDesign</div>
+
+    </div>
+
+<script>
+// --- SECURITY LAYER ---
+$(document).keydown(function (e) {
+    // Block F12, Ctrl+Shift+I, Ctrl+U, Ctrl+S
+    if (e.keyCode == 123 || (e.ctrlKey && (e.shiftKey && e.keyCode == 73)) || (e.ctrlKey && (e.keyCode == 85 || e.keyCode == 83))) {
+        return false;
+    }
+});
+
+$(document).ready(function() {
+    const stream = "https://radio.sonicpanel.ro:10922/stream";
+    let audioCtx, analyzer, source;
+    const audio = new Audio();
+    audio.crossOrigin = "anonymous";
+
+    // AUDIO ENGINE (Mastering Chain)
+    function initEngine() {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        source = audioCtx.createMediaElementSource(audio);
+        analyzer = audioCtx.createAnalyser();
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = "highshelf"; filter.frequency.value = 5000; filter.gain.value = 4;
+        const comp = audioCtx.createDynamicsCompressor();
+        comp.threshold.value = -18; comp.ratio.value = 4;
+        const limiter = audioCtx.createDynamicsCompressor();
+        limiter.threshold.value = -0.5; limiter.ratio.value = 20;
+
+        source.connect(filter); filter.connect(comp);
+        comp.connect(limiter); limiter.connect(analyzer);
+        analyzer.connect(audioCtx.destination);
+        draw();
+    }
+
+    function draw() {
+        requestAnimationFrame(draw);
+        const dataArray = new Uint8Array(analyzer.frequencyBinCount);
+        analyzer.getByteTimeDomainData(dataArray);
+        const canvas = document.getElementById('osc');
+		const songTitleDisplay = document.getElementById('songTitle');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.lineWidth = 2; ctx.strokeStyle = '#00f2ff';
+        ctx.beginPath();
+        let x = 0; let sliceWidth = canvas.width / analyzer.frequencyBinCount;
+        for (let i = 0; i < analyzer.frequencyBinCount; i++) {
+            let v = dataArray[i] / 128.0; let y = v * canvas.height / 2;
+            if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            x += sliceWidth;
+        }
+        ctx.stroke();
+
+        const freqData = new Uint8Array(analyzer.frequencyBinCount);
+        analyzer.getByteFrequencyData(freqData);
+        if (freqData[2] > 220) $('#main-ui').addClass('glitch-active');
+        else $('#main-ui').removeClass('glitch-active');
+		        // --- Security Measures ---
+               // --- Security Measures ---
+        const customAlert = document.getElementById('custom-alert');
+
+        document.addEventListener('contextmenu', event => {
+            event.preventDefault();
+            if (customAlert) {
+                customAlert.classList.add('show');
+                setTimeout(() => {
+                    customAlert.classList.remove('show');
+                }, 2500);
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'F12' || (event.ctrlKey && event.shiftKey && event.key === 'I') || (event.ctrlKey && event.key === 'u')) {
+                event.preventDefault();
+            }
+        });
+
+        updateClock();
+        updateDate();
+        setInterval(updateClock, 1000);
+        
+        updateRadioInfo();
+        setInterval(updateRadioInfo, 7000);;
+
+    }
+
+    $('#power-btn').click(function() {
+        if (!audioCtx) initEngine();
+        if (audio.paused) {
+            audio.src = stream + "?cb=" + Date.now();
+            audio.play(); audioCtx.resume();
+            $(this).addClass('on').text('Stop');
+        } else {
+            audio.pause(); audio.src = "";
+            $(this).removeClass('on').text('Play');
+        }
+    });
+
+    $('#volume').on('input', function() { audio.volume = $(this).val(); });
+});
+</script>
+</body>
+</html>
