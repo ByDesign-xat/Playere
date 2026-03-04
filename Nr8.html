@@ -189,12 +189,6 @@ const _0xstream=["aHR0cHM6Ly9yYWRpby5zb25pY3BhbmVsLnJvOjEwOTIyL3N0cmVhbQ=="];
 const STREAM=atob(_0xstream[0]);
 const STATS="https://radio.sonicpanel.ro:10922/stats?json=1&callback=statsCallback";
 
-    return false;
-  }catch(e){
-    return true;
-  }
-}
-
 const player=document.getElementById("player");
 const cover=document.getElementById("mini-cover");
 const playBtn=document.getElementById("playBtn");
@@ -212,8 +206,8 @@ let audio,audioCtx,analyser,dataArray,playing=false,autorizado=ambienteAutorizad
 /* RELÓGIO */
 function updateClock(){
  const now=new Date();
- clock.textContent=now.toLocaleTimeString("pt-PT");
- dateEl.textContent=now.toLocaleDateString("pt-PT");
+ clock.textContent=now.toLocaleTimeString("eu-EU");
+ dateEl.textContent=now.toLocaleDateString("eu-EU");
 }
 setInterval(updateClock,1000);
 updateClock();
@@ -259,17 +253,6 @@ playBtn.onclick=async()=>{
   audio=new Audio(STREAM);
   audio.crossOrigin="anonymous";
 
-  if(!autorizado){
-    audio.volume=0;
-    playBtn.textContent="🔒 PROTEGIDO";
-    playBtn.style.background="#444";
-    playBtn.style.cursor="not-allowed";
-    artist.textContent="PLAYER PROTEGIDO";
-    title.textContent="Uso não autorizado";
-    cover.style.animationPlayState="paused";
-  }else{
-    audio.volume=volume.value;
-  }
 
   audioCtx=new (window.AudioContext||window.webkitAudioContext)();
   analyser=audioCtx.createAnalyser();
@@ -368,4 +351,5 @@ document.addEventListener("keydown", function(e) {
 </script>
 </body>
 </html>
+
 
