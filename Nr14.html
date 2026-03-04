@@ -38,6 +38,22 @@
     animation: spin 8s linear infinite;
     animation-play-state: paused;
 }
+/* ===== CLUB VISUALIZER ===== */
+.ballerini-area {
+    position: relative;
+    overflow: hidden;
+}
+
+#audio-visualizer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 75%;
+    pointer-events: none;
+    mix-blend-mode: screen;
+};
+
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .ballerini-area { width: 440px; height: 240px; margin-top: 10px; border: 2px solid #00f2ff; border-radius: 8px; background: rgba(0,0,0,0.5); overflow: hidden; display: flex; justify-content: center; align-items: center; }
         .ballerini-content { width: 100%; height: 100%; object-fit: contain; }
@@ -98,6 +114,7 @@
             </div>
             <div class="ballerini-area">
                 <img src="https://xatimg.com/image/eQclCkaKDJdZ.gif" class="ballerini-content">
+				<canvas id="audio-visualizer"></canvas>
             </div>
         </div>
 
@@ -117,7 +134,9 @@
 
 <script>
 const _0xMOR = "https://radio.sonicpanel.ro:10922/radio.mp3";
-const _stream = new Audio(_0xMOR);
+const _stream = new Audio();
+_stream.crossOrigin = "anonymous";
+_stream.src = _0xMOR;
 
 let historySongs = [];
 let lastSong = "";
@@ -238,6 +257,82 @@ async function updateArtwork(songTitle) {
         }
     } catch {}
 }
+
+/* ===== AUDIO VISUALIZER ===== */
+/* ===== WINAMP OLDSCHOOL - NORMAL (NO WAVES) ===== */
+
+const canvas = document.getElementById("audio-visualizer");
+const ctx = canvas.getContext("2d");
+
+function resizeCanvas() {
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+let barsCount = 32;
+let segments = 20;
+
+// nivele independente pe fiecare bară (fără val)
+let levels = new Array(barsCount).fill(0);
+
+function drawVisualizer() {
+    requestAnimationFrame(drawVisualizer);
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (_stream.paused || _stream.volume == 0) return;
+
+    let intensity = _stream.volume;
+
+    let barWidth = canvas.width / barsCount;
+    let segmentHeight = canvas.height / segments;
+
+    for (let i = 0; i < barsCount; i++) {
+
+        // mișcare naturală random stabilă (NU val)
+        let change = (Math.random() - 0.5) * 4;
+        levels[i] += change;
+
+        if (levels[i] < 0) levels[i] = 0;
+        if (levels[i] > segments * intensity) levels[i] = segments * intensity;
+
+        let activeSegments = Math.floor(levels[i]);
+
+        for (let s = 0; s < activeSegments; s++) {
+
+            let y = canvas.height - (s + 1) * segmentHeight;
+
+            let color;
+
+            if (s < segments * 0.6) {
+                color = "#00f2ff";      // cyan
+            } else if (s < segments * 0.85) {
+                color = "#a0ffff";      // cyan deschis
+            } else {
+                color = "#ffffff";      // alb
+            }
+
+            ctx.fillStyle = color;
+
+            ctx.fillRect(
+                i * barWidth + 3,
+                y + 2,
+                barWidth - 6,
+                segmentHeight - 4
+            );
+        }
+    }
+
+    ctx.shadowColor = "#00f2ff";
+    ctx.shadowBlur = 6;
+}
+
+drawVisualizer();
+
+
+
 // --- PROTECT SCRIPT ---
 const protectionMessage="Stop Copyright ByDesign";
 document.addEventListener("contextmenu", e=>{e.preventDefault();alert(protectionMessage);});
