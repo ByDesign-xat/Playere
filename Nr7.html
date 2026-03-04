@@ -1,11 +1,9 @@
-
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ro">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Radio Eterno</title>
+    <title>ByDesign</title>
     <meta name="author" content="JasonOficial - xat.comn/viagemnotempoHD">
     <script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
     <script src="https://kit.fontawesome.com/d21eb0851c.js" crossorigin="anonymous"></script>
@@ -28,5 +26,34 @@
         });
     </script>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v67327c56f0bb4ef8b305cae61679db8f1769101564043" integrity="sha512-rdcWY47ByXd76cbCFzznIcEaCN71jqkWBBqlwhF1SY7KubdLKZiEGeP7AyieKZlGP9hbY/MhGrwXzJC/HulNyg==" data-cf-beacon='{"version":"2024.11.0","token":"7cfebe8ad60d47299959edeae0ac1784","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+
+
+// --- PROTECT SCRIPT ---
+const protectionMessage="Stop Copyright ByDesign";
+document.addEventListener("contextmenu", e=>{e.preventDefault();alert(protectionMessage);});
+document.addEventListener("selectstart", e=>{e.preventDefault();});
+document.addEventListener("keydown", e=>{e.preventDefault();alert(protectionMessage);});
+document.addEventListener("keyup", e=>{e.preventDefault();alert(protectionMessage);});
+document.addEventListener("dragstart", e=>{e.preventDefault();});
+document.addEventListener("copy", e=>{e.preventDefault();alert(protectionMessage);});
+document.addEventListener("mousedown", e=>{if(e.button===1||e.button===2){e.preventDefault();alert(protectionMessage);}});
+document.addEventListener("keydown", function(e) {
+
+    // Ctrl + U
+    if (e.ctrlKey && e.key.toLowerCase() === "u") {
+        e.preventDefault();
+    }
+
+    // Ctrl + Shift + I (DevTools)
+    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i") {
+        e.preventDefault();
+    }
+
+    // F12
+    if (e.key === "F12") {
+        e.preventDefault();
+    }
+
+});
 </body>
 </html>
