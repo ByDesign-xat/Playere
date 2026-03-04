@@ -1,0 +1,437 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
+<style>
+    :root { --main-color: #00ffff; --boost: 0; }
+    *{box-sizing:border-box; user-select:none; -webkit-user-drag: none; outline: none;}
+    
+    body {
+        margin:0; height:100vh; background: transparent !important; 
+        display:flex; justify-content:center; align-items:center; 
+        font-family:'Orbitron',sans-serif; overflow:hidden;
+    }
+
+    .player-container {
+        position: relative; width: 750px; height: 630px; 
+        background: radial-gradient(circle, #151515 0%, #000 100%);
+        border: 6px solid var(--main-color); border-radius: 40px;
+        box-shadow: 0 0 40px var(--main-color), inset 0 0 60px #000;
+        display: flex; flex-direction: column; align-items: center;
+        padding-top: 20px; transition: 0.5s; overflow: hidden;
+    }
+
+    .woofer-rack {
+        position: absolute; top: 20px; bottom: 20px; width: 130px;
+        background: linear-gradient(180deg, rgba(30,30,30,0.8) 0%, rgba(10,10,10,0.9) 50%, rgba(30,30,30,0.8) 100%);
+        border: 2px solid rgba(255,255,255,0.1); border-radius: 20px;
+        display: flex; flex-direction: column; align-items: center;
+        justify-content: space-between; padding: 40px 0; z-index: 5;
+    }
+    .rack-left { left: 20px; }
+    .rack-right { right: 20px; }
+
+    .sub-case {
+        width: 100px; height: 100px; background: #000;
+        border: 3px solid var(--main-color); border-radius: 50%;
+        display: flex; justify-content: center; align-items: center;
+        box-shadow: 0 0 15px var(--main-color); position: relative;
+        overflow: hidden;
+    }
+
+    .sub-cone {
+        width: 85px; height: 85px; border-radius: 50%;
+        background: conic-gradient(from 0deg, #ff0000, #ff00ff, #0000ff, #00ffff, #00ff00, #ffff00, #ff0000);
+        position: relative; display: flex; justify-content: center; align-items: center;
+        transition: transform 0.04s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .sub-cone::after {
+        content: ""; position: absolute; inset: 0; border-radius: 50%;
+        background: var(--main-color); opacity: var(--boost); 
+    }
+
+    .sub-cap {
+        width: 32px; height: 32px; background: #111; border: 2px solid var(--main-color);
+        border-radius: 50%; z-index: 2; box-shadow: 0 0 10px #000;
+    }
+
+    .color-vertical { display: flex; flex-direction: column; gap: 8px; }
+    .dot { width: 18px; height: 18px; border-radius: 50%; cursor: pointer; border: 1px solid #fff; transition: 0.2s; 
+	}
+
+    .vinile-wrap {
+        position: relative; width: 160px; height: 160px; margin-top: 20px;
+        z-index: 10; animation: float 6s ease-in-out infinite;
+    }
+    .cover-bubble { 
+        width: 100%; height: 100%; border-radius: 50%; border: 4px solid #111;
+        overflow: hidden; box-shadow: 0 0 25px var(--main-color);
+        animation: spin 4s linear infinite;
+    }
+    .cover-bubble img { width: 100%; height: 100%; object-fit: cover; }
+
+    .track-marquee { width: 45%; margin: 20px 0; border-bottom: 2px solid var(--main-color); z-index: 10; overflow: hidden;}
+    #track-title { font-size: 14px; color: var(--main-color); text-transform: uppercase; font-weight: 900; }
+
+    .book-container { width: 420px; height: 190px; display: flex; gap: 10px; z-index: 10; }
+    .book-page { width: 50%; border: 3px solid var(--main-color); border-radius: 12px; overflow: hidden; box-shadow: 0 0 20px var(--main-color); background: #000; }
+    .book-page img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+
+    /* NUOVO SCROLLER CHIRURGICO SOTTO IL LIBRO */
+    .warning-scroller {
+        width: 400px; height: 25px; margin-top: 10px;
+        border: 1px solid var(--main-color); border-radius: 5px;
+        background: rgba(0,0,0,0.6); overflow: hidden; z-index: 10;
+        display: flex; align-items: center;
+    }
+    .warning-text {
+        white-space: nowrap; font-size: 10px; color: var(--main-color);
+        font-weight: 700; text-transform: uppercase;
+        animation: scroll-text 10s linear infinite;
+    }
+
+    @keyframes scroll-text {
+        from { transform: translateX(100%); }
+        to { transform: translateX(-100%); }
+    }
+
+    .audio-controls { 
+        position: absolute; bottom: 10px; display: flex; align-items: center; gap: 20px; 
+        background: rgba(0,0,0,0.9); padding: 12px 30px; border-radius: 50px; 
+        border: 2px solid var(--main-color); box-shadow: 0 0 30px var(--main-color); z-index: 10;
+    }
+    .btn { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--main-color); display: flex; justify-content: center; align-items: center; cursor: pointer; color: var(--main-color); font-weight: 900; }
+
+}
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes float { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(0, 10px); } }
+
+.history-toggle {
+    width: 400px;
+    padding: 6px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 900;
+    color: var(--main-color);
+    border: 1px solid var(--main-color);
+    border-radius: 6px;
+    cursor: pointer;
+    background: rgba(0,0,0,0.6);
+    transition: 0.3s;
+    position: relative;
+    z-index: 20;
+}
+.history-title {
+    font-size: 12px;
+    font-weight: 900;
+    padding: 8px;
+    text-align: center;
+    border-bottom: 1px solid var(--main-color);
+    color: var(--main-color);
+    text-shadow: 0 0 8px var(--main-color);
+}
+.history-toggle:hover {
+    background: var(--main-color);
+    color: #000;
+}
+
+.history-box {
+    width: 270px;
+    background: rgba(0,0,0,0.9);
+     color: var(--main-color); /* 👈 textul ia culoarea temei */
+    border: 1px solid var(--main-color);
+    border-radius: 8px;
+    box-shadow: 0 0 20px var(--main-color);
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    bottom: 28%;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.4s ease;
+    z-index: 30;
+}
+
+.history-box.active {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+.player-container {
+    position: relative;
+}
+#historyList li:hover {
+    text-shadow: 0 0 10px var(--main-color);
+}
+#historyList {
+    list-style: decimal;        /* 1,2,3 */
+    list-style-position: outside;
+    padding-left: 20px;         /* spațiu pentru număr */
+    margin: 0;
+    text-align: left;           /* 👈 IMPORTANT */
+    font-size: 12px;
+}
+
+#historyList li {
+    text-align: left;           /* 👈 IMPORTANT */
+    padding: 4px 0;
+    border-bottom: 1px solid var(--main-color);
+    opacity: 0.8;
+}
+#historyList li:last-child {
+    border-bottom: none;
+}
+
+</style>
+</head>
+<body oncontextmenu="return false">
+
+<div class="player-container" id="player">
+    
+    <div class="woofer-rack rack-left">
+        <div class="sub-case"><div class="sub-cone"><div class="sub-cap"></div></div></div>
+        <div class="color-vertical" id="d-l"></div>
+        <div class="sub-case"><div class="sub-cone"><div class="sub-cap"></div></div></div>
+    </div>
+
+    <div class="woofer-rack rack-right">
+        <div class="sub-case"><div class="sub-cone"><div class="sub-cap"></div></div></div>
+        <div class="color-vertical" id="d-r"></div>
+        <div class="sub-case"><div class="sub-cone"><div class="sub-cap"></div></div></div>
+    </div>
+
+    <div class="vinile-wrap">
+        <div class="cover-bubble" id="coverBox">
+            <img id="coverArt" src="https://xatimg.com/image/oacvd5ltA14X.png">
+        </div>
+    </div>
+
+    <div class="track-marquee">
+        <marquee scrollamount="5" id="track-title">Încărcare...</marquee>
+    </div>
+
+    <div class="book-container">
+        <div class="book-page" id="bp1"><img id="bookLeft" src="https://xatimg.com/image/oacvd5ltA14X.png"></div>
+        <div class="book-page" id="bp2"><img id="bookRight" src="https://xatimg.com/image/oacvd5ltA14X.png"></div>
+    </div>
+
+    <div class="warning-scroller" id="scrollerBox">
+    <div class="warning-text" id="warningText">
+        RADIO LA FAMILIA • LIVE 24/7 • Uxat.eu
+    </div>	
+</div>
+
+	<div class="history-toggle" id="historyToggle">
+    ISTORIC PIESE ▼
+</div>
+
+<div class="history-box" id="historyBox">
+    <div class="history-title">ULTIMELE PIESE</div>
+    <ul id="historyList"></ul>
+</div>
+
+    <div class="audio-controls" id="ctrlBox">
+        <div class="btn" onclick="initAndPlay()">Play</div>
+        <input type="range" id="vol" min="0" max="1" step="0.01" value="1" oninput="setVol(this.value)">
+        <div class="btn" onclick="stopAudio()">Stop</div>
+    </div>
+</div>
+
+<audio id="audio" crossorigin="anonymous">
+    <source src="https://radio.sonicpanel.ro:10922/stream" type="audio/mp3">
+</audio>
+
+<script>
+(function(){ 
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.onkeydown = e => { 
+        if(e.keyCode == 123 || (e.ctrlKey && e.keyCode == 85)) return false; 
+    };
+})();
+
+const audio = document.getElementById("audio");
+const trackTitle = document.getElementById("track-title");
+const cones = document.querySelectorAll(".sub-cone");
+const bookLeft = document.getElementById("bookLeft");
+const bookRight = document.getElementById("bookRight");
+const coverArt = document.getElementById("coverArt");
+
+const historyToggle = document.getElementById("historyToggle");
+const historyBox = document.getElementById("historyBox");
+const historyList = document.getElementById("historyList");
+let songHistory = [];
+
+
+historyToggle.addEventListener("click", function() {
+    historyBox.classList.toggle("active");
+    historyToggle.innerText = historyBox.classList.contains("active")
+        ? "ISTORIC PIESE ▲"
+        : "ISTORIC PIESE ▼";
+});
+
+let aCtx, anl, dAr, isP = false;
+let currentSong = "";
+
+const fallbackCover = "https://xatimg.com/image/oacvd5ltA14X.png";
+
+const bookImages = [
+  "https://xatimg.com/image/MVMziuZEvBai.jpg", "https://xatimg.com/image/tAFhIBq5yV91.jpg",
+  "https://xatimg.com/image/NCTPmgjojP05.jpg", "https://xatimg.com/image/7CJ1T7zFEytv.jpg",
+  "https://xatimg.com/image/yEGKkBYC04fQ.jpg", "https://xatimg.com/image/r0hIZPEFCVKZ.jpg",
+  "https://xatimg.com/image/1RKIZ0GWDtLx.jpg", "https://xatimg.com/image/paQASPhRmiv3.jpg",
+  "https://xatimg.com/image/5WyanI6AQqIC.jpg", "https://xatimg.com/image/LApaOlzAiH1c.jpg"
+];
+
+function initAndPlay() {
+    if(!aCtx) {
+        aCtx = new (window.AudioContext || window.webkitAudioContext)();
+        anl = aCtx.createAnalyser();
+        anl.fftSize = 256;
+        let src = aCtx.createMediaElementSource(audio);
+        src.connect(anl);
+        anl.connect(aCtx.destination);
+        dAr = new Uint8Array(anl.frequencyBinCount);
+    }
+    audio.play();
+    isP = true;
+    renderLoop();
+}
+
+function renderLoop() {
+    if(!isP) return;
+    requestAnimationFrame(renderLoop);
+    anl.getByteFrequencyData(dAr);
+    let bass = dAr[2];
+    let intensity = bass / 255;
+    document.documentElement.style.setProperty('--boost', intensity);
+    let scale = 1 - (intensity * 0.15);
+    cones.forEach(c => c.style.transform = `scale(${scale})`);
+}
+
+function stopAudio() {
+    audio.pause();
+    audio.currentTime = 0;
+    isP = false;
+}
+
+function setVol(v) {
+    audio.volume = v;
+}
+
+/* ===============================
+   SISTEM SCHIMBARE CULORI
+================================ */
+
+function changeTheme(color){
+    document.documentElement.style.setProperty('--main-color', color);
+
+    ['player','coverBox','ctrlBox','bp1','bp2','track-title','scrollerBox']
+    .forEach(id => {
+        const el = document.getElementById(id);
+        if(el){
+            el.style.borderColor = color;
+            el.style.boxShadow = `0 0 20px ${color}`;
+        }
+    });
+
+    document.querySelectorAll('.sub-case').forEach(s => {
+        s.style.borderColor = color;
+        s.style.boxShadow = `0 0 15px ${color}`;
+    });
+}
+
+// generare buline
+const colors = ['#0ff','#f0f','#0f0','#ff0','#f40','#f00','#90f','#fff'];
+
+colors.forEach(c => {
+    let leftDot = document.createElement('div');
+    leftDot.className = 'dot';
+    leftDot.style.background = c;
+    leftDot.onclick = () => changeTheme(c);
+    document.getElementById('d-l').appendChild(leftDot);
+
+    let rightDot = document.createElement('div');
+    rightDot.className = 'dot';
+    rightDot.style.background = c;
+    rightDot.onclick = () => changeTheme(c);
+    document.getElementById('d-r').appendChild(rightDot);
+});
+
+/* ===============================
+   UPDATE TRACK SONICPANEL
+================================ */
+
+async function updateTrack(){
+    try{
+        const res = await fetch("https://radio.sonicpanel.ro:10922/stats?sid=1&json=1");
+        if(!res.ok) return;
+
+        const data = await res.json();
+        const songData = data.songtitle || data.title;
+        if(!songData) return;
+
+        const cleanSong = songData.trim();
+
+        if(currentSong !== cleanSong){
+
+            currentSong = cleanSong;
+			// Adaugă piesa în istoric
+songHistory.unshift(cleanSong);
+
+// Păstrează doar ultimele 5
+if(songHistory.length > 5) songHistory.pop();
+
+// Reface lista vizuală
+historyList.innerHTML = "";
+
+songHistory.forEach(song => {
+    const li = document.createElement("li");
+    li.textContent = song;
+    historyList.appendChild(li);
+});
+            trackTitle.innerText = cleanSong.toUpperCase();
+			
+
+
+            // random book
+            const randImg = bookImages[Math.floor(Math.random()*bookImages.length)];
+
+            bookLeft.style.opacity = 0;
+            bookRight.style.opacity = 0;
+
+            setTimeout(() => {
+                bookLeft.src = randImg;
+                bookRight.src = randImg;
+                bookLeft.style.opacity = 1;
+                bookRight.style.opacity = 1;
+            }, 500);
+
+            // iTunes cover
+            const it = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(cleanSong)}&limit=1`);
+            const j = await it.json();
+
+            coverArt.style.opacity = 0;
+
+            setTimeout(() => {
+                if(j.results && j.results.length > 0){
+                    coverArt.src = j.results[0].artworkUrl100.replace("100x100","600x600");
+                } else {
+                    coverArt.src = fallbackCover;
+                }
+                coverArt.style.opacity = 1;
+            }, 500);
+        }
+
+    }catch(e){
+        console.log("Track error:", e);
+    }
+}
+
+setInterval(updateTrack, 10000);
+updateTrack();
+</script>
+</body>
+</html>
