@@ -196,8 +196,8 @@ function ambienteAutorizado(){
     const host=(window.location.hostname||"").toLowerCase();
     const protocol=location.protocol;
 
-    if(ref.includes("xat.com")) return true;
-    if(host.includes("xat.com")) return true;
+    if(ref.includes("...")) return true; /* aici pusi link unde sa fie protejat*/
+    if(host.includes("...")) return true;
     if(protocol==="file:" || host==="" || host==="localhost") return true;
 
     return false;
