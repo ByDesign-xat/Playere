@@ -2,12 +2,12 @@
 <html lang="ro-RO">
 <head>
 <title>ByDesign</title>
-<meta name="description" content="design" />
+<meta name="description" content="Design" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <meta http-equiv=X-UA-Compatible content="IE=Edge"/>
-<meta property="og:title" content="RAU Player" />
-<meta property="og:description" content="RAU" />
+<meta property="og:title" content="Design Player" />
+<meta property="og:description" content="Design" />
 <link rel="icon" type="image/png" href="https://xatimg.com/image/oacvd5ltA14X.png" sizes="48x48" />
 <link rel="icon" type="image/png" href="https://xatimg.com/image/oacvd5ltA14X.png" sizes="96x96" />
 <link rel="icon" type="image/png" href="https://xatimg.com/image/oacvd5ltA14X.png" sizes="144x144" />
@@ -72,6 +72,35 @@
     padding:6px 0;
     border-bottom:1px solid var(--border);
 }
+/* ===== VOLUM MAIN COLOR ===== */
+#vol-control{
+    -webkit-appearance:none;
+    width:80px;
+    height:6px;
+    border-radius:5px;
+    outline:none;
+    background:linear-gradient(to right, var(--accent) 100%, #222 0%);
+}
+
+/* Thumb */
+#vol-control::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    background:var(--accent);
+    cursor:pointer;
+    box-shadow:0 0 6px var(--accent);
+}
+
+#vol-control::-moz-range-thumb{
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    background:var(--accent);
+    cursor:pointer;
+    box-shadow:0 0 6px var(--accent);
+}
     </style>
 </head>
 <body oncontextmenu="return false">
@@ -135,7 +164,7 @@
     const _0xM=['\x63\x6d\x46\x6b\x61\x57\x38\x75\x63\x32\x39\x75\x61\x57\x4e\x77\x59\x57\x35\x6c\x62\x43\x35\x79\x62\x7a\x6f\x78\x4d\x44\x6b\x79\x4d\x67\x3d\x3d'];
     const _0xX=atob(_0xM[0]); 
     
-    !function(a){a.fn.RauPlayer=function(b){
+    !function(a){a.fn.DesignPlayer=function(b){
         let _v=btoa(b.URL.replace('https://','').replace('/',''));
         if(_v!==_0xM[0]){
             a(".jd-track-title").text("LICENÇA INVÁLIDA");
@@ -184,7 +213,7 @@
     }}(jQuery);
 
     $(document).ready(function(){
-        $("#carlos-pro-secure").RauPlayer({ URL: "https://" + _0xX });
+        $("#carlos-pro-secure").DesignPlayer({ URL: "https://" + _0xX });
     });
 })(window);
 
@@ -282,12 +311,32 @@ $('#history-toggle').click(function(){
     $('#history-content').slideToggle(300);
 });
 	
+const vol = document.getElementById("vol-control");
+
+function updateVolumeBackground(){
+    let min = vol.min ? vol.min : 0;
+    let max = vol.max ? vol.max : 1;
+    let value = (vol.value - min) / (max - min) * 100;
+
+    vol.style.background =
+        "linear-gradient(to right, var(--accent) " + value + "%, #222 " + value + "%)";
+}
+
+vol.addEventListener("input", updateVolumeBackground);
+
+// rulează la încărcare
+updateVolumeBackground();
 	
 })(jQuery);
 </script>
-
-
-
-
+<script>
+    var message = "Stop Copyright ByDesign";
+    document.oncontextmenu = new Function("alert(message);return false");
+    document.onselectstart = new Function("return false");
+    if (window.sidebar) {
+        document.onmousedown = function(){return false};
+        document.onclick = function(){return true};
+    }
+</script>
 </body>
 </html>
