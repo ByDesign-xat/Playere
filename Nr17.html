@@ -159,7 +159,9 @@
             a.ajax({dataType:"jsonp",url:"https://itunes.apple.com/search?term="+encodeURIComponent(aT+" "+sT)+"&limit=1",
                 success:function(n){
                     let i=(n.results&&n.results.length)?n.results[0].artworkUrl100.replace("100x100","500x500"):c.def;
-                    a(".jd-cover",d).css("background-image","url("+i+")");
+                    if(i){
+    a(".jd-cover",d).css("background-image","url("+i+")");
+}
                 }
             });
         }
