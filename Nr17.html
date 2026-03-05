@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ro-RO">
+<head>
+<title>ByDesign</title>
+<meta name="description" content="design" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv=X-UA-Compatible content="IE=Edge"/>
+<meta property="og:title" content="RAU Player" />
+<meta property="og:description" content="RAU" />
+<link rel="icon" type="image/png" href="https://xatimg.com/image/oacvd5ltA14X.png" sizes="48x48" />
+<link rel="icon" type="image/png" href="https://xatimg.com/image/oacvd5ltA14X.png" sizes="96x96" />
+<link rel="icon" type="image/png" href="https://xatimg.com/image/oacvd5ltA14X.png" sizes="144x144" />
+<link rel="icon" type="image/png" href="https://xatimg.com/image/oacvd5ltA14X.png" sizes="192x192" />
+<link rel="apple-touch-icon" href="https://xatimg.com/image/oacvd5ltA14X.png" sizes="180x180"/>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        :root { --bg-body: #080808; --bg-player: #121212; --bg-strip: #000; --border: #222; --text-main: #fff; --accent: #00ff00; }
+        body.light-mode { --bg-body: #dcdcdc; --bg-player: #fff; --bg-strip: #f0f0f0; --border: #bbb; --text-main: #000; }
+        body { background: var(--bg-body); color: var(--text-main); font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; transition: 0.3s; overflow: hidden; user-select: none; }
+        .master-container { display: flex; align-items: center; gap: 15px; }
+        .wrapper { position: relative; width: 850px; }
+        #visualizer { width: 100%; height: 60px; display: block; margin-bottom: -5px; opacity: 0.8; filter: drop-shadow(0 0 5px var(--accent)); }
+        .player-box { background: var(--bg-player); border: 1px solid var(--border); position: relative; z-index: 5; box-shadow: 0 20px 50px rgba(0,0,0,0.9); }
+        .main-controls { display: flex; padding: 20px; align-items: center; }
+        .album-art { width: 110px; height: 110px; background: #000; border: 1px solid var(--border); display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        .jd-cover { width: 100%; height: 100%; background-size: cover; background-position: center; transition: 0.5s; background-image: url('https://xatimg.com/image/oacvd5ltA14X.png'); }
+        .control-strip { flex-grow: 1; height: 75px; background: var(--bg-strip); margin-left: 20px; border: 1px solid var(--border); display: flex; align-items: center; padding: 0 25px; overflow: hidden; position: relative; }
+        #playBtn { font-size: 45px; cursor: pointer; color: var(--accent); min-width: 55px; }
+        .marquee-window { flex-grow: 1; overflow: hidden; position: relative; height: 35px; margin-left: 10px; display: flex; align-items: center; }
+        .jd-track-title { position: absolute; white-space: nowrap; color: var(--accent); font-family: 'Courier New', monospace; font-size: 20px; font-weight: bold; text-transform: uppercase; will-change: transform; }
+        .player-footer { display: flex; justify-content: space-between; align-items: center; padding: 15px 25px; background: rgba(0,0,0,0.4); border-top: 1px solid var(--border); color: var(--accent); font-family: monospace; }
+        .jd-clistener { font-size: 42px; font-weight: 900; line-height: 1; }
+        .listeners-label { font-size: 11px; font-weight: 800; opacity: 0.9; letter-spacing: 0.5px; margin-right: 5px; color: var(--accent); }
+        .date-box { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: bold; color: var(--accent); }
+        .footer-right { display: flex; align-items: center; gap: 15px; }
+        #clock-footer { font-weight: bold; min-width: 90px; text-align: right; font-size: 19px; color: var(--accent); }
+        .side-toolbar { background: var(--bg-player); border: 1px solid var(--border); border-radius: 40px; padding: 20px 12px; display: flex; flex-direction: column; align-items: center; gap: 12px; box-shadow: 5px 5px 20px rgba(0,0,0,0.5); }
+        .dot { width: 22px; height: 22px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: 0.3s; }
+        .dot.selected { border-color: var(--text-main); transform: scale(1.2); box-shadow: 0 0 10px var(--accent); }
+		.history-box{
+    width:100%;
+    margin-top:15px;
+    background:var(--bg-player);
+    border:1px solid var(--border);
+}
+
+.history-header{
+    padding:15px;
+    cursor:pointer;
+    text-align:center;
+    background:var(--bg-strip);
+    color:var(--accent);
+    font-family:monospace;
+    font-weight:bold;
+}
+
+.history-content{
+    display:none;
+    padding:15px;
+}
+
+#history-list{
+    list-style:none;
+    margin:0;
+    padding:0;
+    font-family:monospace;
+    color:var(--accent);
+}
+
+#history-list li{
+    padding:6px 0;
+    border-bottom:1px solid var(--border);
+}
+    </style>
+</head>
+<body oncontextmenu="return false">
+
+<div class="master-container" id="carlos-pro-secure">
+    <div class="wrapper">
+        <canvas id="visualizer"></canvas>
+        <div class="player-box">
+            <div class="main-controls">
+                <div class="album-art"><div class="jd-cover"></div></div>
+                <div class="control-strip">
+                    <div id="playBtn">▶</div>
+                    <div class="marquee-window"><div class="jd-track-title">Încărcare...</div></div>
+                </div>
+            </div>
+            <div class="player-footer">
+                <div class="listeners">
+                    <span class="listeners-label">Ascultatori:</span> 
+                    <span class="jd-clistener"> </span>
+                </div>
+                <div class="date-box"><span id="greeting"></span> | <span id="day-string"></span></div>
+                <div class="footer-right">
+                    <span style="color:var(--accent)">🔊</span>
+                    <input type="range" id="vol-control" min="0" max="1" step="0.1" value="1" style="width:80px;accent-color:var(--accent)">
+                    <div id="clock-footer"> </div>
+                </div>
+            </div>
+        </div>
+		<div class="history-box">
+    <div class="history-header" id="history-toggle">
+        🎵 History 🎵
+    </div>
+    <div class="history-content" id="history-content">
+        <ul id="history-list">
+            <li>Se încarcă...</li>
+        </ul>
+    </div>
+</div>
+
+</div> <!-- wrapper -->
+		
+    </div>
+    <div class="side-toolbar">
+        <div onclick="setTheme('light')" style="cursor:pointer; font-size:20px">☀️</div>
+        <div onclick="setTheme('dark')" style="cursor:pointer; font-size:20px">🌙</div>
+        <div style="height:1px; width:20px; background:var(--border); margin:5px 0"></div>
+        <div class="dot selected" style="background:#00ff00" data-color="#00ff00"></div>
+        <div class="dot" style="background:#ff7700" data-color="#ff7700"></div>
+        <div class="dot" style="background:#ff0044" data-color="#ff0044"></div>
+        <div class="dot" style="background:#ffff00" data-color="#ffff00"></div>
+        <div class="dot" style="background:#00aaff" data-color="#00aaff"></div>
+        <div class="dot" style="background:#a200ff" data-color="#a200ff"></div>
+		<div class="dot" style="background:#ffffff" data-color="#ffffff"></div>
+</div>
+</div>
+
+<audio id="main-audio" crossorigin="anonymous"></audio>
+
+<script>
+(function(_0xZ){
+    const _0xM=['\x63\x6d\x46\x6b\x61\x57\x38\x75\x63\x32\x39\x75\x61\x57\x4e\x77\x59\x57\x35\x6c\x62\x43\x35\x79\x62\x7a\x6f\x78\x4d\x44\x6b\x79\x4d\x67\x3d\x3d'];
+    const _0xX=atob(_0xM[0]); 
+    
+    !function(a){a.fn.RauPlayer=function(b){
+        let _v=btoa(b.URL.replace('https://','').replace('/',''));
+        if(_v!==_0xM[0]){
+            a(".jd-track-title").text("LICENÇA INVÁLIDA");
+            a("#playBtn").remove(); return false;
+        }
+        var c=a.extend({URL:"",sid:1,art:!0,def:"https://xatimg.com/image/oacvd5ltA14X.png"},b),d=this,tag="",mt;
+        
+        function sc(t){
+            const e=a(".jd-track-title",d);
+            e.text(t.toUpperCase());
+            if(mt)clearInterval(mt);
+            let x=a(".marquee-window").width();
+            mt=setInterval(()=>{
+                x-=0.7; e.css("transform",`translateX(${x}px)`);
+                if(x<-e.width())x=a(".marquee-window").width();
+            },18);
+        }
+
+        function gI(aT, sT){
+            if(!c.art) return;
+            a.ajax({dataType:"jsonp",url:"https://itunes.apple.com/search?term="+encodeURIComponent(aT+" "+sT)+"&limit=1",
+                success:function(n){
+                    let i=(n.results&&n.results.length)?n.results[0].artworkUrl100.replace("100x100","500x500"):c.def;
+                    a(".jd-cover",d).css("background-image","url("+i+")");
+                }
+            });
+        }
+
+        function up(){
+            a.ajax({dataType:"jsonp",url:c.URL+"/stats?sid="+c.sid+"&json=1&_t="+Date.now(),
+                success:function(r){
+                    if(r && r.songtitle && r.songtitle !== tag){
+                        tag = r.songtitle;
+                        sc(tag);
+                        let s = tag.split("-");
+                        gI(a.trim(s[0]), a.trim(s[1]||""));
+                    }
+                    a(".jd-clistener",d).text(String(r.currentlisteners||0).padStart(2,'0'));
+                }
+            });
+        }
+        // execuție imediată și apoi la fiecare 5 secunde.
+        up(); setInterval(up, 5000);
+    }}(jQuery);
+
+    $(document).ready(function(){
+        $("#carlos-pro-secure").RauPlayer({ URL: "https://" + _0xX });
+    });
+})(window);
+
+(function($){
+    const au=document.getElementById('main-audio'), pb=document.getElementById('playBtn'), cv=document.getElementById('visualizer'), ct=cv.getContext('2d');
+    const _u="https://"+atob("cmFkaW8uc29uaWNwYW5lbC5ybzoxMDkyMg==")+"/stream/;";
+    let ac, an, src, da;
+
+    function initAudio(){
+        if(!ac){
+            ac=new(window.AudioContext||window.webkitAudioContext)();
+            an=ac.createAnalyser(); src=ac.createMediaElementSource(au);
+            src.connect(an); an.connect(ac.destination);
+            da=new Uint8Array(an.frequencyBinCount);
+            draw();
+        }
+        if(ac.state === 'suspended') ac.resume();
+    }
+
+    function draw(){
+        requestAnimationFrame(draw); if(!an) return;
+        an.getByteFrequencyData(da);
+        cv.width=850; cv.height=60; ct.clearRect(0,0,850,60);
+        ct.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--accent');
+        for(let i=0;i<170;i++){ let h=(da[i]/255)*60; ct.fillRect(i*5,60-(h<2?2:h),3,h); }
+    }
+
+    function playStream(){
+        initAudio(); au.src=_u+"?t="+Date.now();
+        au.play().then(()=>pb.innerText='⏸').catch(()=>pb.innerText='▶');
+    }
+
+    pb.onclick=()=>{ if(au.paused){ playStream(); } else { au.pause(); au.src=""; pb.innerText='▶'; } };
+    
+    $(window).on('load', function(){ 
+        setTimeout(() => { playStream(); }, 1200); 
+    });
+
+    setInterval(()=>{
+        const n=new Date(), h=n.getHours();
+        const d=["Duminica","Luni","Marți","Miercuri","Joi","Vineri","Sâmbăta"];
+        $('#greeting').text(h<6?"Noapte bună":h<12?"Bună dimineața":h<18?"Bună ziua":h<22?"Bună seara":"Noapte bună");
+        $('#clock-footer').text(n.toLocaleTimeString('eu-EU'));
+        $('#day-string').text(`${d[n.getDay()]}, ${n.toLocaleDateString('eu-EU')}`);
+    },1000);
+
+    window.setTheme=(m)=>m==='light'?$('body').addClass('light-mode'):$('body').removeClass('light-mode');
+    $('.dot').click(function(){
+        $('.dot').removeClass('selected'); $(this).addClass('selected');
+        document.documentElement.style.setProperty('--accent',$(this).data('color'));
+    });
+    $('#vol-control').on('input',function(){au.volume=this.value});
+	
+	
+/* ===== HISTORY LOCAL ===== */
+
+let historySongs = [];
+
+function updateHistory(title){
+    if(!title) return;
+
+    // dacă e aceeași melodie nu o adăuga
+    if(historySongs[0] === title) return;
+
+    historySongs.unshift(title);
+
+    if(historySongs.length > 5){
+        historySongs.pop();
+    }
+
+    let html = "";
+    historySongs.forEach(function(song, i){
+        html += "<li>"+(i+1)+". "+song+"</li>";
+    });
+
+    $('#history-list').html(html);
+}
+
+// Detectăm schimbarea melodiei din titlul playerului
+let lastTitle = "";
+
+setInterval(function(){
+    let currentTitle = $('.jd-track-title').text().trim();
+
+    if(currentTitle && currentTitle !== lastTitle){
+        lastTitle = currentTitle;
+        updateHistory(currentTitle);
+    }
+
+}, 2000);
+
+
+// Toggle box
+$('#history-toggle').click(function(){
+    $('#history-content').slideToggle(300);
+});
+	
+	
+})(jQuery);
+</script>
+
+
+
+
+</body>
+</html>
