@@ -403,7 +403,12 @@ Radio LaFamilia • Ofline •
 
 </div>
 
-<audio id="radio" crossorigin="anonymous" src="https://radio.sonicpanel.ro:10922/stream"></audio>
+
+<audio id="radio" crossorigin="anonymous"></audio>
+<script>/*  Stream  */ 
+const stream = "aHR0cHM6Ly9yYWRpby5zb25pY3BhbmVsLnJvOjEwOTIyL3N0cmVhbQ=="
+document.getElementById("radio").src = atob(stream)
+</script>
 
 <script>
 
@@ -487,7 +492,7 @@ day:"2-digit",
 month:"long",
 year:"numeric"
 })
-document.getElementById("clock").innerText = time + " • " + date
+document.getElementById("clock").innerText = time + "  🎧  " + date
 
 }
 
