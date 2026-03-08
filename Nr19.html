@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<title>Bydesign</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap');
+
+:root {
+--neon-blue:#00eaff;
+--neon-white:#ffffff;
+--inf-red:#ff1a00;
+--inf-orange:#ff5e00;
+--cyber-font:'Orbitron',sans-serif;
+}
+
+body{
+background:transparent;
+margin:0;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+overflow:hidden;
+font-family:'Rajdhani',sans-serif;
+}
+
+.main-terminal{
+width:780px;
+height:670px;
+background:rgba(0,5,15,0.95);
+display:grid;
+grid-template-columns:280px 1fr;
+grid-template-rows:80px 1fr 100px;
+padding:15px;
+border:2px solid var(--neon-blue);
+box-shadow:0 0 30px rgba(0,234,255,.4);
+}
+
+/* GLOW BOX AZURE */
+
+.glow-box-azure{
+position:relative;
+background:rgba(0,3,8,.98);
+margin:8px;
+overflow:visible;
+border:1px solid rgba(0,234,255,.2);
+}
+
+.glow-box-azure::before{
+content:"";
+position:absolute;
+inset:-4px;
+border:4px solid transparent;
+background:conic-gradient(from var(--a),transparent 45%,var(--neon-blue),var(--neon-white),transparent 100%) border-box;
+-webkit-mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);
+-webkit-mask-composite:destination-out;
+mask-composite:exclude;
+animation:rotateGlow 3s linear infinite;
+}
+
+/* GLOW BOX INFERNO */
+
+.glow-box-inferno{
+position:relative;
+background:#000;
+margin:8px;
+overflow:hidden;
+border:1px solid var(--neon-blue);
+}
+
+.glow-box-inferno::before{
+content:"";
+position:absolute;
+inset:-4px;
+border:4px solid transparent;
+background:conic-gradient(from var(--a),transparent 40%,var(--inf-red),var(--inf-orange),transparent 100%) border-box;
+-webkit-mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);
+-webkit-mask-composite:destination-out;
+mask-composite:exclude;
+animation:rotateGlow 2s linear infinite;
+}
+
+@property --a{
+syntax:'<angle>';
+initial-value:0deg;
+inherits:false;
+}
+
+@keyframes rotateGlow{
+to{--a:360deg;}
+}
+
+/* HEADER */
+
+.header{
+grid-column:1 / 3;
+display:flex;
+align-items:center;
+padding:0 5px;
+gap:15px;
+}
+
+.gate-status{
+font-family:var(--cyber-font);
+font-size:16px;
+color:var(--neon-white);
+}
+
+#track-marquee{
+font-family:var(--cyber-font);
+font-size:17px !important;
+color:var(--neon-blue);
+text-shadow:0 0 10px var(--neon-blue);
+font-weight:bold;
+line-height:1;
+margin-left:-25px;
+}
+
+.titleFlash{
+animation:titleFlash 1s ease;
+}
+
+@keyframes titleFlash{
+
+0%{
+text-shadow:0 0 25px var(--neon-white);
+}
+
+100%{
+text-shadow:0 0 10px var(--neon-blue);
+}
+
+}
+
+
+
+
+/* LEFT PANEL */
+
+.monitor-left{
+display:flex;
+flex-direction:column;
+gap:5px;
+}
+
+.info-zone{
+height:210px;
+padding:12px;
+font-size:13px;
+color:var(--neon-blue);
+font-family:var(--cyber-font);
+line-height:1.4;
+}
+
+.cover-zone{
+display:flex;
+justify-content:center;
+align-items:center;
+overflow:hidden;
+width:260px;
+height:240px;
+margin:auto;
+}
+
+#coverBox{
+width:350px;
+height:350px;
+border-radius:12px;
+padding:4px;
+
+background:#00eaff;
+
+animation:glowPulse 2s infinite;
+
+box-shadow:
+0 0 10px #00eaff,
+0 0 25px #00eaff,
+0 0 40px rgba(0,234,255,.6);
+}
+
+#coverArt{
+width:100%;
+height:100%;
+object-fit:cover;
+border-radius:10px;
+}
+
+@keyframes glowPulse{
+
+0%{
+box-shadow:0 0 10px #00eaff,0 0 25px #00eaff;
+}
+
+50%{
+box-shadow:0 0 25px #00eaff,0 0 50px #00eaff;
+}
+
+100%{
+box-shadow:0 0 10px #00eaff,0 0 25px #00eaff;
+}
+
+}
+
+/* CONSOLE */
+
+.console-main{
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.log-window{
+height:120px;
+padding:10px;
+font-size:11px;
+color:var(--neon-white);
+overflow-y:auto;
+border-top:1px solid var(--neon-blue);
+scrollbar-width:none;
+}
+
+.visualizer-area{
+flex-grow:1;
+display:flex;
+gap:2px;
+align-items:flex-end;
+padding:10px;
+position:relative;
+z-index:1;
+}
+
+.footer{
+position:relative;
+z-index:10;
+}
+
+.bar{
+flex:1;
+background:linear-gradient(to top,var(--neon-blue),var(--neon-white));
+height:5px;
+}
+
+/* FOOTER */
+
+.footer{
+grid-column:1 / 3;
+display:flex;
+align-items:center;
+padding:10px 20px;
+margin:8px;
+}
+
+/* PLAY BUTTON */
+
+.btn{
+background:rgba(0,234,255,.1);
+border:2px solid var(--neon-blue);
+color:#fff;
+padding:10px 20px;
+cursor:pointer;
+font-family:var(--cyber-font);
+font-size:14px;
+box-shadow:0 0 10px rgba(0,234,255,.3);
+transition:.3s;
+}
+
+.btn:hover{
+background:var(--neon-blue);
+color:#000;
+box-shadow:0 0 20px var(--neon-blue);
+}
+
+.btn.stop:hover{
+background:var(--inf-red);
+color:#fff;
+box-shadow:0 0 20px var(--inf-red);
+border-color:var(--inf-red);
+}
+
+/* DATE */
+
+#date{
+color:var(--neon-blue);
+font-family:var(--cyber-font);
+font-size:16px;
+text-shadow:0 0 8px var(--neon-blue);
+margin-top:10px;
+}
+
+/* HISTORY */
+
+.history-box{
+position:absolute;
+bottom:88px;
+left:110%;
+transform:translate(-50%,20px);
+width:380px;
+max-height:400px;
+background:#000;
+border:1px solid var(--neon-blue);
+box-shadow:0 0 25px rgba(0,234,255,.4);
+opacity:0;
+pointer-events:none;
+transition:all .35s ease;
+z-index:9999;
+overflow-y:auto;
+}
+
+.history-box::-webkit-scrollbar{
+width:4px;
+}
+
+.history-box::-webkit-scrollbar-thumb{
+background:var(--neon-blue);
+box-shadow:0 0 6px var(--neon-blue);
+}
+
+.history-wrapper:hover .history-box{
+opacity:1;
+transform:translate(-50%,0);
+pointer-events:auto;
+}
+
+.history-box ul{
+list-style:none;
+padding:0;
+margin:0;
+}
+
+.history-box li:last-child{
+border-bottom:none;
+}
+
+/* HISTORY ANIMATION */
+
+.history-box li{
+padding:6px 10px;
+border-bottom:1px solid var(--neon-blue);
+font-size:12px;
+color:#fff;
+}
+
+.history-box li.newSong{
+animation:newTrackGlow 2s ease;
+border-left:3px solid var(--neon-blue);
+}
+
+@keyframes newTrackGlow{
+
+0%{
+background:rgba(0,234,255,.2);
+box-shadow:0 0 20px var(--neon-blue);
+}
+
+100%{
+background:transparent;
+box-shadow:none;
+}
+
+}
+
+@keyframes pulseSong{
+
+0%{
+background:rgba(0,234,255,.0);
+box-shadow:0 0 0 rgba(0,234,255,0);
+}
+
+25%{
+background:rgba(0,234,255,.15);
+box-shadow:0 0 15px rgba(0,234,255,.9);
+}
+
+50%{
+background:rgba(0,234,255,.05);
+box-shadow:0 0 8px rgba(0,234,255,.6);
+}
+
+75%{
+background:rgba(0,234,255,.15);
+box-shadow:0 0 15px rgba(0,234,255,.9);
+}
+
+100%{
+background:transparent;
+box-shadow:0 0 0 rgba(0,234,255,0);
+}
+
+}
+
+/* CONTROL BAR */
+
+.controls{
+position:relative;
+width:100%;
+height:70px;
+z-index:20;
+}
+
+/* PLAY LEFT */
+
+#exeBtn{
+position:absolute;
+left:20px;
+top:50%;
+transform:translateY(-50%);
+}
+
+/* HISTORY CENTER */
+
+.history-wrapper{
+position:absolute;
+left:60%;
+top:50%;
+transform:translate(-50%,-50%);
+}
+
+/* CLOCK RIGHT */
+
+#clock{
+position:absolute;
+right:20px;
+top:50%;
+transform:translateY(-50%);
+padding:10px 20px;
+border:2px solid var(--neon-blue);
+background:rgba(0,234,255,.1);
+color:#fff;
+font-family:var(--cyber-font);
+font-size:14px;
+box-shadow:0 0 10px rgba(0,234,255,.3);
+}
+
+/* Ascultatori LIVE */
+#listenersBox{
+position:absolute;
+left:200px;
+top:50%;
+transform:translateY(-50%);
+padding:10px 20px;
+border:2px solid var(--neon-blue);
+background:rgba(0,234,255,.1);
+color:#fff;
+font-family:var(--cyber-font);
+font-size:14px;
+box-shadow:0 0 10px rgba(0,234,255,.3);
+}
+
+#listenersBox.pulse{
+animation:listenersPulse .8s ease;
+}
+
+@keyframes listenersPulse{
+
+0%{
+box-shadow:0 0 10px rgba(0,234,255,.3);
+}
+
+50%{
+box-shadow:0 0 25px var(--neon-blue);
+transform:translateY(-50%) scale(1.08);
+}
+
+100%{
+box-shadow:0 0 10px rgba(0,234,255,.3);
+transform:translateY(-50%) scale(1);
+}
+
+}
+
+
+
+</style>
+</head>
+<body>
+
+<div class="main-terminal">
+    <div class="header glow-box-azure">
+        <div class="gate-status">Radio: <span id="status" style="color:var(--inf-red)">Stop</span></div>
+        <div style="flex-grow:1; overflow:hidden;">
+            <marquee id="track-marquee" direction="left" scrollamount="6">Încărcare...</marquee>
+        </div>
+    </div>
+
+    <div class="monitor-left">
+        <div class="info-zone glow-box-azure">
+            🌍 LOCATIE 🌍<br>
+            CITY: <span id="city" style="color:white">...</span><br>
+            METEO: <span id="weather" style="color:white">...</span><br>
+            TEMP: <span id="temp" style="color:white">...</span><br>
+            <hr style="border:0; border-top:1px solid var(--neon-blue); margin:5px 0;">
+            ✨ ASTRE ✨<br>
+            ZODIE: <span id="sign" style="color:white">...</span><br>
+            DESTIN: <span id="fate" style="color:var(--neon-white); font-size:11px;">Încărcare...</span>
+			<hr style="border:0; border-top:1px solid var(--neon-blue); margin:5px 0;">
+			<div id="date"></div>
+        </div>
+        <div class="cover-zone glow-box-inferno">
+            <img src="https://xatimg.com/image/oacvd5ltA14X.png" id="coverArt">
+        </div>
+    </div>
+
+    <div class="console-main">
+        <div class="log-window glow-box-azure" id="log">
+            [SYS] VERSIUNEA V28 INCARCARE COMPLETA.<br>
+            [Radio]LaFamilia Online..<br>
+            &copy; Copyright - ByDesign<br>
+            [SYS] NEW LISTENER CONNECTED
+        </div>
+        <div class="visualizer-area glow-box-azure" id="visualizer"></div>
+    </div>
+
+<div class="footer glow-box-azure">
+<div class="controls">
+
+<button class="btn" id="exeBtn">Play</button>
+
+<div id="listenersBox">🎧 <span id="listenersCount">0</span></div>
+
+<div class="history-wrapper">
+<button class="btn" id="historyBtn">History</button>
+
+<div class="history-box" id="historyBox">
+<ul id="historyList"></ul>
+</div>
+
+</div>
+
+<div id="clock"></div>
+
+</div>
+</div>
+
+<audio id="audio" crossorigin="anonymous" src="https://radio.sonicpanel.ro:10922/stream"></audio>
+
+<script>
+
+const audio = document.getElementById("audio");
+const exeBtn = document.getElementById("exeBtn");
+const log = document.getElementById("log");
+const visualizer = document.getElementById("visualizer");
+const marquee = document.getElementById("track-marquee");
+
+let audioCtx;
+let analyser;
+let dataArray;
+let gainNode;
+
+let isPlaying = false;
+let currentTitle = "";
+
+/* LOG TERMINAL */
+
+function addLog(msg,color="var(--neon-blue)"){
+const time=new Date().toLocaleTimeString();
+log.innerHTML+=`<br><span style="color:${color}">[${time}] ${msg}</span>`;
+log.scrollTop=log.scrollHeight;
+}
+
+/* AUDIO INIT */
+
+function initAudio(){
+
+if(audioCtx) return;
+
+audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+const source = audioCtx.createMediaElementSource(audio);
+
+analyser = audioCtx.createAnalyser();
+
+analyser.fftSize = 256;
+
+dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+source.connect(analyser);
+analyser.connect(audioCtx.destination);
+
+visualizer.innerHTML="";
+
+for(let i=0;i<45;i++){
+
+let bar=document.createElement("div");
+bar.className="bar";
+visualizer.appendChild(bar);
+
+}
+
+}
+
+/* VISUALIZER */
+
+function startVisualizer(){
+
+requestAnimationFrame(function render(){
+
+if(!isPlaying) return;
+
+requestAnimationFrame(render);
+
+analyser.getByteFrequencyData(dataArray);
+
+const bars=document.getElementsByClassName("bar");
+
+for(let i=0;i<bars.length;i++){
+
+bars[i].style.height=(dataArray[i]/255)*100+"%";
+
+}
+
+});
+
+}
+
+/* PLAY / STOP */
+
+exeBtn.onclick=()=>{
+
+initAudio();
+
+if(audio.paused){
+
+audioCtx.resume();
+audio.play();
+
+
+
+isPlaying=true;
+
+exeBtn.innerText="Stop";
+exeBtn.classList.add("stop");
+
+document.getElementById("status").innerText="LIVE";
+document.getElementById("status").style.color="var(--neon-blue)";
+
+addLog("STREAM CONNECTED","white");
+
+startVisualizer();
+
+}else{
+
+audio.pause();
+
+isPlaying=false;
+
+exeBtn.innerText="Play";
+exeBtn.classList.remove("stop");
+
+document.getElementById("status").innerText="STOP";
+document.getElementById("status").style.color="var(--inf-red)";
+
+addLog("STREAM STOPPED","var(--inf-orange)");
+
+}
+
+};
+
+
+/* SONG TITLE */
+
+async function updateTitles(){
+
+try{
+
+const r = await fetch("https://radio.sonicpanel.ro:10922/stats?sid=1&json=1&t=" + Date.now());
+const d = await r.json();
+
+let title = "";
+
+if(d.songtitle){
+title = d.songtitle;
+}
+
+else if(d.icestats && d.icestats.source){
+
+if(Array.isArray(d.icestats.source)){
+title = d.icestats.source[0].title;
+}else{
+title = d.icestats.source.title;
+}
+
+}
+
+if(title && title.toUpperCase() != currentTitle){
+
+currentTitle = title.toUpperCase();
+
+marquee.innerText = currentTitle;
+marquee.classList.add("titleFlash");
+
+setTimeout(()=>{
+marquee.classList.remove("titleFlash");
+},1000);
+loadCover(currentTitle);
+
+addLog("NOW PLAYING: " + currentTitle,"white");
+
+}
+
+}catch(e){
+
+marquee.innerText = "RADIO ONLINE";
+
+}
+
+}
+
+setInterval(updateTitles,10000);
+updateTitles();
+
+/* CLOCK */
+
+function updateClock(){
+
+const now=new Date();
+
+let h=String(now.getHours()).padStart(2,"0");
+let m=String(now.getMinutes()).padStart(2,"0");
+let s=String(now.getSeconds()).padStart(2,"0");
+
+document.getElementById("clock").innerText=`${h}:${m}:${s}`;
+
+}
+
+
+/* =========================
+   GEOLOCATION + WEATHER
+========================= */
+
+async function loadWeather(){
+
+try{
+
+const pos = await new Promise((resolve,reject)=>{
+navigator.geolocation.getCurrentPosition(resolve,reject);
+});
+
+const lat = pos.coords.latitude;
+const lon = pos.coords.longitude;
+
+/* CITY NAME */
+
+const cityRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+
+const cityData = await cityRes.json();
+
+let city =
+cityData.address.city ||
+cityData.address.town ||
+cityData.address.village ||
+cityData.address.state ||
+"Unknown";
+
+document.getElementById("city").innerText = city;
+
+/* WEATHER */
+
+const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+
+const weatherData = await weatherRes.json();
+
+const temp = weatherData.current_weather.temperature;
+const code = weatherData.current_weather.weathercode;
+
+/* WEATHER CODE TO TEXT */
+
+const weatherCodes = {
+0:"Senin",
+1:"Mai mult senin",
+2:"Parțial noros",
+3:"Noros",
+45:"Ceață",
+48:"Ceață",
+51:"Burniță",
+61:"Ploaie",
+63:"Ploaie moderată",
+65:"Ploaie puternică",
+71:"Ninsoare",
+80:"Averse",
+95:"Furtună"
+};
+
+let weatherText = weatherCodes[code] || "Necunoscut";
+
+document.getElementById("weather").innerText = weatherText;
+document.getElementById("temp").innerText = temp + "°C";
+
+}catch(e){
+
+document.getElementById("city").innerText="N/A";
+document.getElementById("weather").innerText="Offline";
+document.getElementById("temp").innerText="--";
+
+}
+
+}
+
+loadWeather();
+
+
+/* =========================
+   ZODIAC SIGN
+========================= */
+
+function getZodiac(){
+
+const d = new Date();
+const day = d.getDate();
+const month = d.getMonth()+1;
+
+let sign="";
+
+if((month==3 && day>=21)||(month==4 && day<=19)) sign="Berbec";
+else if((month==4 && day>=20)||(month==5 && day<=20)) sign="Taur";
+else if((month==5 && day>=21)||(month==6 && day<=20)) sign="Gemeni";
+else if((month==6 && day>=21)||(month==7 && day<=22)) sign="Rac";
+else if((month==7 && day>=23)||(month==8 && day<=22)) sign="Leu";
+else if((month==8 && day>=23)||(month==9 && day<=22)) sign="Fecioară";
+else if((month==9 && day>=23)||(month==10 && day<=22)) sign="Balanță";
+else if((month==10 && day>=23)||(month==11 && day<=21)) sign="Scorpion";
+else if((month==11 && day>=22)||(month==12 && day<=21)) sign="Săgetător";
+else if((month==12 && day>=22)||(month==1 && day<=19)) sign="Capricorn";
+else if((month==1 && day>=20)||(month==2 && day<=18)) sign="Vărsător";
+else sign="Pești";
+
+document.getElementById("sign").innerText = sign;
+
+return sign;
+
+}
+
+
+/* =========================
+   HOROSCOPE TEXT
+========================= */
+
+function loadFate(){
+
+const fates=[
+
+"Energia cosmică îți favorizează deciziile.",
+"O oportunitate neașteptată apare curând.",
+"Evită conflictele astăzi.",
+"Un mesaj important vine spre tine.",
+"Creativitatea ta este la maxim.",
+"Zi bună pentru planuri noi.",
+"Fii atent la detalii.",
+"Universul îți trimite un semn.",
+"O întâlnire interesantă te așteaptă.",
+"Rămâi calm și totul se va rezolva."
+
+];
+
+const rand = fates[Math.floor(Math.random()*fates.length)];
+
+document.getElementById("fate").innerText = rand;
+
+}
+
+getZodiac();
+loadFate();
+
+
+
+function updateDate(){
+
+const now = new Date();
+
+const zile = ["Duminică","Luni","Marți","Miercuri","Joi","Vineri","Sâmbătă"];
+const luni = ["Ianuarie","Februarie","Martie","Aprilie","Mai","Iunie","Iulie","August","Septembrie","Octombrie","Noiembrie","Decembrie"];
+
+let zi = zile[now.getDay()];
+let data = now.getDate();
+let luna = luni[now.getMonth()];
+let an = now.getFullYear();
+
+document.getElementById("date").innerText =
+`${zi}, ${data} ${luna} ${an}`;
+
+}
+
+updateDate();
+
+
+const historyBtn = document.getElementById("historyBtn");
+const historyBox = document.getElementById("historyBox");
+const historyList = document.getElementById("historyList");
+
+
+async function loadHistory(){
+
+try{
+
+const res = await fetch("https://radio.sonicpanel.ro:10922/played?sid=1&type=json");
+const data = await res.json();
+
+historyList.innerHTML="";
+
+data.slice(0,10).forEach((track,i)=>{
+
+let li=document.createElement("li");
+if(i === 0){
+li.classList.add("newSong");
+}
+
+li.textContent=(i+1)+". "+track.title;
+
+historyList.appendChild(li);
+
+});
+
+}catch(e){
+
+historyList.innerHTML="<li>History indisponibil</li>";
+
+}
+
+}
+
+loadHistory();
+
+/* refresh history la 20 sec */
+
+setInterval(loadHistory,20000);
+
+
+
+setInterval(updateClock,1000);
+updateClock();
+
+
+let lastListeners = 0;
+
+async function updateListeners(){
+
+try{
+
+const r = await fetch("https://radio.sonicpanel.ro:10922/stats?sid=1&json=1&t=" + Date.now());
+const d = await r.json();
+
+let listeners = 0;
+
+if(d.icestats){
+
+let src = d.icestats.source;
+
+if(Array.isArray(src)){
+listeners = src[0].currentlisteners || src[0].listeners || src[0].clients || 0;
+}else if(src){
+listeners = src.currentlisteners || src.listeners || src.clients || 0;
+}
+
+}
+
+if(d.currentlisteners){
+listeners = d.currentlisteners;
+}
+
+const el = document.getElementById("listenersCount");
+if(el) el.innerText = listeners;
+
+if(listeners > lastListeners){
+
+const box = document.getElementById("listenersBox");
+
+if(box){
+box.classList.add("pulse");
+setTimeout(()=>{
+box.classList.remove("pulse");
+},800);
+}
+
+}
+
+lastListeners = listeners;
+
+}catch(e){
+
+document.getElementById("listenersCount").innerText="--";
+
+}
+
+}
+
+setInterval(updateListeners, 5000);
+updateListeners();
+
+async function loadCover(title){
+
+try{
+
+let query = title.split("-")[0];
+
+let r = await fetch("https://itunes.apple.com/search?term="+encodeURIComponent(query)+"&limit=1");
+
+let d = await r.json();
+
+if(d.results && d.results[0] && d.results[0].artworkUrl100){
+
+let cover = d.results[0].artworkUrl100.replace("100x100","600x600");
+
+document.getElementById("coverArt").src = cover;
+
+}
+
+}catch(e){}
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+// --- PROTECT SCRIPT ---
+const protectionMessage="Stop Copyright ByDesign";
+document.addEventListener("contextmenu", e=>{e.preventDefault();alert(protectionMessage);});
+document.addEventListener("selectstart", e=>{e.preventDefault();});
+document.addEventListener("keydown", e=>{e.preventDefault();alert(protectionMessage);});
+document.addEventListener("keyup", e=>{e.preventDefault();alert(protectionMessage);});
+document.addEventListener("dragstart", e=>{e.preventDefault();});
+document.addEventListener("copy", e=>{e.preventDefault();alert(protectionMessage);});
+document.addEventListener("mousedown", e=>{if(e.button===1||e.button===2){e.preventDefault();alert(protectionMessage);}});
+document.addEventListener("keydown", function(e) {
+
+    // Ctrl + U
+    if (e.ctrlKey && e.key.toLowerCase() === "u") {
+        e.preventDefault();
+    }
+
+    // Ctrl + Shift + I (DevTools)
+    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i") {
+        e.preventDefault();
+    }
+
+    // F12
+    if (e.key === "F12") {
+        e.preventDefault();
+    }
+
+});
+
+</script>
+</body>
+</html>
