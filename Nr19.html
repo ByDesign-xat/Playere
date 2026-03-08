@@ -990,21 +990,29 @@ async function loadCover(title){
 
 try{
 
-let query = title.split("-")[0];
+let query = encodeURIComponent(title);
 
-let r = await fetch("https://itunes.apple.com/search?term="+encodeURIComponent(query)+"&limit=1");
+let r = await fetch("https://itunes.apple.com/search?term="+query+"&entity=song&limit=1");
 
 let d = await r.json();
 
-if(d.results && d.results[0] && d.results[0].artworkUrl100){
+if(d.results && d.results.length > 0){
 
 let cover = d.results[0].artworkUrl100.replace("100x100","600x600");
 
 document.getElementById("coverArt").src = cover;
 
+}else{
+
+document.getElementById("coverArt").src="https://xatimg.com/image/oacvd5ltA14X.png";
+
 }
 
-}catch(e){}
+}catch(e){
+
+document.getElementById("coverArt").src="https://xatimg.com/image/oacvd5ltA14X.png";
+
+}
 
 }
 
