@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<title>ByDesign</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Creepster&family=Metal+Mania&display=swap');
+
+:root {
+  --inf-red: #ff1a00;
+  --inf-orange: #ff5e00;
+  --horror-font: 'Creepster', cursive;
+}
+
+body {
+  background: transparent;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 10px;
+  height: 100vh;
+  overflow: hidden;
+  font-family: 'Courier New', monospace;
+}
+
+.main-terminal {
+  width: 780px;
+  height: 660px;
+  background: rgba(0, 0, 0, 0.94);
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  grid-template-rows: 70px 1fr 80px;
+  position: relative;
+  padding: 15px;
+  border: 2px solid var(--inf-red);
+  box-shadow: 0 0 50px rgba(255, 26, 0, 0.5);
+}
+
+.glow-box {
+  position: relative;
+  background: rgba(5, 0, 0, 0.98);
+  margin: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 94, 0, 0.2);
+}
+
+.glow-box::before,
+.main-terminal::before {
+  content: "";
+  position: absolute;
+  inset: -10px;
+  border: 8px solid transparent;
+  background: conic-gradient(
+    from var(--a),
+    transparent 40%,
+    var(--inf-red),
+    var(--inf-orange),
+    transparent 100%
+  ) border-box;
+
+  -webkit-mask: linear-gradient(#fff 0 0) padding-box,
+                 linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out;
+  mask-composite: exclude;
+
+  animation: rotateGlow 2.5s linear infinite;
+  filter: blur(1px) drop-shadow(0 0 15px var(--inf-red));
+}
+
+@property --a {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes rotateGlow {
+  to {
+    --a: 360deg;
+  }
+}
+
+.header {
+  grid-column: 1 / 3;
+  display: flex;
+  margin-top:-8px;
+  align-items: center;
+  padding: 0 20px;
+  gap: 15px;
+}
+
+.gate-status {
+  font-family: 'Metal Mania', cursive;
+  font-size: 20px;
+  color: #fff;
+}
+
+#track-marquee {
+  font-family: var(--horror-font) !important;
+  font-size: 30px;
+  color: var(--inf-orange);
+  text-shadow: 0 0 15px var(--inf-red);
+}
+
+.monitor-left {
+  margin-top:-8px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.info-zone {
+  height: 210px;
+  padding: 12px;
+  font-size: 15px;
+  color: #fff;
+  font-family: 'Metal Mania';
+  line-height: 1.5;
+}
+
+.cover-zone {
+  flex-grow: 1;
+  margin-top:-15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+#coverArt {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.console-main {
+  display: flex;
+  margin-top:-8px;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.log-window {
+  height: 120px;
+  padding: 10px;
+  font-size: 11px;
+  color: var(--inf-orange);
+  overflow-y: auto;
+  scrollbar-width: none;
+  border-top: 1px solid var(--inf-red);
+}
+
+.visualizer-area {
+  flex-grow: 1;
+  margin-top:-10px;
+  display: flex;
+  gap: 2px;
+  align-items: flex-end;
+  padding: 10px;
+}
+
+.bar {
+  flex: 1;
+  background: linear-gradient(to top, var(--inf-red), var(--inf-orange), #fff);
+  height: 5px;
+  transition: height 0.05s ease;
+}
+
+.footer {
+  grid-column: 1 / 3;
+  margin-top:5px;
+  display:flex;
+  align-items:center;
+  padding:0 25px;
+  gap:20px;
+  position:relative;
+}
+
+.btn {
+  background: rgba(255, 26, 0, 0.3);
+  border: 2px solid var(--inf-red);
+  color: #fff;
+  padding: 10px 25px;
+  cursor: pointer;
+  font-family: var(--horror-font);
+  font-size: 20px;
+  z-index: 1000;
+  transition: 0.3s;
+}
+
+/* 🔊 SLIDER VOLUME FIX 🔊 */
+
+#volRange {
+  -webkit-appearance: none;
+  flex-grow: 1;
+  width: 22px;
+  height: 12px;
+  background: rgba(255, 26, 0, 0.3);
+  border: 1px solid var(--inf-red);
+  border-radius: 10px;
+  outline: none;
+  position: relative;
+  z-index: 2000;
+  cursor: pointer;
+}
+
+#volRange::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  background: #fff;
+  border: 2px solid var(--inf-red);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 10px var(--inf-red);
+}
+
+#clock {
+  color: var(--inf-orange);
+  font-size: 18px;
+  font-family: 'Metal Mania';
+  margin-left: auto;
+}
+
+.glow-box {
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.glow-box:hover {
+  box-shadow:
+    0 0 10px var(--inf-red),
+    0 0 30px rgba(255,0,0,0.5);
+}
+
+
+/* LIVE LED */
+
+#liveLed{
+display:inline-block;
+width:10px;
+height:10px;
+background:red;
+border-radius:50%;
+margin-left:6px;
+box-shadow:0 0 10px red;
+animation:livePulse 1s infinite;
+}
+
+@keyframes livePulse{
+0%{opacity:1; box-shadow:0 0 5px red;}
+50%{opacity:0.3; box-shadow:0 0 15px red;}
+100%{opacity:1; box-shadow:0 0 5px red;}
+}
+
+/* listener join flash */
+
+.listenerFlash{
+animation:listenerFlashAnim 0.6s;
+}
+
+@keyframes listenerFlashAnim{
+0%{color:white; transform:scale(1.3);}
+100%{color:#00ff41; transform:scale(1);}
+}
+
+
+/* volume fill */
+
+#volRange{
+background:linear-gradient(
+to right,
+var(--inf-red) 0%,
+var(--inf-red) var(--vol),
+rgba(255,26,0,0.2) var(--vol),
+rgba(255,26,0,0.2) 100%
+);
+}
+
+/* popup studio */
+
+#volPopup{
+position:absolute;
+bottom:40px;
+transform:translateX(-50%);
+background:black;
+border:1px solid var(--inf-red);
+color:white;
+padding:2px 8px;
+font-size:12px;
+font-family:'Metal Mania';
+pointer-events:none;
+opacity:0;
+transition:0.15s;
+box-shadow:0 0 8px var(--inf-red);
+}
+        
+</style>
+</head>
+<body>
+
+
+
+<div class="main-terminal" id="terminal">
+    <div class="header glow-box">
+        <div class="gate-status">Stare: <span id="status" style="color:var(--inf-red)">Ofline</span></div>
+        <div style="flex-grow:1; overflow:hidden;">
+            <marquee id="track-marquee" direction="left" scrollamount="7">Încărcare...</marquee>
+        </div>
+    </div>
+
+    <div class="monitor-left">
+        <div class="info-zone glow-box">
+            🌍 LOCATIE 🌍<br>
+             CITY: <span id="city" style="color:var(--inf-orange)">...</span><br>
+             METEO: <span id="weather" style="color:var(--inf-orange)">...</span><br>
+             TEMP: <span id="temp" style="color:var(--inf-orange)">...</span><br>
+            <hr style="border:0; border-top:1px solid var(--inf-red); margin:5px 0;">
+            ✨ ASTRE ✨<br>
+            ZODIE: <span id="sign" style="color:var(--inf-orange)">...</span><br>
+            DESTIN: <span id="fate" style="color:white; font-size:11px;">Încărcare...</span>
+            <hr style="border:0; border-top:1px solid var(--inf-red); margin:5px 0;">
+             🎧 Ascultatori: <span id="listeners" style="color:#00ff41">0</span>
+             <span id="liveLed"></span> LIVE
+        </div>
+        <div class="cover-zone glow-box">
+            <img src="https://xatimg.com/image/oacvd5ltA14X.png" id="coverArt">
+        </div>
+    </div>
+
+    <div class="console-main">
+        <div class="log-window glow-box" id="log">
+            [SYS] VERSIUNEA V.30 INCARCARE COMPLETA.<br>
+            [Radio]LaFamilia Online..<br>
+            &copy; Copyright - ByDesign<br>
+            [SYS] NEW LISTENER CONNECTED
+        </div>
+        <div class="visualizer-area glow-box" id="visualizer"></div>
+    </div>
+
+    <div class="footer glow-box">
+        <button class="btn" id="exeBtn">PLAY</button>
+        <input type="range" id="volRange" min="0" max="1" step="0.01" value="1"><div id="volPopup">100%</div>
+        
+        <div id="clock">Încărcare..</div>
+    </div>
+</div>
+
+<audio id="audio" crossorigin="anonymous" src="https://radio.sonicpanel.ro:10922/stream"></audio>
+
+<script>
+    const audio = document.getElementById("audio");
+    const exeBtn = document.getElementById('exeBtn');
+    const log = document.getElementById('log');
+    const visualizer = document.getElementById('visualizer');
+    const marquee = document.getElementById('track-marquee');
+    const volSlider = document.getElementById('volRange');
+    
+    let audioCtx, analyser, dataArray, isPlaying = false, currentTitle = "";
+    let currentListeners = 0;
+    let lastListeners = 0;
+
+
+
+    function addLog(msg, color = "var(--inf-orange)") {
+        const time = new Date().toLocaleTimeString();
+        log.innerHTML += `<br><span style="color:${color}">[${time}] ${msg}</span>`;
+        log.scrollTop = log.scrollHeight;
+    }
+
+    function initAudio() {
+        if (audioCtx) return;
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioCtx.createAnalyser();
+        const source = audioCtx.createMediaElementSource(audio);
+        source.connect(analyser); analyser.connect(audioCtx.destination);
+        analyser.fftSize = 128;
+        dataArray = new Uint8Array(analyser.frequencyBinCount);
+        visualizer.innerHTML = '';
+        for(let i=0; i<45; i++) {
+            let b = document.createElement('div');
+            b.className = 'bar';
+            visualizer.appendChild(b);
+        }
+    }
+
+    exeBtn.onclick = () => {
+        initAudio();
+        if (audio.paused) {
+            audioCtx.resume(); audio.play(); isPlaying = true;
+            exeBtn.innerText = "STOP";
+            document.getElementById('status').innerText = "Online";
+            document.getElementById('status').style.color = "#00ff41";
+            addLog("Radio Pornit", "green");
+            renderBars();
+        } else {
+            audio.pause(); isPlaying = false;
+            exeBtn.innerText = "PLAY";
+            document.getElementById('status').innerText = "Ofline";
+            document.getElementById('status').style.color = "var(--inf-red)";
+            addLog("Radio Oprit", "Red");
+            renderBars();
+        }
+    };
+
+    function renderBars() {
+        if(!isPlaying) return;
+        requestAnimationFrame(renderBars);
+        analyser.getByteFrequencyData(dataArray);
+        const bars = document.getElementsByClassName('bar');
+        for(let i=0; i<bars.length; i++) { 
+            let h = (dataArray[i]/255)*100;
+            bars[i].style.height = h > 5 ? h + '%' : '5px'; 
+        }
+    }
+
+    // --- SLIDER VOLUME FISSA ---
+
+const volPopup = document.getElementById("volPopup");
+
+function updateVolumeUI(){
+
+let percent = Math.round(volSlider.value * 100);
+
+/* MUTE + BOOST */
+
+let label = percent + "%";
+
+if(percent === 0) label = "MUTE";
+if(percent >= 90) label = "MAXIM " + percent + "%";
+
+volPopup.innerText = label;
+
+/* slider fill */
+
+volSlider.style.setProperty("--vol", percent + "%");
+
+/* popup position */
+
+const sliderWidth = volSlider.offsetWidth;
+let pos = sliderWidth * volSlider.value;
+
+volPopup.style.left = (volSlider.offsetLeft + pos) + "px";
+volPopup.style.opacity = 1;
+
+}
+
+volSlider.addEventListener("input",(e)=>{
+
+audio.volume = e.target.value;
+
+updateVolumeUI();
+
+});
+
+volSlider.addEventListener("mouseenter",updateVolumeUI);
+
+volSlider.addEventListener("mouseleave",()=>{
+
+volPopup.style.opacity = 0;
+
+});
+
+/* =========================
+   GEOLOCATION + WEATHER
+========================= */
+
+async function loadWeather(){
+
+try{
+
+const pos = await new Promise((resolve,reject)=>{
+navigator.geolocation.getCurrentPosition(resolve,reject);
+});
+
+const lat = pos.coords.latitude;
+const lon = pos.coords.longitude;
+
+/* CITY NAME */
+
+const cityRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+
+const cityData = await cityRes.json();
+
+let city =
+cityData.address.city ||
+cityData.address.town ||
+cityData.address.village ||
+cityData.address.state ||
+"Unknown";
+
+document.getElementById("city").innerText = city;
+
+/* WEATHER */
+
+const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+
+const weatherData = await weatherRes.json();
+
+const temp = weatherData.current_weather.temperature;
+const code = weatherData.current_weather.weathercode;
+
+/* WEATHER CODE TO TEXT */
+
+const weatherCodes = {
+0:"Senin",
+1:"Mai mult senin",
+2:"Parțial noros",
+3:"Noros",
+45:"Ceață",
+48:"Ceață",
+51:"Burniță",
+61:"Ploaie",
+63:"Ploaie moderată",
+65:"Ploaie puternică",
+71:"Ninsoare",
+80:"Averse",
+95:"Furtună"
+};
+
+let weatherText = weatherCodes[code] || "Necunoscut";
+
+document.getElementById("weather").innerText = weatherText;
+document.getElementById("temp").innerText = temp + "°C";
+
+}catch(e){
+
+document.getElementById("city").innerText="N/A";
+document.getElementById("weather").innerText="Offline";
+document.getElementById("temp").innerText="--";
+
+}
+
+}
+
+loadWeather();
+
+
+/* =========================
+   ZODIAC SIGN
+========================= */
+
+function getZodiac(){
+
+const d = new Date();
+const day = d.getDate();
+const month = d.getMonth()+1;
+
+let sign="";
+
+if((month==3 && day>=21)||(month==4 && day<=19)) sign="Berbec";
+else if((month==4 && day>=20)||(month==5 && day<=20)) sign="Taur";
+else if((month==5 && day>=21)||(month==6 && day<=20)) sign="Gemeni";
+else if((month==6 && day>=21)||(month==7 && day<=22)) sign="Rac";
+else if((month==7 && day>=23)||(month==8 && day<=22)) sign="Leu";
+else if((month==8 && day>=23)||(month==9 && day<=22)) sign="Fecioară";
+else if((month==9 && day>=23)||(month==10 && day<=22)) sign="Balanță";
+else if((month==10 && day>=23)||(month==11 && day<=21)) sign="Scorpion";
+else if((month==11 && day>=22)||(month==12 && day<=21)) sign="Săgetător";
+else if((month==12 && day>=22)||(month==1 && day<=19)) sign="Capricorn";
+else if((month==1 && day>=20)||(month==2 && day<=18)) sign="Vărsător";
+else sign="Pești";
+
+document.getElementById("sign").innerText = sign;
+
+return sign;
+
+}
+
+
+/* =========================
+   HOROSCOPE TEXT
+========================= */
+
+function loadFate(){
+
+const fates=[
+
+"Energia cosmică îți favorizează deciziile.",
+"O oportunitate neașteptată apare curând.",
+"Evită conflictele astăzi.",
+"Un mesaj important vine spre tine.",
+"Creativitatea ta este la maxim.",
+"Zi bună pentru planuri noi.",
+"Fii atent la detalii.",
+"Universul îți trimite un semn.",
+"O întâlnire interesantă te așteaptă.",
+"Rămâi calm și totul se va rezolva."
+
+];
+
+const rand = fates[Math.floor(Math.random()*fates.length)];
+
+document.getElementById("fate").innerText = rand;
+
+}
+
+getZodiac();
+loadFate();
+
+async function updateTitles(){
+
+try{
+
+const r = await fetch("https://radio.sonicpanel.ro:10922/stats?sid=1&json=1&t=" + Date.now());
+const d = await r.json();
+
+/* GET TITLE */
+
+let title =
+d.songtitle ||
+d.servertitle ||
+d.title ||
+"Unknown";
+
+/* GET LISTENERS */
+
+let listeners =
+parseInt(d.currentlisteners) ||
+parseInt(d.listeners) ||
+parseInt(d.uniquelisteners) ||
+0;
+
+/* UPDATE LISTENERS */
+
+const el = document.getElementById("listeners");
+
+if(listeners > lastListeners){
+el.classList.add("listenerFlash");
+setTimeout(()=>el.classList.remove("listenerFlash"),600);
+addLog("NEW LISTENER CONNECTED","green");
+}
+
+el.innerText = listeners;
+lastListeners = listeners;
+
+/* UPDATE SONG */
+
+if(title && title.toUpperCase() !== currentTitle){
+
+currentTitle = title.toUpperCase();
+
+marquee.innerText = currentTitle;
+
+addLog("NOW PLAYING: " + currentTitle,"white");
+
+}
+
+}catch(e){
+
+console.log("TITLE ERROR",e);
+
+}
+
+}
+
+updateTitles();
+setInterval(updateTitles, 8000);
+    setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
+</script>
+</body>
+</html>
