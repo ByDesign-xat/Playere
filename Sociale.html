@@ -8,7 +8,7 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
 :root { --accent:#ff0000; --accent-rgb:255,0,0; --beat:1; }
-body,html{margin:0;padding:0;width:100%;min-height:100vh;background:#020202;color:white;font-family:'Plus Jakarta Sans',sans-serif;display:flex;justify-content:center;align-items:center;overflow:hidden;touch-action:none;}
+body,html{margin:0;padding:0;width:100%;min-height:100vh;background:clear;color:white;font-family:'Plus Jakarta Sans',sans-serif;display:flex;justify-content:center;align-items:center;overflow:hidden;touch-action:none;}
 .ambient-glow{position:absolute;width:120%;height:120%;background:radial-gradient(circle at 50% 50%, rgba(var(--accent-rgb),0.12) 0%, transparent 60%);transform:scale(var(--beat));transition:transform 0.3s cubic-bezier(0.175,0.885,0.32,1.275);z-index:0;filter:blur(80px);pointer-events:none;}
 .main-container{width:95%;max-width:680px;height:420px;background:rgba(18,18,24,0.94);border-radius:32px;display:flex;overflow:hidden;position:relative;border:1px solid rgba(var(--accent-rgb),0.4);box-shadow:0 50px 100px -20px rgba(0,0,0,0.9);z-index:10;transition:border-color 0.5s ease;backdrop-filter:blur(10px);}
 .sidebar{width:85px;background:rgba(0,0,0,0.4);display:flex;flex-direction:column;align-items:center;padding:25px 0;border-left:1px solid rgba(255,255,255,0.05);order:3;position:relative;}
