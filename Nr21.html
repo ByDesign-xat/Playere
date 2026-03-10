@@ -530,7 +530,7 @@ const titleText = document.getElementById("main-title");
 
 // Controllo Integrità
 setInterval(() => {
-    const img = document.getElementById("title");
+    const img = document.getElementById("main-title");
     if (!img || img.getAttribute('src') !== PROTECTED) {
         audio.pause();
         document.body.innerHTML = `<div style="background:black; color:red; height:100vh; width:100vw; display:flex; justify-content:center; align-items:center; font-size:30px; font-weight:bold; border:20px solid black; text-align:center; font-family:Arial;">🚨 Incercare de &copy; Copyright 🚨<br>Acces Interzis ByDesign</div>`;
@@ -916,32 +916,24 @@ meta();
 loadHistory();
 setInterval(loadHistory,60000);
 
+// --- PROTECT SCRIPT ---
 
 
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+document.onkeydown = function(e) {
+
+if(e.keyCode == 123) return false; // F12
+
+if(e.ctrlKey && e.shiftKey && e.keyCode == 73) return false; // CTRL+SHIFT+I
+
+if(e.ctrlKey && e.shiftKey && e.keyCode == 74) return false; // CTRL+SHIFT+J
+
+if(e.ctrlKey && e.keyCode == 85) return false; // CTRL+U
+
+};
 
 </script>
 </body>
 </html>
-<script>
 
-const allowedDomain = "bydesign-xat.github.io";
-
-if(!location.hostname.includes(allowedDomain)){
-
-document.body.innerHTML = `
-<div style="
-background:black;
-color:red;
-font-size:40px;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-font-family:Arial;
-">
-🚨 SCRIPT FURAT 🚨
-</div>`;
-
-}
-
-</script>
