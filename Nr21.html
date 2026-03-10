@@ -530,7 +530,7 @@ const titleText = document.getElementById("main-title");
 
 // Controllo Integrità
 setInterval(() => {
-    const img = document.getElementById("main-title");
+    const img = document.getElementById("title");
     if (!img || img.getAttribute('src') !== PROTECTED) {
         audio.pause();
         document.body.innerHTML = `<div style="background:black; color:red; height:100vh; width:100vw; display:flex; justify-content:center; align-items:center; font-size:30px; font-weight:bold; border:20px solid black; text-align:center; font-family:Arial;">🚨 Incercare de &copy; Copyright 🚨<br>Acces Interzis ByDesign</div>`;
