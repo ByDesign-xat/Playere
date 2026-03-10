@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<title>ByDesign</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&display=swap');
+:root{
+  --neon:#39ff14;
+  --neon2:#00ff41;
+  --glow-shadow: 0 0 25px var(--neon), 0 0 50px rgba(57, 255, 20, 0.2);
+}
+body{
+  margin:0;
+  background:transparent;
+  font-family: 'Orbitron', sans-serif;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  overflow: hidden;
+}
+
+/* CONTORNO ESTERNO E PLAYER */
+.player{
+  width:680px; 
+  height:700px; 
+  background: linear-gradient(145deg, #0a0a0a, #000);
+  border-radius:25px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  position:relative;
+  box-shadow: var(--glow-shadow);
+  border: 1px solid rgba(57, 255, 20, 0.3);
+}
+
+/* EFFETTO BORDO ANIMATO FLORESCENTE */
+.player::before{
+  content:"";
+  position:absolute;
+  top:-8px; left:-8px; right:-8px; bottom:-8px;
+  border-radius:35px;
+  background:linear-gradient(45deg, var(--neon), #00ffff, var(--neon2), #ff00ff, var(--neon));
+  background-size:400%;
+  animation:borderMove 8s linear infinite;
+  z-index:-1;
+  filter: blur(5px);
+}
+
+@keyframes borderMove{
+  0%{background-position:0%}
+  100%{background-position:400%}
+}
+
+/* BOX TITOLO NEON */
+.title-box{
+  width:85%;
+  height:70px;
+  border:3px solid var(--neon);
+  margin-top:20px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow: 0 0 20px var(--neon), inset 0 0 15px var(--neon);
+  position: relative;
+  overflow: hidden;
+  background: rgba(0,0,0,0.9);
+  border-radius: 10px;
+}
+
+.title-box::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: url('https://xatimg.com/image/9M6oVfN1C7Uf.gif');
+  background-size: cover;
+  opacity: 0.2;a
+}
+
+.title-box h1{
+  letter-spacing:10px;
+  font-size:32px;
+  font-family: 'Arial Black', sans-serif;
+  margin: 0;
+  z-index: 2;
+  color: var(--neon);
+  text-shadow: 0 0 15px var(--neon);
+  transition: all 0.8s ease;
+}
+
+/* GRIGLIA INFORMAZIONI */
+.info-grid{
+  width:92%;
+  margin-top:15px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+
+.info-box{
+  border:1px solid var(--neon);
+  padding:8px;
+  text-align:center;
+  color:#fff;
+  font-size: 12px;
+  background: rgba(20, 20, 20, 0.5);
+  box-shadow: inset 0 0 10px var(--neon);
+  min-height: 55px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: 8px;
+  text-transform: uppercase;
+}
+
+.info-box h3{
+  margin:0 0 4px 0;
+  color:var(--neon);
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.history-box h3{
+  font-size:18px;
+  color:var(--neon);
+  text-shadow:0 0 10px var(--neon);
+}
+
+/* GIRADISCHI / VINILE */
+.turntable{
+  margin-top:12px;
+  position:relative;
+  width:300px; 
+  height:300px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background: radial-gradient(circle, #111 0%, #000 70%);
+  border-radius: 50%;
+  border: 2px solid rgba(57, 255, 20, 0.2);
+}
+
+#vinyl{
+  width:270px; 
+  height:270px;
+  border-radius:50%;
+  object-fit:cover;
+  border:4px solid #111;
+  box-shadow:0 0 40px var(--neon);
+  z-index: 1;
+}
+
+.spinning{ animation:spin 4s linear infinite; }
+@keyframes spin{ from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+
+.tonearm{
+  position:absolute;
+  width:100px;
+  right:-30px;
+  top:20px;
+  transform-origin:top left;
+  transform:rotate(-38deg);
+  transition: 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index:3;
+
+  filter:
+    brightness(1)
+    invert(0)
+    sepia(0)
+    saturate(1)
+    hue-rotate(var(--armHue,0deg))
+    drop-shadow(0 0 8px var(--neon))
+    drop-shadow(0 0 20px var(--neon));
+}
+.arm-on{ transform:rotate(15deg) translate(-5px, 5px); }
+
+/* CONTROLLI */
+.controls{
+  margin-top:5px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: 90%;
+  justify-content: center;
+}
+
+button{
+  background:#000;
+  border:2px solid var(--neon);
+  color:var(--neon);
+  padding:10px 20px;
+  cursor:pointer;
+  font-weight:bold;
+  font-size: 14px;
+  border-radius: 5px;
+  text-transform: uppercase;
+  box-shadow: 0 0 15px var(--neon);
+  transition: 0.4s, color 0s, border-color 0s, box-shadow 0s;
+}
+
+button:hover{
+  background: var(--neon);
+  color: #000;
+  box-shadow: 0 0 30px var(--neon);
+}
+
+#volRange {
+  -webkit-appearance: none;
+  width: 160px;
+  height: 8px;
+  background: #111;
+  border: 1px solid var(--neon);
+  border-radius: 10px;
+  outline: none;
+}
+
+#volRange::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  background: var(--neon);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 15px var(--neon);
+}
+
+
+.bottom-grid {
+    margin-top: 15px;
+}
+
+.song-scroll-box{
+  width:92%;
+  height:45px;
+  margin-top:10px;
+  border:2px solid var(--neon);
+  border-radius:8px;
+  display:flex;
+  align-items:center;
+  overflow:hidden;
+  background:#000;
+  box-shadow:0 0 15px var(--neon), inset 0 0 10px var(--neon);
+}
+
+.scroll-track{
+  display:flex;
+  white-space:nowrap;
+  width:max-content;
+  animation:scrollSong 18s linear infinite;
+}
+
+.scroll-track span{
+  display:inline-block;
+  color:var(--neon);
+  font-size:18px;
+  font-weight:bold;
+  padding-right:100px;
+  text-shadow:0 0 10px var(--neon);
+}
+
+@keyframes scrollSong{
+  0%{ transform:translateX(0); }
+  100%{ transform:translateX(-50%); }
+}
+
+.dots{
+  color:var(--neon);
+  font-size:18px;
+  padding:0 40px;
+  text-shadow:0 0 10px var(--neon);
+}
+
+#clock{
+  font-size:26px;
+  font-weight:bold;
+  color:var(--neon);
+  text-shadow:0 0 15px var(--neon);
+}
+
+#date{
+  font-size:26px;
+  font-weight:bold;
+  color:#fff;
+  margin-top:5px;
+}
+
+.history-box{
+  position:relative;
+  cursor:pointer;
+}
+
+
+.history-popup ol{
+  margin:0;
+  padding-left:18px;
+  font-size:11px;
+  text-align:left;
+}
+
+.history-popup li{
+  padding:4px 0;
+  border-bottom:1px solid rgba(255,255,255,0.15);
+  color:#fff;
+}
+
+.history-popup li:first-child{
+  color:var(--neon);
+  font-weight:bold;
+  text-shadow:0 0 6px var(--neon);
+}
+
+.history-box{
+  position:relative;
+  cursor:pointer;
+}
+
+.history-popup{
+  position:absolute;
+  bottom:140px; /* urcă popup-ul mai sus */
+  left:-110px;
+  width:200%;
+  background:#000;
+  border:2px solid var(--neon);
+  border-radius:8px;
+  box-shadow:0 0 20px var(--neon);
+  padding:8px;
+  opacity:0;
+  transform:translateY(10px);
+  transition:0.3s;
+  pointer-events:none;
+  z-index:10;
+}
+
+.history-box:hover .history-popup{
+  opacity:1;
+  transform:translateY(0);
+  pointer-events:auto;
+}
+
+.history-popup ul{
+  list-style:none;
+  padding:0;
+  margin:0;
+}
+
+.history-popup li{
+  font-size:11px;
+  padding:5px 0;
+  border-bottom:1px solid rgba(255,255,255,0.2);
+  color:#fff;
+}
+
+/* numere */
+.history-popup li::before{
+  content:counter(item) " ";
+  counter-increment:item;
+  color:#fff;
+  margin-right:5px;
+}
+
+.history-popup ul{
+  counter-reset:item;
+}
+
+/* prima melodie (main) */
+.history-popup li:first-child{
+  color:var(--neon);
+  font-weight:bold;
+  text-shadow:0 0 6px var(--neon);
+}
+
+
+.volume-box{
+  position:relative;
+  width:160px;
+  display:flex;
+  justify-content:center;
+}
+
+#volValue{
+  position:absolute;
+  top:-22px;
+  font-size:12px;
+  color:var(--neon);
+  font-weight:bold;
+  text-shadow:0 0 10px var(--neon);
+}
+
+/* slider neon fill */
+
+#volRange{
+  -webkit-appearance:none;
+  width:160px;
+  height:8px;
+  border-radius:10px;
+  outline:none;
+  background:linear-gradient(to right,var(--neon) 100%,#111 0%);
+  border:1px solid var(--neon);
+}
+
+#volRange::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  background:var(--neon);
+  cursor:pointer;
+  box-shadow:0 0 10px var(--neon);
+}
+
+</style>
+</head>
+<body>
+
+<div class="player">
+  <div class="title-box">
+    <h1 id="main-title">𝕽𝖆𝖉𝖎𝖔 𝕷𝖆𝕱𝖆𝖒𝖎𝖑𝖎𝖆</h1>
+  </div>
+
+  <div class="info-grid">
+    <div class="info-box"><h3>Ascultatori</h3> 🎧<div id="listeners">0</div></div>
+    <div class="info-box"><h3>Artist</h3><div id="artist">Încărcare...</div></div>
+    <div class="info-box"><h3>Melodie</h3><div id="song">Încărcare...</div></div>
+  </div>
+
+  <div class="turntable">
+    <img id="vinyl" src="https://xatimg.com/image/oacvd5ltA14X.png">
+    <img id="arm" class="tonearm" src="https://xatimg.com/image/iNNyR97fBp6v.png">
+  </div>
+
+<div class="controls">
+  <button id="btnPlay">PLAY</button>
+
+<div class="volume-box">
+  <div id="volValue">100%</div>
+  <input type="range" id="volRange" min="0" max="100" step="1" value="100">
+</div>
+
+  <button id="btnStop">STOP</button>
+</div>
+
+  <div class="info-grid bottom-grid">
+   <div class="info-box">
+  <div id="clock">00:00:00</div>
+  <div id="date" style="font-size:11px;margin-top:3px;">---</div>
+</div>
+<div class="info-box history-box">
+  <h3>History</h3>
+
+  <div class="history-popup">
+    <ul id="historyList"></ul>
+  </div>
+
+</div>
+    <div class="info-box">
+        <h3>Sistem</h3>
+        <div style="color:var(--neon); font-weight:bold; font-size:10px; text-shadow: 0 0 5px var(--neon);">ONLINE / PROTECTED</div>
+    </div>
+     
+        </div>
+		
+			<div class="song-scroll-box">
+<div class="scroll-track">
+  <span id="songScroll">Se încarcă melodia...</span>
+  <span class="dots"> ⬅<<< ♫ • • • ✦ ✦ ✦ Acum Asculti ✦ ✦ ✦ • • • ♫ >>>➜ </span>
+  <span id="songScroll2">Se încarcă melodia...</span>
+  <span class="dots"> ⬅<<< ♫ • • • ✦ ✦ ✦ Acum Asculti ✦ ✦ ✦ • • • ♫ >>>➜ </span>
+</div>
+</div>
+</div>
+
+    
+
+<script>
+const STREAM_URL = "https://radio.sonicpanel.ro:10922/radio.mp3"; 
+
+const audio = new Audio(STREAM_URL);
+audio.crossOrigin = "anonymous";
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const source = audioCtx.createMediaElementSource(audio);
+const analyser = audioCtx.createAnalyser();
+
+analyser.fftSize = 2048;
+analyser.smoothingTimeConstant = 0.8;
+
+source.connect(analyser);
+analyser.connect(audioCtx.destination);
+
+const dataArray = new Uint8Array(analyser.frequencyBinCount);
+const vinyl = document.getElementById("vinyl");
+const arm = document.getElementById("arm");
+const btnPlay = document.getElementById("btnPlay");
+const btnStop = document.getElementById("btnStop");
+const titleText = document.getElementById("main-title");
+
+// Controllo Integrità
+setInterval(() => {
+    const img = document.getElementById("main-title");
+    if (!img || img.getAttribute('src') !== PROTECTED) {
+        audio.pause();
+        document.body.innerHTML = `<div style="background:black; color:red; height:100vh; width:100vw; display:flex; justify-content:center; align-items:center; font-size:30px; font-weight:bold; border:20px solid black; text-align:center; font-family:Arial;">🚨 Incercare de &copy; Copyright 🚨<br>Acces Interzis ByDesign</div>`;
+    }
+}, 1000);
+
+let coverCache = {};
+let songHistory = [
+  "Loading...",
+  "Loading...",
+  "Loading...",
+  "Loading...",
+  "Loading..."
+];
+updateHistory();
+
+const colori = ["#39ff14","#00ffff","#ff00ff","#ffff00","#ff3300","#00ff41"];
+
+let colorIdx = 0;
+
+setInterval(() => {
+
+  colorIdx++;
+
+  if(colorIdx >= colori.length){
+    colorIdx = 0;
+  }
+
+const c = colori[colorIdx];
+
+/* schimbă culoarea globală */
+document.documentElement.style.setProperty('--neon', c);
+
+/* titlu */
+titleText.style.color = c;
+titleText.style.textShadow = `0 0 20px ${c}, 0 0 40px ${c}`;
+
+
+},4000);
+
+btnPlay.onclick = function() {
+
+  audioCtx.resume();
+
+  audio.play().then(() => {
+
+    neonPulse();
+
+    vinyl.classList.add("spinning");
+    arm.classList.add("arm-on");
+
+  });
+
+};
+
+btnStop.onclick = function() {
+
+  audio.pause();
+
+  neonFlickerOff();
+
+  vinyl.classList.remove("spinning");
+  arm.classList.remove("arm-on");
+
+};
+
+
+const volRange = document.getElementById("volRange");
+const volValue = document.getElementById("volValue");
+
+volRange.oninput = function(){
+
+  let percent = this.value;
+
+  volValue.innerText = percent + "%";
+
+  audio.volume = percent / 100;
+
+  /* neon fill slider */
+
+  this.style.background =
+  `linear-gradient(to right,
+  var(--neon) ${percent}%,
+  #111 ${percent}%)`;
+
+  if(audio.volume <= 0){
+    neonFlickerOff();
+  }
+
+};
+volRange.dispatchEvent(new Event("input"));
+
+
+function updateClock(){
+  let now = new Date();
+  document.getElementById("clock").innerText = now.toLocaleTimeString("it-IT");
+  document.getElementById("date").innerText = now.toLocaleDateString("it-IT");
+}
+setInterval(updateClock,1000);
+updateClock();
+
+async function meta(){
+  try{
+
+    let r = await fetch("https://radio.sonicpanel.ro:10922/stats?sid=1&json=1");
+    let d = await r.json();
+
+    document.getElementById("listeners").innerText = d.currentlisteners;
+
+    let song = d.songtitle;
+
+if(song && songHistory[0] !== song){
+
+  songHistory.unshift(song);
+
+  if(songHistory.length > 5){
+    songHistory.pop();
+  }
+
+  updateHistory();
+}
+
+    if(song){
+
+      let parts = song.split(" - ");
+
+      document.getElementById("artist").innerText = parts[0] || "Unknown";
+      document.getElementById("song").innerText = parts[1] || parts[0];
+	  document.getElementById("songScroll").innerText = song;
+      document.getElementById("songScroll2").innerText = song;
+
+      getCover(song);
+
+    }
+
+  }catch(e){ console.log("Meta Error"); }
+}
+
+async function getCover(song){
+
+  if(coverCache[song]){
+    setCover(coverCache[song]);
+    return;
+  }
+
+  try{
+
+    let parts = song.split(" - ");
+    let artist = parts[0] || "";
+    let title = parts[1] || parts[0];
+
+    let query = artist + " " + title;
+
+    let res = await fetch(`https://api.deezer.com/search?q=${encodeURIComponent(query)}`);
+    let data = await res.json();
+
+    if(data.data && data.data.length){
+
+      let cover = data.data[0].album.cover_xl;
+
+      coverCache[song] = cover;
+
+      setCover(cover);
+
+      return;
+
+    }
+
+  }catch(e){}
+
+  let fallback = "https://xatimg.com/image/oacvd5ltA14X.png";
+
+  coverCache[song] = fallback;
+
+  setCover(fallback);
+
+}
+
+function setCover(url){
+
+  vinyl.style.transition = "filter 0.4s ease, opacity 0.4s ease";
+  vinyl.style.filter = "blur(8px)";
+  vinyl.style.opacity = "0.5";
+
+  setTimeout(()=>{
+
+    vinyl.src = url;
+
+    vinyl.onload = () => {
+
+      vinyl.style.filter = "blur(0)";
+      vinyl.style.opacity = "1";
+
+    };
+
+  },200);
+
+}
+
+
+let glow = 0;
+
+function neonPulse(){
+if(audio.paused || audio.volume <= 0){
+  glow = 0;
+}
+
+  analyser.getByteFrequencyData(dataArray);
+
+  /* detectare SUB BASS */
+
+  let subBass = 0;
+  let bins = 3;
+
+  for(let i = 0; i < bins; i++){
+    subBass += dataArray[i];
+  }
+
+  subBass = subBass / bins;
+
+  /* prag bass */
+
+  let threshold = 200;
+let targetGlow = 0;
+
+if(!audio.paused && audio.volume > 0.00 && subBass > threshold){
+  targetGlow = (subBass - threshold) * 0.35;
+}
+  /* smoothing */
+
+  glow += (targetGlow - glow) * 0.25;
+
+  /* INFO BOX */
+
+  const boxes = document.querySelectorAll(".info-box");
+
+  boxes.forEach(box=>{
+    box.style.boxShadow =
+    `0 0 ${0 + glow}px var(--neon),
+     0 0 ${10 + glow}px var(--neon),
+     0 0 ${20 + glow}px var(--neon)`;
+  });
+
+  /* BUTTONS */
+
+  const buttons = document.querySelectorAll("button");
+
+  buttons.forEach(btn=>{
+    btn.style.boxShadow =
+    `0 0 ${0 + glow}px var(--neon),
+     0 0 ${20 + glow}px var(--neon)`;
+  });
+
+  /* VINYL */
+
+  vinyl.style.boxShadow =
+  `0 0 ${25 + glow}px var(--neon),
+   0 0 ${60 + glow}px var(--neon)`;
+
+  /* TITLE BOX */
+
+  const titleBox = document.querySelector(".title-box");
+
+  titleBox.style.boxShadow =
+  `0 0 ${0 + glow}px var(--neon),
+   0 0 ${20 + glow}px var(--neon)`;
+
+  requestAnimationFrame(neonPulse);
+}
+
+function neonFlickerOff(){
+
+  const boxes = document.querySelectorAll(".info-box");
+  const buttons = document.querySelectorAll("button");
+  const titleBox = document.querySelector(".title-box");
+
+  let flickers = 6;
+
+  let flick = setInterval(()=>{
+
+    boxes.forEach(box=>{
+      box.style.boxShadow = Math.random() > 0.5 ?
+      "0 0 20px var(--neon)" : "none";
+    });
+
+    buttons.forEach(btn=>{
+      btn.style.boxShadow = Math.random() > 0.5 ?
+      "0 0 15px var(--neon)" : "none";
+    });
+
+    titleBox.style.boxShadow = Math.random() > 0.5 ?
+    "0 0 25px var(--neon)" : "none";
+
+    flickers--;
+
+    if(flickers <= 0){
+
+      clearInterval(flick);
+
+      glow = 0;
+
+      boxes.forEach(b=>b.style.boxShadow="none");
+      buttons.forEach(b=>b.style.boxShadow="none");
+      titleBox.style.boxShadow="none";
+      vinyl.style.boxShadow="none";
+
+    }
+
+  },80);
+
+}
+
+
+function updateHistory(){
+
+  const list = document.getElementById("historyList");
+  list.innerHTML = "";
+
+  for(let i = 0; i < 5; i++){
+
+    const li = document.createElement("li");
+
+    if(songHistory[i]){
+      li.textContent = songHistory[i];
+    }else{
+      li.textContent = "-----";
+    }
+
+    list.appendChild(li);
+
+  }
+
+}
+
+async function loadHistory(){
+
+  try{
+
+    let r = await fetch("https://radio.sonicpanel.ro:10922/played?sid=1&type=json");
+    let data = await r.json();
+
+    const list = document.getElementById("historyList");
+    list.innerHTML = "";
+
+    data.slice(0,5).forEach((track,index)=>{
+
+      const li = document.createElement("li");
+      li.textContent = track.title;
+
+      list.appendChild(li);
+
+    });
+
+  }catch(e){
+    console.log("History error");
+  }
+
+}
+
+
+
+
+setInterval(meta,10000);
+meta();
+loadHistory();
+setInterval(loadHistory,60000);
+
+
+// --- PROTECT SCRIPT ---
+const protectionMessage="Stop Copyright ByDesign";
+document.addEventListener("contextmenu", e=>{e.preventDefault();alert(protectionMessage);});
+document.addEventListener("selectstart", e=>{e.preventDefault();});
+document.addEventListener("keydown", e=>{e.preventDefault();alert(protectionMessage);});
+document.addEventListener("keyup", e=>{e.preventDefault();alert(protectionMessage);});
+document.addEventListener("dragstart", e=>{e.preventDefault();});
+document.addEventListener("copy", e=>{e.preventDefault();alert(protectionMessage);});
+document.addEventListener("mousedown", e=>{if(e.button===1||e.button===2){e.preventDefault();alert(protectionMessage);}});
+document.addEventListener("keydown", function(e) {
+
+    // Ctrl + U
+    if (e.ctrlKey && e.key.toLowerCase() === "u") {
+        e.preventDefault();
+    }
+
+    // Ctrl + Shift + I (DevTools)
+    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i") {
+        e.preventDefault();
+    }
+
+    // F12
+    if (e.key === "F12") {
+        e.preventDefault();
+    }
+
+});
+
+
+</script>
+</body>
+</html>
+
