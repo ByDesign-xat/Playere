@@ -409,6 +409,37 @@ button:hover{
   box-shadow:0 0 10px var(--neon);
 }
 
+#djEmoji{
+  font-size:15px;
+  display:inline-block;
+  transition: transform 0.15s linear, filter 0.15s linear;
+}
+
+#djEmoji.on{
+  color:#00ff41;
+  filter:
+    drop-shadow(0 0 8px #00ff41)
+    drop-shadow(0 0 16px #00ff41)
+    drop-shadow(0 0 28px #00ff41)
+    drop-shadow(0 0 40px #00ff41);
+}
+
+@keyframes offPulse{
+0%{opacity:1;}
+50%{opacity:0.4;}
+100%{opacity:1;}
+}
+
+#djEmoji.off{
+  color:#ff0000;
+  animation:offPulse 1.2s infinite;
+  filter:
+    drop-shadow(0 0 6px #ff0000)
+    drop-shadow(0 0 12px #ff0000)
+    drop-shadow(0 0 20px #ff0000)
+    drop-shadow(0 0 30px #ff0000);
+}
+
 </style>
 </head>
 <body>
@@ -419,7 +450,10 @@ button:hover{
   </div>
 
   <div class="info-grid">
-    <div class="info-box"><h3>Ascultatori</h3> 🎧<div id="listeners">0</div></div>
+     <div class="info-box">
+     <h3>Ascultatori</h3>
+     <div><span id="djEmoji">🎧 </span> <span id="listeners">0</span></div>
+     </div>
     <div class="info-box"><h3>Artist</h3><div id="artist">Încărcare...</div></div>
     <div class="info-box"><h3>Melodie</h3><div id="song">Încărcare...</div></div>
   </div>
@@ -454,8 +488,8 @@ button:hover{
 
 </div>
     <div class="info-box">
-        <h3>Sistem</h3>
-        <div style="color:var(--neon); font-weight:bold; font-size:10px; text-shadow: 0 0 5px var(--neon);">ONLINE / PROTECTED</div>
+        <h3>Sistem / PROTECTED</h3>
+        <div style="color:var(--neon); font-weight:bold; font-size:10px; text-shadow: 0 0 5px var(--neon);">ONLINE / &copy; ByDesign</div>
     </div>
      
         </div>
@@ -463,9 +497,9 @@ button:hover{
 			<div class="song-scroll-box">
 <div class="scroll-track">
   <span id="songScroll">Se încarcă melodia...</span>
-  <span class="dots"> ⬅<<< ♫ • • • ✦ ✦ ✦ Acum Asculti ✦ ✦ ✦ • • • ♫ >>>➜ </span>
+  <span class="dots"> ⬅<<< ♫ • • • ✦ ✦ ✦ Acum Asculti LaFamilia ✦ ✦ ✦ • • • ♫ >>>➜ </span>
   <span id="songScroll2">Se încarcă melodia...</span>
-  <span class="dots"> ⬅<<< ♫ • • • ✦ ✦ ✦ Acum Asculti ✦ ✦ ✦ • • • ♫ >>>➜ </span>
+  <span class="dots"> ⬅<<< ♫ • • • ✦ ✦ ✦ Acum Asculti LaFamilia ✦ ✦ ✦ • • • ♫ >>>➜ </span>
 </div>
 </div>
 </div>
@@ -604,7 +638,18 @@ async function meta(){
     let r = await fetch("https://radio.sonicpanel.ro:10922/stats?sid=1&json=1");
     let d = await r.json();
 
-    document.getElementById("listeners").innerText = d.currentlisteners;
+    const listeners = d.currentlisteners;
+document.getElementById("listeners").innerText = listeners;
+
+const djEmoji = document.getElementById("djEmoji");
+
+if(listeners > 0){
+  djEmoji.classList.remove("off");
+  djEmoji.classList.add("live");
+}else{
+  djEmoji.classList.remove("live");
+  djEmoji.classList.add("off");
+}
 
     let song = d.songtitle;
 
@@ -755,6 +800,13 @@ if(!audio.paused && audio.volume > 0.00 && subBass > threshold){
   vinyl.style.boxShadow =
   `0 0 ${25 + glow}px var(--neon),
    0 0 ${60 + glow}px var(--neon)`;
+   
+   const djEmoji = document.getElementById("djEmoji");
+
+if(djEmoji){
+  djEmoji.style.transform = `scale(${1 + glow * 0.03})`;
+  djEmoji.style.filter = `drop-shadow(0 0 ${5 + glow}px var(--neon))`;
+}
 
   /* TITLE BOX */
 
@@ -865,36 +917,31 @@ loadHistory();
 setInterval(loadHistory,60000);
 
 
-// --- PROTECT SCRIPT ---
-const protectionMessage="Stop Copyright ByDesign";
-document.addEventListener("contextmenu", e=>{e.preventDefault();alert(protectionMessage);});
-document.addEventListener("selectstart", e=>{e.preventDefault();});
-document.addEventListener("keydown", e=>{e.preventDefault();alert(protectionMessage);});
-document.addEventListener("keyup", e=>{e.preventDefault();alert(protectionMessage);});
-document.addEventListener("dragstart", e=>{e.preventDefault();});
-document.addEventListener("copy", e=>{e.preventDefault();alert(protectionMessage);});
-document.addEventListener("mousedown", e=>{if(e.button===1||e.button===2){e.preventDefault();alert(protectionMessage);}});
-document.addEventListener("keydown", function(e) {
-
-    // Ctrl + U
-    if (e.ctrlKey && e.key.toLowerCase() === "u") {
-        e.preventDefault();
-    }
-
-    // Ctrl + Shift + I (DevTools)
-    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i") {
-        e.preventDefault();
-    }
-
-    // F12
-    if (e.key === "F12") {
-        e.preventDefault();
-    }
-
-});
 
 
 </script>
 </body>
 </html>
+<script>
 
+const allowedDomain = "xat.com";
+
+if(!location.hostname.includes(allowedDomain)){
+
+document.body.innerHTML = `
+<div style="
+background:black;
+color:red;
+font-size:40px;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+font-family:Arial;
+">
+🚨 SCRIPT FURAT 🚨
+</div>`;
+
+}
+
+</script>
