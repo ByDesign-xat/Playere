@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ByDesign</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+/* RESETARE GENERALĂ PENTRU EMBED */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            background: transparent;
+        }
+
+/* VARIABILE DE CULOARE */
+        :root {
+            --pastel-pink: #ff8acb;
+            --soft-lilac: #caa6ff;
+            --light-lavender: #efe7ff;
+            --glass-bg: rgba(0, 0, 0, 0.65);
+            --glass-border: rgba(255, 138, 203, 0.4);
+        }
+
+/* CONTAINER PRINCIPAL PLAYER RADIO */
+        .radio-widget {
+            position: relative;
+            width: 637px;
+            height: 363px;
+            font-family: 'Poppins', sans-serif;
+            border-radius: 12px;
+            overflow: visible;
+            background-color: #000;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            user-select: none;
+            display: block;
+        }
+
+ /* VIDEO BACKGROUND */
+        .bg-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+        }
+
+/* STRAT ÎNTUNECAT PESTE VIDEO PENTRU CONTRAST */
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 2;
+        }
+
+/* PANOU GLASS REUTILIZABIL */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+/* BUTOANE GENERALE */
+        button {
+            cursor: pointer;
+            outline: none;
+            border: none;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+/* PANOU SUS STÂNGA (CEAS + DATĂ) */
+        .top-left-panel {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 10;
+            padding: 5px 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+		
+/* TEXT DATĂ */
+        .date-text {
+            color: var(--pastel-pink);
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+		
+/* TEXT ORĂ */
+        .time-text {
+            color: #fff;
+            font-size: 22px;
+            font-weight: 700;
+            line-height: 1.1;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+/* PANOU SUS DREAPTA (ICONIȚE) */
+        /* Top Right Panel (Icons) */
+        .top-right-panel {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 10;
+            display: flex;
+            gap: 10px;
+        }
+
+/* BUTOANE ICONIȚE SUS */
+        .top-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--light-lavender);
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+/* HOVER BUTOANE SUS */
+        .top-btn:hover {
+            color: #fff;
+            border-color: var(--pastel-pink);
+            box-shadow: 0 0 10px rgba(255, 138, 203, 0.3);
+        }
+
+/* BUTON WARNING */
+        #warning-btn {
+            color: var(--pastel-pink);
+        }
+
+        #warning-btn:hover {
+            text-shadow: 0 0 10px var(--pastel-pink);
+            transform: scale(1.05);
+        }
+
+/* BARĂ CONTROL JOS */
+        .bottom-bar {
+            position: absolute;
+            bottom: 12px;
+            left: 12px;
+            right: 12px;
+            height: 80px;
+            border-radius: 20px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            gap: 15px;
+			overflow:visible;
+        }
+
+/* PARTE STÂNGA BARĂ (PLAY + ALBUM) */
+        .bar-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+/* BUTON PLAY PRINCIPAL */
+        .main-play-btn {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--pastel-pink);
+            color: #fff;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px rgba(255, 138, 203, 0.4);
+            flex-shrink:0;
+            padding:0;
+        }
+		
+		#main-play-icon{
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            width:100%;
+            height:100%;
+            text-align:center;
+        }
+
+/* STARE PLAYING */
+        .main-play-btn.playing {
+            color: var(--soft-lilac);
+            border-color: var(--soft-lilac);
+            box-shadow: 0 0 15px rgba(202, 166, 255, 0.4);
+        }
+		
+		#main-play-icon{
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            width:100%;
+        }
+
+/* HOVER PLAY */
+        .main-play-btn:hover {
+            transform: scale(1.05);
+            background: rgba(255, 138, 203, 0.1);
+        }
+
+/* CONTAINER COPERTĂ ALBUM */
+        .album-wrapper {
+            position: relative;
+            width: 55px;
+            height: 55px;
+            flex-shrink: 0;
+        }
+
+/* IMAGINE ALBUM */
+        #sonic_art {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            background: rgba(255,255,255,0.1); /* fallback */
+        }
+
+/* IMAGINE ÎN ALBUM */
+        #sonic_art img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+/* BADGE LIVE (Online) */
+        .al-aire-badge {
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--pastel-pink);
+            color: #000;
+            font-size: 9px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            z-index: 2;
+        }
+
+/* PUNCT ANIMAT LIVE */
+        .al-aire-dot {
+            width: 5px;
+            height: 5px;
+            background: #fff;
+            border-radius: 50%;
+            animation: pulse-dot 1.5s infinite;
+        }
+
+/* ZONA CENTRALĂ PLAYER */
+        .bar-center {
+            flex-grow:1;
+            min-width:260px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow:visible;
+            gap: 6px;
+        }
+		
+/* RÂND TITLU MELODIE */
+        .title-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+/* TITLU MELODIE */
+        #sonic_title {
+            color: #fff;
+            font-size: 13px;
+			max-width:230px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+        }
+
+/* EQUALIZER AUDIO */
+        /* Equalizer */
+        .equalizer {
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 12px;
+            flex-shrink: 0;
+        }
+
+/* BARE EQUALIZER */
+        .eq-bar {
+            width: 3px;
+            background: var(--soft-lilac);
+            border-radius: 2px;
+            height: 3px;
+            box-shadow: 0 0 5px var(--soft-lilac);
+            transition: height 0.2s ease;
+        }
+
+/* EQUALIZER ACTIV */
+        .equalizer.active .eq-bar {
+            background: var(--pastel-pink);
+            box-shadow: 0 0 5px var(--pastel-pink);
+            animation: eq-play 1s infinite alternate ease-in-out;
+        }
+
+        .equalizer.active .eq-bar:nth-child(1) { animation-delay: 0.1s; animation-duration: 0.6s; }
+        .equalizer.active .eq-bar:nth-child(2) { animation-delay: 0.3s; animation-duration: 0.8s; }
+        .equalizer.active .eq-bar:nth-child(3) { animation-delay: 0.0s; animation-duration: 0.5s; }
+        .equalizer.active .eq-bar:nth-child(4) { animation-delay: 0.1s; animation-duration: 0.7s; }
+        .equalizer.active .eq-bar:nth-child(5) { animation-delay: 0.3s; animation-duration: 0.8s; }
+        .equalizer.active .eq-bar:nth-child(6) { animation-delay: 0.0s; animation-duration: 0.4s; }
+        .equalizer.active .eq-bar:nth-child(7) { animation-delay: 0.1s; animation-duration: 0.6s; }
+        .equalizer.active .eq-bar:nth-child(8) { animation-delay: 0.3s; animation-duration: 0.9s; }
+
+/* ANIMAȚIE BARE EQUALIZER */
+        @keyframes eq-play {
+            0% { height: 3px; }
+            100% { height: 12px; }
+        }
+
+/* BADGES INFO (LISTENERS / DJ) */
+        /* Badges Row */
+        .badges-row {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+/* BADGE INFORMAȚII */
+        .info-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 500;
+            padding: 3px 10px;
+            border-radius: 12px;
+            white-space: nowrap;
+        }
+
+        #sonic_listeners, #sonic_dj {
+            display: inline-block;
+        }
+
+        .pausa-btn {
+            background: transparent;
+            border: 1px solid var(--soft-lilac);
+            color: var(--soft-lilac);
+            font-size: 10px;
+            font-weight: 600;
+            padding: 3px 12px;
+            border-radius: 12px;
+            text-transform: uppercase;
+        }
+
+        .pausa-btn:hover {
+            background: rgba(202, 166, 255, 0.2);
+            color: #fff;
+        }
+
+        .pausa-btn.playing {
+            border-color: var(--pastel-pink);
+            color: var(--pastel-pink);
+        }
+
+
+/* CONTROALE DREAPTA PLAYER */
+        .bar-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+/* BUTOANE ACȚIUNE */
+        .action-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--light-lavender);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+/* HOVER BUTOANE ACȚIUNE */
+        .action-btn:hover {
+            color: #fff;
+            border-color: var(--pastel-pink);
+            box-shadow: 0 0 8px rgba(255, 138, 203, 0.3);
+        }
+
+/* CONTAINER VOLUM */
+        .vol-container {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding-right: 8px;
+        }
+
+        .vol-container .action-btn {
+            border: none;
+            background: transparent;
+            box-shadow: none;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 50px;
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--pastel-pink);
+            cursor: pointer;
+            box-shadow: 0 0 5px var(--pastel-pink);
+        }
+
+/* POPUP MODAL WARNING */
+        .modal-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.show {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: rgba(20, 15, 30, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--pastel-pink);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6), 0 0 20px rgba(255, 138, 203, 0.2);
+            padding: 30px 25px;
+            border-radius: 16px;
+            text-align: center;
+            width: 85%;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.show .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-content p {
+            color: #fff;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+        }
+
+        .close-btn {
+            background: rgba(255, 138, 203, 0.15);
+            border: 1px solid var(--pastel-pink);
+            color: var(--pastel-pink);
+            padding: 6px 20px;
+            border-radius: 15px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .close-btn:hover {
+            background: var(--pastel-pink);
+            color: #000;
+        }
+
+/* Animații */
+        @keyframes pulse-dot {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.8); }
+            70% { transform: scale(1); box-shadow: 0 0 0 4px rgba(255, 255, 255, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+			
+        }
+        .fa-spinner {
+            animation: spin 1s linear infinite;
+            padding-left: 0 !important;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+/* PARTICULE MUZICALE */
+        .music-particle {
+            position: absolute;
+            pointer-events: none;
+            font-size: 14px;
+            z-index: 5;
+            animation: floatUp 1.5s ease-out forwards;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-40px) scale(1.5); opacity: 0; }
+        }
+
+
+
+/* procent volum */
+#vol-percent{
+font-size:11px;
+color:#ccc;
+min-width:30px;
+text-align:right;
+font-weight:600;
+}
+
+/* slider normal */
+#vol-slider{
+width:40px;
+min-width:40px;
+max-width:40px;
+}
+
+/* volum maxim */
+.vol-max #vol-slider{
+width:40px;
+}
+
+.vol-max #vol-percent{
+color:#ff8acb;
+}
+
+.vol-min #vol-percent{
+color:#ffffff;
+}
+
+
+/* badge cand radio este OFF */
+.off-live{
+background:#ff0000;
+color:#ffffff;
+}
+/* punct verde cand este LIVE */
+.live-dot{
+background:#00ff00;
+}
+
+/* punct alb cand este STOP */
+.off-dot{
+background:#ffffff;
+}
+
+.visualizer{
+position:absolute;
+left:130px;
+right:0px;
+bottom:90px;
+height:70px;
+z-index:1; /* era 15 */
+pointer-events:none;
+display:flex;
+align-items:flex-end;
+}
+
+#visualizer-canvas{
+width:100%;
+height:100%;
+}
+
+canvas{
+z-index:0;
+}
+
+
+/* History */
+
+.history-container{
+position:relative;
+z-index:50;
+}
+
+.history-panel{
+position:absolute;
+bottom:67px;
+left:-190px;;
+width:400px;
+background:rgba(0,0,0,0.9);
+border:1px solid var(--pastel-pink);
+border-radius:10px;
+padding:10px;
+opacity:0;
+transform:translateY(10px);
+pointer-events:none;
+transition:all .25s ease;
+box-shadow:0 10px 25px rgba(0,0,0,0.6);
+z-index:9999;
+}
+
+.history-container:hover .history-panel{
+opacity:1;
+transform:translateY(0);
+pointer-events:auto;
+}
+
+.history-item{
+display:flex;
+align-items:center;
+gap:8px;
+font-size:11px;
+color:#fff;
+padding:4px 0;
+}
+
+.history-item.active{
+color:var(--pastel-pink);
+font-weight:600;
+}
+
+.history-number{
+width:16px;
+text-align:center;
+font-weight:700;
+}
+
+.history-line{
+height:1px;
+background:var(--pastel-pink);
+opacity:.4;
+margin:3px 0;
+}
+
+
+
+
+
+
+    </style>
+</head>
+<body>
+
+    <!-- Container STRICT 637x363 -->
+    <div class="radio-widget" id="radio-widget">
+        
+        <!-- Background Video (NO BLUR) -->
+        <video class="bg-video" autoplay loop muted playsinline>
+            <source src="https://bydesign-xat.github.io/Index/VideoPlay25v3.mp4" type="video/mp4">
+        </video>
+        <div class="video-overlay"></div>
+
+        <!-- Warning Modal -->
+        <div class="modal-overlay" id="warning-modal">
+            <div class="modal-content">
+                <p>ACEST PLAYER ESTE EXCLUSIV &copy; Copyright - ByDesign</p>
+                <button class="close-btn" id="close-modal">Inchide</button>
+            </div>
+        </div>
+
+        <!-- Top Left: Clock -->
+        <div class="top-left-panel glass-panel">
+            <div class="date-text" id="date-text">Încărcare...</div>
+            <div class="time-text" id="time-text">00:00</div>
+        </div>
+
+        <!-- Top Right: Icons -->
+        <div class="top-right-panel">
+            <button class="top-btn glass-panel" id="warning-btn" title="Advertencia">
+                <i class="fas fa-exclamation-triangle"></i>
+            </button>
+        </div>
+
+<div class="visualizer" id="visualizer">
+<canvas id="visualizer-canvas"></canvas>
+</div>
+
+        <!-- Bottom Bar -->
+        <div class="bottom-bar glass-panel">
+            
+            <div class="bar-left">
+                <button class="main-play-btn" id="main-play-btn">
+                    <i class="fas fa-play" id="main-play-icon"></i>
+                </button>
+                
+                <div class="album-wrapper">
+                    <div class="al-aire-badge off-live" id="live-badge">
+                        <div class="al-aire-dot"></div>Offline
+                    </div>
+                    <!-- Sonic Art Widget -->
+                    <div id='sonic_art'></div>
+                </div>
+            </div>
+
+            <div class="bar-center">
+                <div class="title-row">
+                    <!-- Sonic Title Widget -->
+                    <div id='sonic_title'></div>
+                    
+                </div>
+                <div class="badges-row">
+                    <div class="info-badge">DJ: <div id='sonic_dj'></div></div>
+                    <div class="info-badge">LIVE: <div id='sonic_listeners'></div></div>
+                    <div class="history-container">
+<button class="pausa-btn history-btn">HISTORY</button>
+
+<div class="history-panel" id="history-panel">
+
+<div class="history-item active">
+<span class="history-number">1</span>
+<span class="history-title" id="h1">Now Playing</span>
+</div>
+
+<div class="history-line"></div>
+
+<div class="history-item">
+<span class="history-number">2</span>
+<span class="history-title" id="h2">Previous Song</span>
+</div>
+
+<div class="history-line"></div>
+
+<div class="history-item">
+<span class="history-number">3</span>
+<span class="history-title" id="h3">Previous Song</span>
+</div>
+
+<div class="history-line"></div>
+
+<div class="history-item">
+<span class="history-number">4</span>
+<span class="history-title" id="h4">Previous Song</span>
+</div>
+
+<div class="history-line"></div>
+
+<div class="history-item">
+<span class="history-number">5</span>
+<span class="history-title" id="h5">Previous Song</span>
+</div>
+
+</div>
+</div>
+					<div class="equalizer" id="equalizer">
+                        <div class="eq-bar"></div>
+                        <div class="eq-bar"></div>
+                        <div class="eq-bar"></div>
+						<div class="eq-bar"></div>
+                        <div class="eq-bar"></div>
+                        <div class="eq-bar"></div>
+						<div class="eq-bar"></div>
+                        <div class="eq-bar"></div>
+                        <div class="eq-bar"></div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="bar-right">
+                <div class="vol-container">
+                     <button class="action-btn" id="vol-icon-btn">
+                     <i class="fas fa-volume-up" id="vol-icon"></i>
+                     </button>
+
+                     <input type="range" id="vol-slider" min="0" max="1" step="0.01" value="1">
+
+                     <span id="vol-percent">100%</span>
+                  </div>
+            </div>
+
+        </div>
+
+        <!-- Invisible Audio Element -->
+<audio id="audio-stream" preload="none"
+src="https://radio.sonicpanel.ro:10922/stream"
+crossorigin="anonymous"></audio>
+
+    <!-- Sonic / Doscast Scripts -->
+    <script id='sonic_js' data-port='8132' src='https://radio.sonicpanel.ro/cp/widgets.js?r=406'></script>
+
+    <script>
+        // --- Elements ---
+        const audio = document.getElementById('audio-stream');
+        const mainPlayBtn = document.getElementById('main-play-btn');
+        const mainPlayIcon = document.getElementById('main-play-icon');
+        const pausaBtn = document.getElementById('pausa-btn') || {};
+        const equalizer = document.getElementById('equalizer');
+        const volSlider = document.getElementById('vol-slider');
+		const volPercent = document.getElementById("vol-percent");
+        const volContainer = document.querySelector(".vol-container");
+        const volIcon = document.getElementById('vol-icon');
+        const radioWidget = document.getElementById('radio-widget');
+		const liveBadge = document.getElementById("live-badge");
+        
+        // Modal Elements
+        const warningBtn = document.getElementById('warning-btn');
+        const warningModal = document.getElementById('warning-modal');
+        const closeModal = document.getElementById('close-modal');
+
+        let isPlaying = false;
+        let isLoading = false;
+        let reconnectTimeout;
+
+        // --- Clock & Date (Spanish) ---
+        function updateClock() {
+            const now = new Date();
+            
+            // Time
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('time-text').textContent = `${hours}:${minutes}`;
+
+            // Date Format: MIE 11/3
+            const days = ['DUM', 'LUN', 'MAR', 'MIE', 'JOI', 'VIN', 'SAM'];
+            const dayName = days[now.getDay()];
+            const dayNum = now.getDate();
+            const monthNum = now.getMonth() + 1;
+            document.getElementById('date-text').textContent = `${dayName} ${dayNum}/${monthNum}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // --- Modal ---
+        warningBtn.addEventListener('click', () => {
+            warningModal.classList.add('show');
+        });
+        closeModal.addEventListener('click', () => {
+            warningModal.classList.remove('show');
+        });
+        warningModal.addEventListener('click', (e) => {
+            if (e.target === warningModal) warningModal.classList.remove('show');
+        });
+
+        // --- Audio Logic ---
+        function togglePlay() {
+            if (audio.paused) {
+                setLoadingState(true);
+                audio.load(); // catch live edge
+                audio.play().catch(err => {
+                    console.error("Playback failed:", err);
+                    setLoadingState(false);
+                    setPlayingState(false);
+                });
+            } else {
+                audio.pause();
+                setPlayingState(false);
+            }
+        }
+
+        mainPlayBtn.addEventListener('click', togglePlay);
+        if(pausaBtn.addEventListener){
+           pausaBtn.addEventListener('click', togglePlay);
+}
+
+        audio.addEventListener('playing', () => {
+            clearTimeout(reconnectTimeout);
+            setLoadingState(false);
+            setPlayingState(true);
+        });
+
+        audio.addEventListener('waiting', () => {
+            setLoadingState(true);
+        });
+
+        audio.addEventListener('pause', () => {
+            setPlayingState(false);
+        });
+
+        // Auto-reconnect
+        audio.addEventListener('error', () => {
+            setLoadingState(false);
+            setPlayingState(false);
+            clearTimeout(reconnectTimeout);
+            if (isPlaying || isLoading) {
+                reconnectTimeout = setTimeout(() => {
+                    setLoadingState(true);
+                    audio.load();
+                    audio.play().catch(() => setLoadingState(false));
+                }, 5000);
+            }
+        });
+
+function setPlayingState(state) {
+    isPlaying = state;
+
+    if (isPlaying) {
+	startVisualizer();
+
+        mainPlayIcon.className = 'fas fa-pause';
+        mainPlayBtn.classList.add('playing');
+        equalizer.classList.add('active');
+        if(pausaBtn.textContent !== undefined){
+        pausaBtn.textContent = "PAUSA";
+        pausaBtn.classList.add('playing');
+}
+
+        liveBadge.classList.remove("off-live");
+        liveBadge.innerHTML = '<div class="al-aire-dot off-dot"></div>Online';
+
+    } else {
+
+        mainPlayIcon.className = 'fas fa-play';
+        mainPlayBtn.classList.remove('playing');
+        equalizer.classList.remove('active');
+        if(pausaBtn.textContent !== undefined){
+        pausaBtn.textContent = "PAUSA";
+        pausaBtn.classList.add('playing');
+}
+
+        liveBadge.classList.add("off-live");
+        liveBadge.innerHTML = '<div class="al-aire-dot off-dot"></div>Offline';
+
+    }
+}
+
+        function setLoadingState(state) {
+            isLoading = state;
+            if (isLoading) {
+                mainPlayIcon.className = 'fas fa-spinner';
+                equalizer.classList.remove('active');
+            } else {
+                setPlayingState(isPlaying);
+            }
+        }
+
+        // --- Volume Logic ---
+volSlider.addEventListener("input", (e) => {
+
+const val = e.target.value;
+audio.volume = val;
+
+let percent = Math.round(val*100);
+volPercent.textContent = percent + "%";
+
+volContainer.classList.remove("vol-max","vol-min");
+
+if(percent === 0){
+volContainer.classList.add("vol-min");
+}
+
+if(percent === 100){
+volContainer.classList.add("vol-max");
+}
+
+if (val == 0) {
+volIcon.className = 'fas fa-volume-mute';
+} else if (val < 0.5) {
+volIcon.className = 'fas fa-volume-down';
+} else {
+volIcon.className = 'fas fa-volume-up';
+}
+
+});
+        audio.volume = volSlider.value;
+
+        // --- Music Particle Effect ---
+        const particleContainer = document.createElement('div');
+        particleContainer.style.position = 'absolute';
+        particleContainer.style.top = '0';
+        particleContainer.style.left = '0';
+        particleContainer.style.width = '100%';
+        particleContainer.style.height = '100%';
+        particleContainer.style.pointerEvents = 'none';
+        particleContainer.style.zIndex = '9';
+        particleContainer.style.overflow = 'hidden';
+        radioWidget.appendChild(particleContainer);
+
+        let lastParticleTime = 0;
+        radioWidget.addEventListener('mousemove', (e) => {
+            const now = Date.now();
+            if (now - lastParticleTime < 50) return; // Throttle particle generation
+            lastParticleTime = now;
+
+            const particle = document.createElement('span');
+            particle.className = 'music-particle';
+            const notes = ['♪', '♫', '♬', '♩'];
+            particle.textContent = notes[Math.floor(Math.random() * notes.length)];
+            
+            // Randomize color
+            const isPink = Math.random() > 0.5;
+            particle.style.color = isPink ? 'var(--pastel-pink)' : 'var(--soft-lilac)';
+            particle.style.textShadow = `0 0 8px ${isPink ? 'var(--pastel-pink)' : 'var(--soft-lilac)'}`;
+            
+            // Position based on widget
+            const rect = radioWidget.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            particle.style.left = `${x}px`;
+            particle.style.top = `${y}px`;
+            
+            particleContainer.appendChild(particle);
+            
+            // Cleanup particle
+            setTimeout(() => {
+                if (particle.parentNode) {
+                    particle.parentNode.removeChild(particle);
+                }
+            }, 1500);
+        });
+
+
+/* NEON AUDIO VISUALIZER */
+
+const canvas = document.getElementById("visualizer-canvas");
+const ctx = canvas.getContext("2d");
+function resizeCanvas(){
+canvas.width = canvas.offsetWidth;
+canvas.height = canvas.offsetHeight;
+}
+
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
+
+
+let audioCtx;
+let analyser;
+let source;
+
+function startVisualizer(){
+
+if(!audioCtx){
+
+audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+source = audioCtx.createMediaElementSource(audio);
+
+analyser = audioCtx.createAnalyser();
+
+source.connect(analyser);
+analyser.connect(audioCtx.destination);
+
+analyser.fftSize = 256;
+
+}
+
+if(audioCtx.state === "suspended"){
+audioCtx.resume();
+}
+
+if(!window.visualizerRunning){
+drawVisualizer();
+window.visualizerRunning = true;
+}
+
+drawVisualizer();
+
+}
+
+
+function drawVisualizer(){
+
+requestAnimationFrame(drawVisualizer);
+
+if(!analyser) return;
+
+const bufferLength = analyser.frequencyBinCount;
+const dataArray = new Uint8Array(bufferLength);
+
+analyser.getByteFrequencyData(dataArray);
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+/* calcul automat bare pe toata latimea */
+let gap = 2;
+let barWidth = (canvas.width / bufferLength) - gap;
+
+let x = 0;
+
+for(let i=0;i<bufferLength;i++){
+
+let value = dataArray[i] / 255;
+
+/* normalizare semnal (nu mai depinde de volum) */
+value = Math.pow(value,2.0);
+
+/* limitare maxima */
+value = Math.min(value * 1.5,1);
+
+let barHeight = value * canvas.height;
+
+/* gradient neon */
+let gradient = ctx.createLinearGradient(0,0,0,canvas.height);
+gradient.addColorStop(0,"#caa6ff");
+gradient.addColorStop(1,"#ff8acb");
+
+ctx.fillStyle = gradient;
+
+ctx.shadowColor = "#ff8acb";
+ctx.shadowBlur = 12;
+
+ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+
+x += barWidth + gap;
+
+}
+
+}
+
+
+
+/* REAL HISTORY FROM SONICPANEL */
+
+let historySongs = [];
+let lastSong = "";
+
+async function updateHistory(){
+
+try{
+
+let response = await fetch("https://radio.sonicpanel.ro:10922/stats?json=1");
+let data = await response.json();
+
+let currentSong = data.songtitle;
+
+if(currentSong && currentSong !== lastSong){
+
+lastSong = currentSong;
+
+historySongs.unshift(currentSong);
+
+if(historySongs.length > 5){
+historySongs.pop();
+}
+
+}
+
+for(let i=0;i<5;i++){
+
+let el = document.getElementById("h"+(i+1));
+
+if(el){
+el.textContent = historySongs[i] ? historySongs[i] : "-";
+}
+
+}
+
+}catch(e){
+console.log("history error",e);
+}
+
+}
+
+updateHistory();
+setInterval(updateHistory,5000);
+
+
+
+
+// --- PROTECT SCRIPT ---
+
+
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+document.onkeydown = function(e) {
+
+if(e.keyCode == 123) return false; // F12
+
+if(e.ctrlKey && e.shiftKey && e.keyCode == 73) return false; // CTRL+SHIFT+I
+
+if(e.ctrlKey && e.shiftKey && e.keyCode == 74) return false; // CTRL+SHIFT+J
+
+if(e.ctrlKey && e.keyCode == 85) return false; // CTRL+U
+
+};
+</script>
+</body>
+</html>

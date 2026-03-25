@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="ro"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <title>KenhostLive</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap');
+
+        :root {
+            --glow-color: #00f2ff;
+            --accent-color: #7000ff;
+            --neon-red: #ff0044;
+            --rainbow: linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00f2ff, #0000ff, #ff00ff, #ff0000);
+        }
+
+        * { box-sizing: border-box; }
+        
+        body { 
+            background: transparent; 
+            height: 100vh; 
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            font-family: 'Orbitron', sans-serif; 
+            overflow: hidden;
+        }
+
+        .plasma-bg { 
+            position: absolute; 
+            width: 100%; 
+            height: 100%; 
+            background: transparent; 
+            z-index: -1; 
+        }
+
+        .master-container {
+            width: 650px; height: 550px; 
+            padding: 5px;
+            border: 3px solid var(--glow-color);
+            border-radius: 25px;
+            box-shadow: 0 0 15px var(--glow-color), inset 0 0 15px var(--glow-color);
+            position: relative;
+            background: #000; 
+        }
+
+        .master-container::after {
+            content: ''; position: absolute; top: -8px; left: -8px; right: -8px; bottom: -8px;
+            border: 3px solid var(--neon-red); border-radius: 30px;
+            box-shadow: 0 0 20px var(--neon-red); pointer-events: none;
+        }
+
+        .rainbow-text {
+            background: var(--rainbow); background-size: 200% auto;
+            color: transparent; -webkit-background-clip: text; background-clip: text;
+            animation: rainbow-scroll 3s linear infinite; font-weight: 900;
+        }
+        @keyframes rainbow-scroll { to { background-position: 200% center; } }
+
+        .player-frame { 
+            width: 100%; height: 100%; display: grid; 
+            grid-template-columns: 180px 1fr 180px; grid-template-rows: 140px 160px 1fr; 
+            gap: 10px; padding: 15px;
+        }
+
+        .armor-panel { 
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px); 
+            border: 1px solid var(--glow-color); position: relative; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            padding: 8px; overflow: hidden; border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0, 242, 255, 0.2);
+        }
+
+        .main-core { 
+            grid-column: 2; grid-row: 1 / 3; 
+            clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%); 
+            border: 2px solid var(--glow-color);
+            position: relative;
+        }
+
+        #corona-canvas {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .cover-wrapper { 
+            width: 190px; height: 190px; 
+            border-radius: 50%; border: 6px double var(--glow-color); 
+            padding: 5px; z-index: 5; position: relative;
+            background: #111;
+        }
+
+        #mainCover { 
+            width: 100%; height: 100%; border-radius: 50%; object-fit: cover; 
+            animation: spin 10s linear infinite; animation-play-state: paused; 
+            transition: opacity 0.5s ease-in-out;
+            opacity: 1;
+        }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        #track-marquee { 
+            width: 100%; overflow: hidden; white-space: nowrap; 
+            border-bottom: 1px solid var(--glow-color); margin-bottom: 1px;
+        }
+        #track-text { 
+            display: inline-block; padding-left: 100%; 
+            animation: marqueeScroll 15s linear infinite; 
+        }
+        @keyframes marqueeScroll {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-100%, 0); }
+        }
+
+        .eq-container { width: 95%; height: 60px; display: flex; align-items: flex-end; gap: 2px; margin-bottom: 10px; }
+        .bar { flex: 1; background: var(--rainbow); background-size: 500% 100%; min-height: 3px; }
+
+        input[type=range] { -webkit-appearance: none; width: 140px; height: 6px; background: var(--rainbow); border-radius: 10px; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 18px; background: #fff; border-radius: 50%; border: 2px solid var(--glow-color); cursor: pointer; }
+
+        .bottom-control { grid-column: 1 / 4; grid-row: 3; border-radius: 15px; }
+        .label { font-size: 9px; letter-spacing: 2px; color: var(--glow-color); text-transform: uppercase; margin-bottom: 5px; }
+        .value-large { font-size: 18px; font-weight: 900; }
+        
+        .btn-core { background: transparent; border: 2px solid var(--glow-color); color: #fff; padding: 8px 20px; cursor: pointer; font-size: 11px; font-weight: 700; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%); transition: 0.3s; }
+        .btn-core:hover { background: var(--glow-color); color: #000; }
+
+        #sys-core-shield { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 999999; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 2s; }
+        
+        .history-item { font-size: 10px; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; text-align: center; }
+		
+/* container cu overflow ascuns */
+#track-marquee {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--glow-color);
+}
+
+/* textul care se mișcă */
+#track-text {
+    display: inline-block;
+    padding-left: 100%; /* start off-screen */
+    background: var(--rainbow);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 900;
+    animation: marqueeScroll 20s linear infinite, rainbow-scroll 5s linear infinite;
+}
+
+/* scroll text */
+@keyframes marqueeScroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+}
+
+/* rainbow gradient animation (existent deja) */
+@keyframes rainbow-scroll {
+    0% { background-position: 0% center; }
+    100% { background-position: 200% center; }
+}		
+
+.btn-stop {
+    background: transparent;        /* fundal inițial */
+    border: 2px solid #ff0044;     /* bordură roșie */
+    color: #fff;                    /* text alb inițial */
+    padding: 8px 20px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 700;
+    clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%); /* forma butonului */
+    transition: 0.3s all;           /* animatie tranzitie */
+}
+
+/* hover effect */
+.btn-stop:hover {
+    background: #ff0044;  /* fundal roșu */
+    color: #000;           /* text negru */
+}
+
+.label {
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--glow-color);
+    text-transform: uppercase;
+    margin-bottom: 5px;
+
+    border-bottom: 2px solid var(--glow-color); /* linia unică */
+    padding-bottom: 2px;          /* distanța liniei față de text */
+}
+
+		
+</style>
+</head>
+<body>
+
+<div id="sys-core-shield">
+    <img src="" style="width:250px;">
+    <div style="color:red; font-size:20px; text-align:center;">
+        <br>
+    </div>
+</div>
+
+<div class="plasma-bg"></div>
+
+<div class="master-container">
+    <div class="player-frame" id="mainFrame">
+        
+        <div class="armor-panel" style="grid-column:1; grid-row:1;">
+            <div class="label underline-label">Radio</div>
+            <div class="value-large rainbow-text" id="city-tag">LaFamilia</div>
+        </div>
+
+        <div class="armor-panel" style="grid-column:1; grid-row:2;">
+            <div class="label underline-label">Ascultarori</div>
+                 <div class="rainbow-text" style="font-size: 14px; margin-top:5px;">
+                     🎧 Live: <span id="listener-count">0</span>
+                 </div>
+				   <!-- SPAȚIU INTRE ASCULTATORI/METEO SI ZODIAC -->
+    <div style="height: 15px;"></div> <!-- asta face spațiul -->
+            <div class="label underline-label">Zodiac</div>
+                 <div class="rainbow-text" style="font-size: 14px; margin-top:5px;">
+                   <span id="zodiac-sign">Încărcare...</span>
+                 </div>
+        </div>
+
+        <div class="armor-panel main-core">
+            <canvas id="corona-canvas" width="400" height="400"></canvas>
+            <div class="cover-wrapper">
+                <img id="mainCover" src="" style="animation-play-state: running; opacity: 1;">
+            </div>
+        </div>
+
+        <div class="armor-panel" style="grid-column:3; grid-row:1;">
+            <div class="label underline-label">Data/Ora</div>
+            <div id="clock-tag" class="rainbow-text" style="font-size: 20px;">Încărcare...</div>
+            <div id="full-date" class="rainbow-text" style="font-size: 15px; margin-top: 5px;">Încărcare...</div>
+        </div>
+
+        <div class="armor-panel" style="grid-column:3; grid-row:2;">
+            <div class="label underline-label">History</div>
+            <div id="history-box" style="font-size: 10px; width:100%; height:80px; overflow-y:auto; overflow-x:hidden;"><div class="history-item rainbow-text">🔊 &copy; Copyright - ByDesign</div></div>
+        </div>
+
+        <div class="armor-panel bottom-control">
+            <div id="track-marquee">
+                <span id="track-text" class="rainbow-text" style="font-size: 18px;">🔊 &copy; Copyright - ByDesign</span>
+            </div>
+            
+            <div class="eq-container" id="eq-box"><div class="bar" style="height: 0px;"></div><div class="bar" style="height: 0px;"></div><div class="bar" style="height: 0px;"></div><div class="bar" style="height: 0px;"></div><div class="bar" style="height: 0px;"></div><div class="bar" style="height: 0px;"></div><div class="bar" style="height: 0px;"></div><div class="bar" style="height: 0px;"></div><div class="bar" style="height: 0px;"></div><div class="bar" style="height: 0px;"></div><div class="bar" style="height: 0px;"></div><div class="bar" style="height: 0px;"></div><div class="bar" style="height: 0px;"></div><div class="bar" style="height: 0px;"></div><div class="bar" style="height: 0px;"></div><div class="bar" style="height: 0px;"></div><div class="bar" style="height: 0px;"></div><div class="bar" style="height: 0px;"></div><div class="bar" style="height: 0px;"></div><div class="bar" style="height: 0px;"></div><div class="bar" style="height: 0px;"></div><div class="bar" style="height: 0px;"></div><div class="bar" style="height: 0px;"></div><div class="bar" style="height: 0px;"></div><div class="bar" style="height: 0px;"></div><div class="bar" style="height: 0px;"></div><div class="bar" style="height: 0px;"></div><div class="bar" style="height: 0px;"></div><div class="bar" style="height: 0px;"></div><div class="bar" style="height: 0px;"></div><div class="bar" style="height: 0px;"></div><div class="bar" style="height: 0px;"></div><div class="bar" style="height: 0px;"></div><div class="bar" style="height: 0px;"></div><div class="bar" style="height: 0px;"></div></div>
+
+<div style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 0 10px;">
+    <button class="btn-core" id="playBtn" onclick="togglePlay()">PLAY</button>
+    
+    <!-- container central pentru slider + procent -->
+    <div style="display: flex; align-items: center; gap: 5px;">
+        <input type="range" id="vol-slider" min="0" max="1" step="0.01" value="1">
+        <span id="vol-percent" class="rainbow-text" style="font-size:12px;">100%</span>
+    </div>
+
+    <button class="btn-stop" onclick="location.reload()">STOP</button>
+</div>
+</div>		
+		
+
+<!-- Armor-panel pentru link-uri, sub bottom-control -->
+<div class="armor-panel" style="grid-column: 1 / 4; grid-row: 4; height: 30px; display:flex; justify-content:center; align-items:center; gap:5px;">
+<!-- Container link-uri, sub bottom-control -->
+<div style="width:100%; display:flex; justify-content:center; align-items:center; gap:100px; margin-top:5px;">
+    <a href="https://www.facebook.com" target="_blank">
+        <img src="https://xatimg.com/image/sBDAXMnJQqcL.gif" alt="Facebook" width="28" height="26">
+    </a>
+    <a href="https://xat.com" target="_blank">
+        <img src="https://xatimg.com/image/WYhfxyhbhrFP.gif" alt="xat" width="28" height="26">
+    </a>
+    <a href="https://play.google.com" target="_blank">
+        <img src="https://xatimg.com/image/jmZjJ2mgjWS9.gif" alt="Android" width="28" height="26">
+    </a>
+</div>
+
+    </div>
+</div>
+
+<script>
+    // --- CONFIGURAZIONE STREAM ---
+    const STREAM_URL = "https://radio.sonicpanel.ro:10922/;type=mp3";
+	// --- Slider volum și procent ---
+const volSlider = document.getElementById('vol-slider');
+const volPercent = document.getElementById('vol-percent');
+
+// Inițializare procent
+volPercent.innerText = Math.round(volSlider.value * 100) + '%';
+
+// Update la schimbare slider
+volSlider.addEventListener('input', (e) => {
+    const val = e.target.value;
+    audio.volume = val; // setează volumul audio
+    volPercent.innerText = Math.round(val * 100) + '%'; // update text
+});
+	
+    const PROXY = "https://api.allorigins.win/raw?url=";
+    const METADATA_URL = "https://radio.sonicpanel.ro:10922/stats?sid=1&json=1"; 
+    const DEFAULT_COVER = "https://xatimg.com/image/oacvd5ltA14X.png";
+
+    const audio = new Audio(STREAM_URL);
+    audio.crossOrigin = "anonymous";
+    let isPlaying = false, audioCtx, analyser, dataArray, source;
+    let angleCorona = 0; 
+
+    const coronaCanvas = document.getElementById("corona-canvas");
+    const ctxC = coronaCanvas.getContext("2d");
+    const eqBox = document.getElementById('eq-box');
+
+    // Inizializzazione Barre Equalizzatore
+    for(let i=0; i<35; i++) {
+        let b = document.createElement('div'); b.className = 'bar'; eqBox.appendChild(b);
+    }
+    const bars = document.getElementsByClassName('bar');
+
+    function initAudio() {
+        try {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioCtx.createAnalyser();
+            source = audioCtx.createMediaElementSource(audio);
+            source.connect(analyser);
+            analyser.connect(audioCtx.destination);
+            analyser.fftSize = 256;
+            dataArray = new Uint8Array(analyser.frequencyBinCount);
+            console.log("Audio Engine Initialized");
+        } catch(e) {
+            console.error("Audio Context Error:", e);
+        }
+    }
+
+    function drawVisuals() {
+        if(!isPlaying) return;
+        requestAnimationFrame(drawVisuals);
+        analyser.getByteFrequencyData(dataArray);
+
+        for(let i=0; i<bars.length; i++) {
+            let val = dataArray[i];
+            let height = i < 10 ? (val / 255) * 40 : (val / 255) * 60;
+            bars[i].style.height = (height + 4) + "px";
+        }
+
+        let power = (dataArray[10] * 1.2 + dataArray[20] * 1.5) / 2;
+        let jump = Math.min((power / 255) * 35, 30); 
+        
+        ctxC.clearRect(0,0,400,400);
+        for(let i=0; i<16; i++) {
+            let currentAngle = angleCorona + (i * (Math.PI * 2 / 16));
+            let radius = 115 + jump; 
+            let x = 200 + Math.cos(currentAngle) * radius;
+            let y = 200 + Math.sin(currentAngle) * radius;
+            
+            ctxC.beginPath();
+            let dotSize = 3 + (jump * 0.25); 
+            ctxC.arc(x, y, dotSize, 0, Math.PI * 2);
+            ctxC.fillStyle = `hsl(${(i * 22) + (angleCorona * 50)}, 100%, 50%)`;
+            ctxC.shadowBlur = 8 + jump;
+            ctxC.shadowColor = ctxC.fillStyle;
+            ctxC.fill();
+        }
+        angleCorona += 0.02;
+    }
+
+    function togglePlay() {
+        if(!audioCtx) initAudio();
+        
+        const btn = document.getElementById('playBtn');
+        const cover = document.getElementById('mainCover');
+
+        if(audio.paused) {
+            audioCtx.resume().then(() => {
+                audio.play();
+                isPlaying = true;
+                btn.innerText = "PLAY"; 
+                cover.style.animationPlayState = "running";
+                drawVisuals();
+            });
+        } else {
+            audio.pause(); 
+            isPlaying = false;
+            btn.innerText = "PLAY"; 
+            cover.style.animationPlayState = "paused";
+        }
+    }
+
+    setInterval(() => { 
+        const d = new Date();
+        document.getElementById('clock-tag').innerText = d.toLocaleTimeString('ro-RO');
+        document.getElementById('full-date').innerText = d.toLocaleDateString('ro-RO', {day:'numeric', month:'short', year:'numeric'}).toUpperCase();
+    }, 1000);
+
+    let currentTrack = "";
+	let historyCounter = 0;
+
+
+	async function getMeta() {
+    try {
+        const r = await fetch(METADATA_URL);
+        const data = await r.json();
+
+const mainCover = document.getElementById('mainCover');
+
+function updateCover(url) {
+    mainCover.src = url || DEFAULT_COVER;
+}
+
+
+        // Update track title
+let songTitle = (data.songtitle || "SISTEMA IL CARTAIO").toUpperCase();
+if (currentTrack !== songTitle) {
+    currentTrack = songTitle;
+    document.getElementById('track-text').innerText = songTitle;
+
+    // Istoric cu număr
+const h = document.getElementById('history-box');
+
+// Numărăm doar melodiile reale (fără placeholder)
+const existingSongs = Array.from(h.children).filter(c => c.dataset.songNumber);
+const nextNumber = existingSongs.length + 1;
+
+// Creăm elementul pentru istoric
+const div = document.createElement('div'); 
+div.className = 'history-item rainbow-text'; 
+div.dataset.songNumber = nextNumber;   // stocăm nr melodiei
+div.innerText = `${nextNumber}. ${songTitle}`;
+
+// Adăugăm la început
+h.prepend(div);
+
+// Păstrăm doar ultimele 5
+const allSongs = Array.from(h.children).filter(c => c.dataset.songNumber);
+while(allSongs.length > 5) {
+    const last = allSongs.pop();
+    h.removeChild(last);
+};
+
+    // Update cover
+    updateCover(DEFAULT_COVER); // momentan folosim imaginea default
+}
+
+        // Update listener count
+        const listeners = data.currentlisteners || data.listeners || 0;
+        document.getElementById('listener-count').innerText = listeners;
+
+    } catch (e) {
+        console.log("Errore metadati", e);
+    }
+}
+
+setInterval(getMeta, 2000); // update la fiecare 2 secunde
+getMeta(); // update imediat la încărcare
+
+
+
+function getZodiacSign(day, month) {
+    const zodiac = [
+        { sign: "Capricorn", end: 19 },
+        { sign: "Vărsător", end: 18 },
+        { sign: "Pești", end: 20 },
+        { sign: "Berbec", end: 19 },
+        { sign: "Taur", end: 20 },
+        { sign: "Gemeni", end: 20 },
+        { sign: "Rac", end: 22 },
+        { sign: "Leu", end: 22 },
+        { sign: "Fecioară", end: 22 },
+        { sign: "Balanță", end: 22 },
+        { sign: "Scorpion", end: 21 },
+        { sign: "Săgetător", end: 21 },
+        { sign: "Capricorn", end: 31 } // pentru decembrie
+    ];
+    return (day > zodiac[month - 1].end) 
+        ? zodiac[month % 12].sign 
+        : zodiac[month - 1].sign;
+}
+
+function updateZodiac() {
+    const today = new Date();
+    const sign = getZodiacSign(today.getDate(), today.getMonth() + 1);
+    document.getElementById("zodiac-sign").innerText = sign;
+}
+
+updateZodiac();
+setInterval(updateZodiac, 60*60*1000); // actualizare la fiecare oră
+
+
+
+// --- PROTECT SCRIPT ---
+
+
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+document.onkeydown = function(e) {
+
+if(e.keyCode == 123) return false; // F12
+
+if(e.ctrlKey && e.shiftKey && e.keyCode == 73) return false; // CTRL+SHIFT+I
+
+if(e.ctrlKey && e.shiftKey && e.keyCode == 74) return false; // CTRL+SHIFT+J
+
+if(e.ctrlKey && e.keyCode == 85) return false; // CTRL+U
+
+};
+
+</script>
+
+</body></html>

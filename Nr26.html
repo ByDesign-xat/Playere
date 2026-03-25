@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<title>La Familia</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet">
+
+<style>
+:root{
+--main:#ff0000;
+--glow:rgba(255,0,0,0.6);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+background:transparent;
+font-family:'Orbitron',sans-serif;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+color:var(--main);
+overflow:hidden;
+}
+
+.player{
+width:900px;
+height:580px;
+background-image:url('https://www.transparenttextures.com/patterns/carbon-fibre.png'),
+linear-gradient(145deg,#1a1a1a 0%,#050505 100%);
+background-color:#111;
+border-radius:35px;
+border:3px solid #ff0000;
+box-shadow:0 0 50px rgba(255,0,0,0.3), inset 0 0 20px rgba(0,0,0,1);
+display:flex;
+padding:25px;
+gap:35px;
+align-items:center;
+}
+
+.side{
+width:170px;
+height:100%;
+background:rgba(0,0,0,0.4);
+border-radius:20px;
+display:flex;
+flex-direction:column;
+justify-content:space-evenly;
+align-items:center;
+}
+
+.speaker-box{
+width:145px;
+height:145px;
+background:#000;
+border-radius:50%;
+display:flex;
+justify-content:center;
+align-items:center;
+box-shadow: inset 0 0 25px rgba(0,0,0,1),0 0 15px var(--glow);
+}
+
+.box-small{width:105px;height:105px;}
+
+.sub-big{
+width:140px;
+height:140px;
+background-image:url('https://xatimg.com/image/OuJbcyvdKsyH.gif');
+background-size:cover;
+border-radius:50%;
+transition: transform 0.1s ease; /* tranziție pentru animație */
+}
+
+.sub-small{
+width:100px;
+height:100px;
+background-image:url('https://xatimg.com/image/OuJbcyvdKsyH.gif');
+background-size:cover;
+border-radius:50%;
+transition: transform 0.1s ease; /* tranziție pentru animație */
+}
+
+.center{
+flex:1;
+height:100%;
+text-align:center;
+display:flex;
+flex-direction:column;
+justify-content:space-between;
+}
+
+.title{
+font-family: 'Audiowide', sans-serif;
+font-size:42px;
+letter-spacing:4px;
+color:#ff0000;
+text-shadow:0 0 10px #ff0000;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:18px;
+}
+
+.title img{height:70px;width:60px;}
+
+.cover-container{
+width:160px;
+height:160px;
+border-radius:50%;
+overflow:hidden;
+margin:0 auto;
+border:4px solid var(--main);
+box-shadow:0 0 25px var(--glow);
+}
+
+#cover{
+width:100%;
+height:100%;
+object-fit:cover;
+border-radius:50%;
+animation:spin 6s linear infinite;
+animation-play-state:paused;
+}
+
+@keyframes spin{
+from{transform:rotate(0deg);}
+to{transform:rotate(360deg);}
+}
+
+.song {
+  width: 380px;
+  height: 32px;
+  overflow: hidden;
+  background: #000;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+    margin: 5px auto; /* ajustează 80px după cât vrei să fie mai jos spre centru */
+  align-self: center; /* centru pe orizontală */
+}
+
+.scroll {
+  display: inline-block;
+  white-space: nowrap;
+  animation: scrollText 12s linear infinite;
+  font-size: 14px;
+  color: #fff;
+}
+
+@keyframes scrollText{
+0%{transform:translateX(100%)}
+100%{transform:translateX(-100%)}
+}
+
+.vu{
+display:flex;
+justify-content:center;
+align-items:flex-end;
+gap:1px;
+height:85px;
+background:rgba(0,0,0,0.8);
+padding:5px;
+border-radius:8px;
+}
+
+.vu-bar{
+width:1.2px;
+height:3px;
+background:linear-gradient(to top,#600,#f00,#ff8888);
+}
+
+.controls button{
+background:#111;
+border:2px solid var(--main);
+color:#fff;
+width:45px;
+height:45px;
+border-radius:50%;
+cursor:pointer;
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between; /* unul în stânga, unul în dreapta */
+  align-items: center;
+  width: 400px; /* ajustează după cât de depărtate vrei butoanele */
+  margin: 0 auto; /* centru pentru container */
+}
+
+#volume{width:200px;}
+
+.weather{color:#fff;}
+.info{font-size:11px;color:#888;}
+
+.play-btn {
+  background: #111;
+  border: 2px solid #00ff00;
+  color: #00ff00;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.play-btn:hover {
+  box-shadow: 0 0 15px #00ff00, 0 0 30px #00ff00, 0 0 45px #00ff00;
+  transform: scale(1.1);
+}
+
+.stop-btn {
+  background: #111;
+  border: 2px solid #ff0000;
+  color: #ff0000;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.stop-btn:hover {
+  box-shadow: 0 0 15px #ff0000, 0 0 30px #ff0000, 0 0 45px #ff0000;
+  transform: scale(1.1);
+}  cursor: pointer;
+}
+
+.sub-big, .sub-small {
+    transition: transform 0.1s ease; /* animație lină */
+    transform-origin: center center; /* scalează din centru */
+}
+
+
+
+</style>
+</head>
+
+<body>
+<div class="player">
+
+<div class="side">
+<div class="speaker-box box-small"><div class="sub-small"></div></div>
+<div class="speaker-box"><div class="sub-big"></div></div>
+<div class="speaker-box"><div class="sub-big"></div></div>
+</div>
+
+<div class="center">
+
+<div class="title">
+  <img src="https://xatimg.com/image/Fu2xS39jv10b.png">
+  <span>La Familia</span>
+  <img src="https://xatimg.com/image/hwyBWAtkcSkT.png">
+</div>
+
+<div class="cover-container">
+<img id="cover" src="https://xatimg.com/image/oacvd5ltA14X.png">
+</div>
+
+<div class="song">
+<span id="trackInfo" class="scroll">Încărcare...</span>
+</div>
+
+<div class="vu" id="visualizer"></div>
+
+<div class="controls">
+  <button class="play-btn" onclick="playRadio()">Play</button>
+  <button class="stop-btn" onclick="stopRadio()">Stop</button>
+<br>
+ <input type="range" id="volume" min="0" max="1" step="0.01" value="1">
+  <span id="volumePercent">100%</span>
+</div>
+
+<div class="weather">
+<span id="weather">Încărcare...</span>
+</div>
+
+<div class="info">
+<div id="display-data"></div>
+ASCULTA: ✦ <span id="listeners">0</span> ✦ |  
+<span id="time-now"></span>
+</div>
+
+</div>
+
+<div class="side">
+<div class="speaker-box box-small"><div class="sub-small"></div></div>
+<div class="speaker-box"><div class="sub-big"></div></div>
+<div class="speaker-box"><div class="sub-big"></div></div>
+</div>
+
+</div>
+
+<audio id="audio" crossorigin="anonymous"></audio>
+
+<script>
+// RADIO
+const hidden="aHR0cHM6Ly9yYWRpby5zb25pY3BhbmVsLnJvOjEwOTIyL3N0cmVhbQ==";
+const STREAM=atob(hidden);
+const audio=document.getElementById("audio");
+audio.src=STREAM;
+
+const volume = document.getElementById("volume");
+const volumePercent = document.getElementById("volumePercent");
+
+volume.oninput = () => {
+  audio.volume = volume.value;                        // setează volumul audio
+  volumePercent.innerText = Math.round(volume.value * 100) + "%"; // actualizează procentul
+};
+const cover=document.getElementById("cover");
+const vu=document.getElementById("visualizer");
+const listeners=document.getElementById("listeners");
+
+
+// VU BAR
+let audioContext, analyser, source, dataArray;
+for(let i=0;i<140;i++){
+  let bar=document.createElement("div");
+  bar.className="vu-bar";
+  vu.appendChild(bar);
+}
+
+function playRadio(){
+  audio.play().catch(()=>{});
+  cover.style.animationPlayState="running";
+  if(!audioContext){
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    analyser = audioContext.createAnalyser();
+    analyser.fftSize=512;
+    source = audioContext.createMediaElementSource(audio);
+    source.connect(analyser);
+    analyser.connect(audioContext.destination);
+    dataArray = new Uint8Array(analyser.frequencyBinCount);
+  }
+  animate();
+}
+
+function stopRadio(){
+  audio.pause();
+  cover.style.animationPlayState="paused";
+}
+
+let lastBoomTime = 0;
+
+function animate(){
+  requestAnimationFrame(animate);
+  if(!analyser) return;
+
+  analyser.getByteFrequencyData(dataArray);
+
+  // VU bars
+  const bars = document.querySelectorAll(".vu-bar");
+  bars.forEach((bar,i)=>{
+    let val = dataArray[i] || 0;
+    bar.style.height = (3 + val*0.3) + "px";
+  });
+
+  // Anima boxele după bass, intensitate constantă (ca la 6%)
+  const bass = dataArray.slice(0,5).reduce((a,b)=>a+b,0)/5; // medie primele 10 frecvențe
+  const boxes = document.querySelectorAll(".sub-big");
+  
+  boxes.forEach(box=>{
+    // FIX intensitatea ca la 6%, indiferent de volumul audio
+    let scale = 1 + (bass/1500); // 500 = scala fixă ca la volumul 6%
+    box.style.transform = `scale(${scale})`;
+  });
+}
+
+
+
+// CEAS
+function updateClock(){
+  let d=new Date();
+  document.getElementById("time-now").innerText=d.toLocaleTimeString("ro-RO");
+  document.getElementById("display-data").innerText=d.toLocaleDateString("ro-RO",{weekday:'long',day:'numeric',month:'long',year:'numeric'}).toUpperCase();
+}
+setInterval(updateClock,1000);
+updateClock();
+
+// VREMEA CU ORAȘ
+function updateWeather() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(pos=>{
+      const lat=pos.coords.latitude;
+      const lon=pos.coords.longitude;
+
+      // Obține orașul
+      fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+      .then(r=>r.json()).then(loc=>{
+        const city = loc.address.city || loc.address.town || loc.address.village || "Locație necunoscută";
+
+        // Obține vremea
+        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&timezone=auto`)
+        .then(r=>r.json()).then(w=>{
+          const temp = w.current_weather.temperature;
+          const symbol = w.current_weather.is_day ? "☀" : "🌙";
+          document.getElementById("weather").innerText = `${city} ${symbol} ${temp}°C`;
+        });
+      });
+    }, err=>{ document.getElementById("weather").innerText="Vreme indisponibilă"; });
+  } else {
+    document.getElementById("weather").innerText="Geolocalizare nu suportată";
+  }
+}
+updateWeather();
+setInterval(updateWeather,600000);
+
+// STATS RADIO
+window.statsCB=function(data){
+  if(!data) return;
+  listeners.innerText = data.currentlisteners || 0;
+  if(data.songtitle){
+    document.getElementById("trackInfo").innerText = data.songtitle;
+    fetchCover(data.songtitle);
+  }
+}
+
+function updateStats(){
+  let s=document.createElement("script");
+  s.src=`https://radio.sonicpanel.ro:10922/stats?sid=1&json=1&callback=statsCB&r=${Math.random()}`;
+  document.body.appendChild(s);
+  setTimeout(()=>s.remove(),5000);
+}
+setInterval(updateStats,10000);
+updateStats();
+
+// FETCH COVER
+function fetchCover(track){
+  window.coverCB = function(data){
+    if(data.results && data.results.length>0){
+      cover.src=data.results[0].artworkUrl100.replace("100x100","500x500");
+    } else {
+      cover.src="https://xatimg.com/image/oacvd5ltA14X.png";
+    }
+  }
+  let s=document.createElement("script");
+  s.src = "https://itunes.apple.com/search?term="+encodeURIComponent(track)+"&media=music&limit=1&callback=coverCB";
+  document.body.appendChild(s);
+  setTimeout(()=>s.remove(),5000);
+}
+
+
+
+// --- PROTECT SCRIPT ---
+
+
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+document.onkeydown = function(e) {
+
+if(e.keyCode == 123) return false; // F12
+
+if(e.ctrlKey && e.shiftKey && e.keyCode == 73) return false; // CTRL+SHIFT+I
+
+if(e.ctrlKey && e.shiftKey && e.keyCode == 74) return false; // CTRL+SHIFT+J
+
+if(e.ctrlKey && e.keyCode == 85) return false; // CTRL+U
+
+};
+</script>
+</body>
+</html>

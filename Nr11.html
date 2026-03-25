@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ByDesign</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+<style>
+:root{
+    --neon:#ff0000;
+    --panel:rgba(17,17,17,0.85);
+    --glow:0 0 15px rgba(255,0,0,0.7);
+}
+
+html,body{
+    margin:0;
+    padding:0;
+    background:transparent !important;
+    font-family:'Orbitron',sans-serif;
+}
+
+#app-wrapper{
+    width:100%;
+    min-height:520px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+#main-station{
+    width:700px;
+    height:500px;
+    background:var(--panel);
+    backdrop-filter:blur(6px);
+    border:3px solid var(--neon);
+    border-radius:50px;
+    display:flex;
+    flex-direction:column;
+    box-shadow:0 0 80px rgba(255,0,0,0.2);
+    overflow:hidden;
+}
+
+#station-header{
+    height:110px;
+    background:rgba(0,162,255,0.75);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:15px;
+    border-bottom:2px solid var(--neon);
+}
+
+.header-logo{
+    width:55px;
+    height:55px;
+    object-fit:contain;
+    filter:drop-shadow(0 0 8px rgba(255,0,0,0.7));
+}
+
+.radio-name{
+    font-size:2em;
+    font-weight:900;
+    color:#ff0000;
+    letter-spacing:6px;
+    text-shadow:0 0 15px var(--neon);
+    white-space:nowrap;
+}
+
+#station-body{
+    display:flex;
+    flex-grow:1;
+    overflow:hidden;
+}
+
+#side-left{
+    width:220px;
+    padding:20px;
+    background:rgba(0,162,255,0.75);
+    border-right:2px solid rgba(255,0,0,0.2);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:space-between;
+}
+
+#digital-clock{
+    font-size:2em;
+    color:var(--neon);
+    text-shadow:var(--glow);
+    font-family:'Share Tech Mono',monospace;
+}
+
+#digital-date{
+    font-family:'Share Tech Mono',monospace;
+    font-size:0.75em;
+    opacity:0.8;
+    text-align:center;
+    white-space:nowrap;
+}
+
+#temperature{
+    font-family:'Share Tech Mono',monospace;
+    font-size:0.75em;
+    opacity:0.9;
+    text-align:center;
+}
+
+.mini-cover{
+    width:150px;
+    height:150px;
+    border:3px solid var(--neon);
+    border-radius:20px;
+    background:#000 center/cover no-repeat;
+    box-shadow:0 0 30px rgba(0,162,255,0.9);
+}
+
+#side-center{
+    width:150px;
+    background:rgba(0,162,255,0.75);
+    padding:20px;
+    border-right:2px solid rgba(255,0,0,0.2);
+}
+
+#track-history{
+    height:460px;
+    overflow-y:auto;
+}
+
+.history-item{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:12px;
+    padding:8px;
+    border-bottom:2px solid #F00;
+    font-family:'Share Tech Mono',monospace;
+    font-size:0.80em;
+}
+
+.history-cover{
+    width:40px;
+    height:40px;
+    border-radius:5px;
+    background-size:cover;
+    border:2px solid var(--neon);
+}
+
+#side-right{
+    flex-grow:1;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:rgba(0,162,255,0.75);
+    position:relative;
+    flex-direction:column;
+}
+
+#cover-spin{
+    width:230px;
+    height:230px;
+    border-radius:50%;
+    border:5px solid #ff0000;
+    background:#000 center/cover no-repeat;
+    animation:rotateVinyl 12s linear infinite;
+    animation-play-state:paused;
+}
+
+@keyframes rotateVinyl{
+    from{transform:rotate(0deg);}
+    to{transform:rotate(360deg);}
+}
+
+#visualizer-container{
+    width:100%;
+    margin-top:20px;
+    display:flex;
+    justify-content:center;
+    align-items:flex-end;
+}
+
+#equalizer{
+    width:240px;
+    height:70px;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:5px;
+}
+
+.eq-bar{
+    width:8px;
+    height:12px;
+    border-radius:6px;
+    background:linear-gradient(to top,#ff0000,#00a2ff);
+    box-shadow:0 0 12px rgba(255,0,0,0.8);
+    transform-origin:bottom;
+    transition:height 0.08s linear;
+}
+
+.controls{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.btn-play{
+    width:45px;
+    height:45px;
+    cursor:pointer;
+    background:red;
+    border-radius:50%;
+    border:none;
+    color:white;
+    font-size:18px;
+    font-weight:bold;
+}
+
+#volume{
+    width:90px;
+    cursor:pointer;
+}
+</style>
+</head>
+
+<body oncontextmenu="return false">
+<div id="app-wrapper">
+
+<div id="main-station">
+    <div id="station-header">
+        <img src="https://xatimg.com/image/oacvd5ltA14X.png" class="header-logo">
+        <div class="radio-name">LaFamilia</div>
+        <img src="https://xatimg.com/image/oacvd5ltA14X.png" class="header-logo">
+    </div>
+
+    <div id="station-body">
+        <div id="side-left">
+            <div style="text-align:center">
+                <div id="digital-clock"></div>
+                <div id="digital-date"></div>
+                <div id="temperature">🌡️ : --°C</div>
+            </div>
+
+            <div class="mini-cover" id="mini-cover" style="background-image:url('https://xatimg.com/image/oacvd5ltA14X.png');"></div>
+
+            <div style="text-align:center;width:100%;">
+                <div id="artist" style="color:var(--neon);font-weight:bold;">Încărcare...</div>
+                <div id="title">Încărcare...</div>
+            </div>
+
+            <div style="font-family:'Share Tech Mono', monospace;">
+                👥 Ascutatotii: <span id="listeners">6</span>
+            </div>
+
+            <div class="controls">
+                <button class="btn-play" id="playBtn">▶</button>
+                <input type="range" id="volume" min="0" max="1" step="0.01" value="1">
+            </div>
+        </div>
+
+        <div id="side-center">
+            <div style="color:var(--neon);margin-bottom:12px;border-bottom:2px solid var(--neon);font-family:'Share Tech Mono', monospace;">
+                𝕀𝕤𝕥𝕠𝕣𝕚𝕔...
+            </div>
+            <div id="track-history">
+                <div class="history-item">
+                    <div class="history-cover" style="background-image:url('https://xatimg.com/image/oacvd5ltA14X.png')"></div>
+                    <div><b>LaFamilia...</b><br><small>LaFamilia...</small></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="side-right">
+            <div id="cover-spin" style="background-image:url('https://i.imgur.com/XNoKzfj.png');"></div>
+
+            <div id="visualizer-container">
+                <div id="equalizer">
+                    <div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div>
+                    <div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div>
+                    <div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div>
+                    <div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+/* BLOQUEIO TOTAL: STREAM + STATS + NOME */
+const LOCK = Object.freeze({
+    stream: atob("aHR0cHM6Ly9yYWRpby5zb25pY3BhbmVsLnJvOjEwOTIyL3N0cmVhbQ=="),
+    stats: atob("aHR0cHM6Ly9yYWRpby5zb25pY3BhbmVsLnJvOjEwOTIyL3N0YXRzP2pzb249MQ=="),
+    name: "LaFamilia"
+});
+
+/* PROTEÇÃO EXTREMA DO NOME (mesmo se apagarem) */
+function enforceRadioName(){
+    const header = document.getElementById("station-header");
+    let title = document.querySelector(".radio-name");
+
+    if(!title && header){
+        const newTitle = document.createElement("div");
+        newTitle.className = "radio-name";
+        newTitle.textContent = LOCK.name;
+        header.insertBefore(newTitle, header.children[1] || null);
+        return;
+    }
+
+    if(title && title.textContent !== LOCK.name){
+        title.textContent = LOCK.name;
+    }
+
+    if(title){
+        title.style.display = "block";
+        title.style.visibility = "visible";
+        title.style.opacity = "1";
+    }
+
+    if(document.title !== LOCK.name){
+        document.title = LOCK.name;
+    }
+}
+setInterval(enforceRadioName, 1000);
+
+/* TEMPERATURA MINAS GERAIS */
+async function updateTemperature(){
+    try{
+        const res = await fetch("https://api.open-meteo.com/v1/forecast?latitude=-19.9167&longitude=-43.9345&current_weather=true");
+        const data = await res.json();
+        if(data && data.current_weather){
+            const temp = Math.round(data.current_weather.temperature);
+            document.getElementById("temperature").textContent =
+                `🌡️ MINAS GERAIS: ${temp}°C`;
+        }
+    }catch(e){}
+}
+setInterval(updateTemperature,600000);
+updateTemperature();
+
+const DEFAULT_COVER = "https://xatimg.com/image/oacvd5ltA14X.png";
+const audio = new Audio();
+audio.crossOrigin = "anonymous";
+audio.preload = "none";
+audio.volume = 0.7;
+
+let playing = false;
+let lastTrack = "";
+let audioCtx, analyser, source, dataArray;
+const eqBars = document.querySelectorAll(".eq-bar");
+
+function initVisualizer(){
+    if(audioCtx) return;
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    source = audioCtx.createMediaElementSource(audio);
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 64;
+    const bufferLength = analyser.frequencyBinCount;
+    dataArray = new Uint8Array(bufferLength);
+    source.connect(analyser);
+    analyser.connect(audioCtx.destination);
+    animateEqualizer();
+}
+
+function animateEqualizer(){
+    if(!analyser){
+        requestAnimationFrame(animateEqualizer);
+        return;
+    }
+    analyser.getByteFrequencyData(dataArray);
+    eqBars.forEach((bar, i)=>{
+        const value = dataArray[i] || 0;
+        const height = Math.max(10, value * 0.6);
+        bar.style.height = height + "px";
+    });
+    requestAnimationFrame(animateEqualizer);
+}
+
+document.getElementById("playBtn").onclick = async ()=>{
+    try{
+        if(!playing){
+            if(!audioCtx){
+                initVisualizer();
+                if(audioCtx.state === "suspended"){
+                    await audioCtx.resume();
+                }
+            }
+            audio.src = LOCK.stream;
+            await audio.play();
+            document.getElementById("playBtn").textContent="❚❚";
+            document.getElementById("cover-spin").style.animationPlayState="running";
+            playing = true;
+        }else{
+            audio.pause();
+            document.getElementById("playBtn").textContent="▶";
+            document.getElementById("cover-spin").style.animationPlayState="paused";
+            playing = false;
+        }
+    }catch(e){
+        alert("Stop Copyright ByDesign");
+    }
+};
+
+document.getElementById("volume").oninput=function(){
+    audio.volume=this.value;
+};
+
+function updateTime(){
+    const now = new Date();
+    document.getElementById("digital-clock").textContent =
+        now.toLocaleTimeString('eu-EU',{hour12:false});
+    const weekday = now.toLocaleDateString('eu-EU',{weekday:'long'}).toUpperCase();
+    const date = now.toLocaleDateString('eu-EU');
+    document.getElementById("digital-date").textContent = `${weekday}, ${date}`;
+}
+setInterval(updateTime,1000);
+updateTime();
+
+function cleanTrack(t){
+    if(!t) return "";
+    return t.replace(/\(.*?\)/g,'').replace(/\[.*?\]/g,'').trim();
+}
+
+async function fetchCover(song){
+    const name = cleanTrack(song);
+    if(!name) return DEFAULT_COVER;
+
+    return new Promise(resolve=>{
+        $.ajax({
+            url:`https://itunes.apple.com/search?term=${encodeURIComponent(name)}&media=music&limit=1`,
+            dataType:'jsonp',
+            timeout:5000,
+            success:data=>{
+                let cover = DEFAULT_COVER;
+                if(data.results && data.results.length > 0 && data.results[0].artworkUrl100){
+                    cover = data.results[0].artworkUrl100.replace('100x100','600x600');
+                }
+                resolve(cover);
+            },
+            error:()=>resolve(DEFAULT_COVER)
+        });
+    });
+
+}
+
+function updateRadio(){
+    $.ajax({
+        url: LOCK.stats,
+        dataType:'jsonp',
+        jsonp:'callback',
+        success:async data=>{
+            if(!data) return;
+
+            const listeners=data.currentlisteners||data.listeners||0;
+            $("#listeners").text(listeners);
+
+            if(data.songtitle && data.songtitle!==lastTrack){
+                lastTrack=data.songtitle;
+
+                const parts=lastTrack.split(" - ");
+                const artist=parts[0]||"RÁDIO";
+                const title=parts[1]||"AO VIVO";
+
+                $("#artist").text(artist);
+                $("#title").text(title);
+
+                const cover=await fetchCover(lastTrack);
+
+                $("#mini-cover").css("background-image",`url('${cover}')`);
+                $("#cover-spin").css("background-image",`url('${cover}')`);
+
+                $("#track-history").prepend(`
+                    <div class="history-item">
+                        <div class="history-cover" style="background-image:url('${cover}')"></div>
+                        <div><b>${title}</b><br><small>${artist}</small></div>
+                    </div>
+                `);
+
+                if($("#track-history .history-item").length>10){
+                    $("#track-history .history-item:last").remove();
+                }
+            }
+        }
+    });
+}
+setInterval(updateRadio,8000);
+updateRadio();
+</script>
+</body>
+</html>
