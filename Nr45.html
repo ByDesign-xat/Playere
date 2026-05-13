@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<title>ByDesign</title>
+
+<style>
+:root { --current-neon:#dbdbdb; }
+
+body{
+  background:transparent;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  margin:0;
+  font-family:Arial;
+  overflow:hidden;
+}
+
+.dashboard{
+  width:650px;
+  height:520px;
+  background:#000;
+  display:grid;
+  grid-template-columns:140px 1fr 140px;
+  grid-template-rows:370px 120px;
+  gap:10px;
+  padding:15px;
+  border:5px solid var(--current-neon);
+  box-shadow:0 0 30px var(--current-neon);
+  position:relative;
+}
+
+.speaker-box{
+  background:#111;
+  border:4px solid var(--current-neon);
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+  align-items:center;
+  overflow:hidden;
+}
+
+.vinyl-plate{
+  width:110px;
+  height:110px;
+  margin-top:10px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-shrink:0;
+}
+
+.vinyl-disc{
+  width:100px;
+  height:100px;
+  border-radius:50%;
+  overflow:hidden;
+}
+
+.cover-art{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:50%;
+}
+
+.is-playing .vinyl-disc{
+  animation:spin 4s linear infinite;
+}
+
+@keyframes spin{
+  from{transform:rotate(0deg);}
+  to{transform:rotate(360deg);}
+}
+
+.video-monitor{
+  flex:1;
+  border:4px solid var(--current-neon);
+  position:relative;
+  overflow:hidden;
+  height:100%;
+}
+
+.video-monitor img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+#rain-container{
+  position:absolute;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  display:none;
+}
+
+.rain-drop{
+  position:absolute;
+  animation:fall linear infinite;
+}
+
+@keyframes fall{
+  to{transform:translateY(350px);opacity:0;}
+}
+
+.led-row{
+  height:40px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:12px;
+  background:#111;
+}
+
+.led-name{
+  font-family:Courier;
+  font-weight:bold;
+  font-size:14px;
+  color:var(--current-neon);
+}
+
+.led-dot{
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  cursor:pointer;
+}
+
+.bottom-ui{
+  grid-column:1/4;
+  background:#111;
+  border:3px solid var(--current-neon);
+  border-radius:6px;
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  padding:5px 10px;
+  height:120px;
+  overflow:visible;
+  transform:translateY(10px);
+}
+
+.bottom-uiR{
+  width:500px;
+  height:20px;
+  margin-top:70px;
+  transform: translateX(-570px);
+  background:#111;
+  border:3px solid var(--current-neon);
+  border-radius:6px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:10px;
+}
+
+.display-text{
+  font-family:Courier;
+  color:var(--current-neon);
+  font-size:13px;
+}
+
+#clock,
+#listeners{
+  font-family:Courier;
+  color:var(--current-neon);
+  font-size:15px;
+  text-align:center;
+  margin-top:150px;
+}
+
+.btn{
+  background:#000;
+  width:60px;
+  text-align:center;
+  transform: translateY(-10px);
+  border:2px solid var(--current-neon);
+  border-radius:6px;
+  color:var(--current-neon);
+  padding:8px;
+  cursor:pointer;
+}
+
+input[type="range"]{
+  -webkit-appearance:none;
+  width:120px;
+  height:4px;
+  transform:translateY(-10px);
+  background:var(--current-neon);
+  border-radius:5px;
+  outline:none;
+}
+
+input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:17px;
+  height:17px;
+  border-radius:50%;
+  background:#000;
+  border:2px solid var(--current-neon);
+  cursor:pointer;
+}
+
+.radio-title{
+  position:absolute;
+  bottom:1px;
+  left:50%;
+  transform:translateX(-50%);
+  color:var(--current-neon);
+  font-family:Courier;
+  font-size:16px;
+  font-weight:bold;
+  background:rgba(0,0,0,0.9);
+  padding:6px 80px;
+  border:1px solid var(--current-neon);
+  border-radius:6px;
+  white-space:nowrap;
+}
+
+.radio-btn{
+  background:#000;
+  transform: translateY(-7px);
+  color:var(--current-neon);
+  border:2px solid var(--current-neon);
+  padding:6px 12px;
+  margin:4px;
+  font-family:Courier;
+  font-size:12px;
+  cursor:pointer;
+  border-radius:6px;
+}
+
+.radio-btn.active{
+  background:var(--current-neon);
+  color:#000;
+}
+
+.radio-group{
+  display:flex;
+  gap:8px;
+}
+
+.vol-percent{
+  transform:translateY(-10px);
+  font-family:Courier;
+  color:var(--current-neon);
+  font-size:13px;
+  font-weight:bold;
+  min-width:40px;
+  text-align:center;
+  text-shadow:0 0 8px var(--current-neon);
+  transition:0.2s ease;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="dashboard" id="mainDash">
+
+<div class="speaker-box">
+<div class="vinyl-plate"><div class="vinyl-disc"><img id="c1" class="cover-art"></div></div>
+<div id="clock"></div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:5px;">
+<div class="video-monitor">
+<img id="videoCover" src="https://xatimg.com/image/oacvd5ltA14X.png">
+<div class="radio-title" id="radioTitle">Radio LaFamilia</div>
+<div id="rain-container"></div>
+</div>
+
+<div class="led-row">
+<span class="led-name">Change</span>
+<div class="led-dot" style="background:#dbdbdb" onclick="changeTheme('#dbdbdb')"></div>
+<div class="led-dot" style="background:red" onclick="changeTheme('red')"></div>
+<div class="led-dot" style="background:#00f2ff" onclick="changeTheme('#00f2ff')"></div>
+<div class="led-dot" style="background:#00ff00" onclick="changeTheme('#00ff00')"></div>
+<div class="led-dot" style="background:#ff00ea" onclick="changeTheme('#ff00ea')"></div>
+<div class="led-dot" style="background:#ffc000" onclick="changeTheme('#ffc000')"></div>
+
+<span class="led-name">Color</span>
+</div>
+</div>
+
+<div class="speaker-box">
+<div class="vinyl-plate"><div class="vinyl-disc"><img id="c2" class="cover-art"></div></div>
+<div id="listeners" class="display-text">👥 0 Live</div>
+<div id="uptime" class="display-text">⏱ 00:00:00</div>
+</div>
+
+<div class="bottom-ui">
+
+<div style="display:flex;align-items:center;gap:10px;transform:translate(10px,-20px);">
+<button class="btn" onclick="togglePlay()" id="playBtn">PLAY</button>
+
+<input type="range" min="0" max="1" step="0.01" value="1" oninput="setVolume(this.value)">
+<span id="volPercent" class="vol-percent">100%</span>
+
+<div class="radio-group">
+<button class="radio-btn active" onclick="switchRadio('r1')">LaFamilia</button>
+<button class="radio-btn" onclick="switchRadio('r2')">RGV Live</button>
+<button class="radio-btn" onclick="switchRadio('r3')">Rgv Reggaeton</button>
+<button class="radio-btn" onclick="switchRadio('r4')">Rgv HipHop</button>
+</div>
+</div>
+
+<div class="bottom-uiR">
+<div id="track" class="display-text">Încărcare...</div>
+</div>
+
+</div>
+</div>
+
+<audio id="audio"></audio>
+
+<script>
+/* 🔒 URLs codificados */
+const SERVERS = {
+  r1: {
+    stream: "aHR0cHM6Ly9yYWRpby5zb25pY3BhbmVsLnJvOjEwOTIyL3N0cmVhbQ==",
+    stats:  "aHR0cHM6Ly9yYWRpby5zb25pY3BhbmVsLnJvOjEwOTIyL3N0YXRz",
+    cover:  "https://xatimg.com/image/oacvd5ltA14X.png"
+  },
+
+  r2: {
+    stream: "aHR0cHM6Ly9yYWRpby5zb25pY3BhbmVsLnJvOjgxMzAvc3RyZWFt",
+    stats:  "aHR0cHM6Ly9yYWRpby5zb25pY3BhbmVsLnJvOjgxMzAvc3RhdHM=",
+    cover:  "https://xatimg.com/image/X5GNt0MIQzb9.png"
+  },
+
+  r3: {
+    stream: "aHR0cHM6Ly9yYWRpby5zb25pY3BhbmVsLnJvOjgxMTgvc3RyZWFt",
+    stats:  "aHR0cHM6Ly9yYWRpby5zb25pY3BhbmVsLnJvOjgxMTgvc3RhdHM=",
+    cover:  "https://xatimg.com/image/t7sn5Zqanusy.png"
+  },
+
+  r4: {
+    stream: "aHR0cHM6Ly9yYWRpby5zb25pY3BhbmVsLnJvOjgxMjYvc3RyZWFt",
+    stats:  "aHR0cHM6Ly9yYWRpby5zb25pY3BhbmVsLnJvOjgxMjYvc3RhdHM=",
+    cover:  "https://xatimg.com/image/7TW1c37QBRl3.png"
+  }
+};
+
+/* 🔒 TEXTOS OBRIGATÓRIOS */
+const REQUIRED_TEXTS = [
+  "Radio LaFamilia",
+  "RGV Live",
+  "Rgv Reggaeton",
+  "Rgv HipHop",
+  "Change",
+  "ByDesign",
+  "Color"
+];
+
+function dec(b){return atob(b);}
+
+
+let currentRadio = "r1";
+
+let STREAM_URL = dec(SERVERS[currentRadio].stream);
+let STATS_BASE = dec(SERVERS[currentRadio].stats);
+
+const audio = document.getElementById("audio");
+audio.src = STREAM_URL;
+
+const mainDash = document.getElementById("mainDash");
+const rainContainer = document.getElementById("rain-container");
+const trackEl = document.getElementById("track");
+const listenersEl = document.getElementById("listeners");
+const clockEl = document.getElementById("clock");
+const videoCover = document.getElementById("videoCover");
+const radioTitle = document.getElementById("radioTitle");
+const volPercent = document.getElementById("volPercent");
+
+function setVolume(val){
+  audio.volume = val;
+
+  let percent = Math.round(val * 100);
+  volPercent.innerText = percent + "%";
+}
+
+const covers = ["c1","c2"].map(id=>document.getElementById(id));
+const RADIO_NAMES = {
+  r1: "Radio LaFamilia",
+  r2: "RGV Live",
+  r3: "Rgv Reggaeton",
+  r4: "Rgv HipHop"
+};
+
+let isPlaying=false;
+let lastTrack="";
+let statsScript=null;
+
+let startTime = null;
+let uptimeInterval = null;
+
+
+/* 🔒 BLOQUEIO */
+function block(msg){
+  document.body.innerHTML="<h1 style='color:red;text-align:center;margin-top:20%'>"+msg+"</h1>";
+  audio.pause();
+  throw new Error(msg);
+}
+
+/* VALIDARE */
+function validate(){
+  if(!audio.src.includes(STREAM_URL.replace(/^https?:\/\//,''))){
+    block("STREAM BLOQUEADO");
+  }
+}
+
+setInterval(validate,2000);
+
+/* CLOCK */
+function updateClock(){
+const now=new Date();
+clockEl.innerText =
+now.toLocaleDateString("ro-RO") + " " +
+now.toLocaleTimeString("ro-RO");
+}
+setInterval(updateClock,1000);
+updateClock();
+
+/* THEME */
+function changeTheme(color){
+document.documentElement.style.setProperty('--current-neon', color);
+}
+
+/* PLAY / STOP */
+function togglePlay(){
+validate();
+
+const btn = document.getElementById("playBtn");
+
+if(!isPlaying){
+
+  clearInterval(uptimeInterval);
+
+  startTime = new Date();
+  uptimeInterval = setInterval(updateUptime, 1000);
+
+  audio.play().catch(()=>{});
+  mainDash.classList.add("is-playing");
+  rainContainer.style.display="block";
+  createRain();
+  isPlaying=true;
+
+  btn.innerText = "STOP";
+
+}else{
+
+  audio.pause();
+  mainDash.classList.remove("is-playing");
+  rainContainer.style.display="none";
+  isPlaying=false;
+
+  btn.innerText = "PLAY";
+
+  clearInterval(uptimeInterval);
+  uptimeInterval = null;
+
+  document.getElementById("uptime").innerText = "⏱ 00:00:00";
+}
+}
+
+/* RAIN */
+function createRain(){
+rainContainer.innerHTML="";
+const s=["♪","♫","♥"];
+for(let i=0;i<40;i++){
+let d=document.createElement("div");
+d.className="rain-drop";
+d.innerText=s[Math.floor(Math.random()*s.length)];
+d.style.left=Math.random()*100+"%";
+d.style.color="var(--current-neon)";
+d.style.animationDuration=(Math.random()*2+1)+"s";
+rainContainer.appendChild(d);
+}
+}
+
+/* COVER FETCH (optional fallback manual) */
+function fetchCover(artist,title){
+const query=encodeURIComponent((artist||"")+" "+(title||""));
+
+fetch(`https://itunes.apple.com/search?term=${query}&media=music&limit=1`)
+.then(r=>r.json())
+.then(d=>{
+
+  let img="https://xatimg.com/image/3EzeMmxBgRNV.png";
+
+  if(d.results && d.results.length){
+    img=d.results[0].artworkUrl100.replace("100x100","600x600");
+  }
+
+  covers.forEach(c=>c.src=img);
+
+});
+}
+
+/* STATS UPDATE */
+function statsUpdate(){
+
+validate();
+
+if(statsScript) statsScript.remove();
+
+statsScript=document.createElement("script");
+if(!STATS_BASE.includes("callback=")){
+  statsScript.src = STATS_BASE + "?sid=1&json=1&callback=statsCB&rand="+Math.random();
+}
+
+document.body.appendChild(statsScript);
+}
+
+/* MAIN CALLBACK */
+function statsCB(data){
+document.getElementById("radioTitle").innerText = RADIO_NAMES[currentRadio];
+
+validate();
+
+if(!data) return;
+
+let source=data.icestats?.source || data.source || data;
+if(Array.isArray(source)) source=source[0];
+if(!source) return;
+
+listenersEl.innerText="👥 "+(source.listeners||source.currentlisteners||0)+" Live";
+
+let title=source.title || source.songtitle || "";
+// 🔥 update radio title din server/status
+if(source.server_name){
+
+}else{
+}
+
+if(!title || title===lastTrack) return;
+
+lastTrack=title;
+trackEl.innerText = title;
+
+let artist="",music=title;
+
+if(title.includes(" - ")){
+let p=title.split(" - ");
+artist=p[0];
+music=p.slice(1).join(" - ");
+}
+
+const query = encodeURIComponent(artist + " " + music);
+
+fetch(`https://itunes.apple.com/search?term=${query}&media=music&limit=1`)
+.then(r => r.json())
+.then(d => {
+
+  let img = "https://xatimg.com/image/3EzeMmxBgRNV.png";
+
+  if(d.results && d.results.length){
+    img = d.results[0].artworkUrl100.replace("100x100","600x600");
+  }
+
+  covers.forEach(c => c.src = img);
+
+
+});
+
+}
+
+/* INIT */
+setInterval(statsUpdate,2000);
+statsUpdate();
+
+/* UPTIME */
+function updateUptime(){
+  if(!startTime) return;
+
+  let diff = new Date() - startTime;
+
+  let seconds = Math.floor(diff / 1000) % 60;
+  let minutes = Math.floor(diff / 1000 / 60) % 60;
+  let hours = Math.floor(diff / 1000 / 60 / 60);
+
+  document.getElementById("uptime").innerText =
+    "⏱ " +
+    String(hours).padStart(2,'0') + ":" +
+    String(minutes).padStart(2,'0') + ":" +
+    String(seconds).padStart(2,'0');
+}
+
+setVolume(audio.volume);
+
+audio.addEventListener("loadedmetadata", () => {
+  setVolume(audio.volume);
+});
+
+
+function switchRadio(id){
+
+  currentRadio = id;
+
+  const wasPlaying = true; // 🔥 forțăm play la schimbare
+
+  audio.pause();
+
+  STREAM_URL = dec(SERVERS[id].stream);
+  STATS_BASE = dec(SERVERS[id].stats);
+
+  audio.src = STREAM_URL;
+  audio.load();
+
+  // UI buttons
+  document.querySelectorAll(".radio-btn").forEach(b => b.classList.remove("active"));
+  const btn = document.querySelector(`[onclick="switchRadio('${id}')"]`);
+  if(btn) btn.classList.add("active");
+
+  // UI server
+  document.getElementById("radioTitle").innerText = RADIO_NAMES[id];
+  videoCover.src = SERVERS[id].cover;
+
+  // 🔥 WAIT STREAM READY → apoi play
+setTimeout(() => {
+
+  audio.play().then(() => {
+
+    isPlaying = true;
+
+    mainDash.classList.add("is-playing");
+    rainContainer.style.display = "block";
+
+    document.getElementById("playBtn").innerText = "STOP";
+
+    if(!startTime){
+      startTime = new Date();
+      uptimeInterval = setInterval(updateUptime, 1000);
+    }
+
+  }).catch(() => {
+    console.log("Play blocat de browser");
+  });
+
+}, 300);
+}
+
+function restartAudio(){
+
+  audio.play().then(() => {
+
+    mainDash.classList.add("is-playing");
+    rainContainer.style.display = "block";
+
+    document.getElementById("playBtn").innerText = "STOP";
+
+  }).catch(err => {
+    console.log("PLAY BLOCKED:", err);
+  });
+}
+
+function togglePlay(){
+
+  validate();
+
+  const btn = document.getElementById("playBtn");
+
+  if(!isPlaying){
+
+    audio.play().then(() => {
+
+      isPlaying = true;
+
+      mainDash.classList.add("is-playing");
+      rainContainer.style.display = "block";
+
+      btn.innerText = "STOP";
+
+      if(!startTime){
+        startTime = new Date();
+        uptimeInterval = setInterval(updateUptime, 1000);
+      }
+
+    });
+
+  } else {
+
+    audio.pause();
+
+    isPlaying = false;
+
+    mainDash.classList.remove("is-playing");
+    rainContainer.style.display = "none";
+
+    btn.innerText = "PLAY";
+  }
+}
+
+</script>
+
+</body>
+</html>
+
+
+
+
+<script>
+
+// --- PROTECT SCRIPT ---
+
+
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+document.onkeydown = function(e) {
+
+if(e.keyCode == 123) return false; // F12
+
+if(e.ctrlKey && e.shiftKey && e.keyCode == 73) return false; // CTRL+SHIFT+I
+
+if(e.ctrlKey && e.shiftKey && e.keyCode == 74) return false; // CTRL+SHIFT+J
+
+if(e.ctrlKey && e.keyCode == 85) return false; // CTRL+U
+
+};
+</script>
+<script>
+
+    function disableselect(e) {
+        return false
+    }
+    function reEnable() {
+        return true
+    }
+    document.onselectstart = new Function("return false")
+    if (window.sidebar) {
+        document.onmousedown = disableselect
+        document.onclick = reEnable
+    }
+</script>
+<script>
+        window.oncontextmenu = function () {
+            console.log("Right Click Disabled");
+            return false;
+        }
+    </script> 

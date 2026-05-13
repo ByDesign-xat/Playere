@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>ByDesign</title>
+    <style>
+        /* PROTEZIONE TOTALE: Impedisce selezione testo e trascinamento */
+        * {
+            -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        body { 
+            margin: 0; padding: 0; background: black; 
+            display: flex; justify-content: center; align-items: center; 
+            min-height: 100vh; font-family: 'Segoe UI', sans-serif;
+            color: white; overflow: hidden;
+        }
+
+        #widget-container {
+            position: relative;
+            width: 880px; height: 380px;
+            background: rgba(30, 31, 55, 0.95);
+            border-radius: 60px; border: 4px solid #B71C1C;
+            box-shadow: 0 0 25px #B71C1C;
+            padding: 30px; box-sizing: border-box;
+            display: flex; align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        #left-zone { width: 320px; display: flex; justify-content: center; }
+        
+        #vinil {
+            width: 270px; height: 270px; border-radius: 50%;
+            background: #000; border: 2px solid #333;
+            display: flex; justify-content: center; align-items: center;
+            animation: spin 5s linear infinite; animation-play-state: paused;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
+        #cover { 
+            width: 260px; height: 260px; border-radius: 50%; 
+            border: 4px solid #B71C1C; object-fit: cover;
+            pointer-events: none; /* Impedisce interazioni dirette sulla foto */
+        }
+
+        #right-zone {
+            flex: 1; height: 280px;
+            display: flex; flex-direction: column;
+            justify-content: space-between;
+            padding: 0 10px; box-sizing: border-box;
+        }
+
+        #radio-title {
+            font-size: 34px; font-weight: 900; color: #B71C1C;
+            margin: 0; text-align: center;
+            text-transform: uppercase; letter-spacing: 2px;
+            text-shadow: 0 0 40px #00ffff;
+        }
+
+        #dj-tag {
+            background: #b71c1c; border: 1px solid #ff4444;
+            padding: 8px; text-align: center; font-weight: bold;
+            font-size: 14px; border-radius: 4px; margin: 5px 0;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+        }
+
+        #track-box {
+            background: #000; border: 1px solid #444; height: 45px;
+            display: flex; align-items: center; overflow: hidden;
+            border-radius: 4px; position: relative; width: 100%;
+        }
+        #track-text {
+            position: absolute; white-space: nowrap; font-weight: bold;
+            color: #00ffff; animation: scroll 20s linear infinite; font-size: 16px;
+        }
+
+        #controls-row {
+            display: flex; justify-content: center; align-items: center; gap: 20px;
+            width: 100%; margin: 10px 0;
+        }
+        
+        .btn {
+            width: 95px; height: 42px; background: #000; color: #fff;
+            border: 2px solid #00ffff; font-weight: bold; cursor: pointer;
+            border-radius: 0; transition: 0.3s;
+            box-shadow: 0 0 8px #00ffff;
+            text-transform: uppercase;
+        }
+        
+#volume {
+    -webkit-appearance: none;
+    width: 150px;
+    height: 10px;
+    background: #B71C1C;
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* TRACK HOVER */
+#volume:hover {
+    filter: drop-shadow(0 0 6px #00ffff);
+}
+
+/* ====== THUMB (butonul cerc) ====== */
+#volume::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #00ffff;
+    border-radius: 50%;
+    border: 2px solid #000;
+    cursor: pointer;
+    box-shadow: 0 0 8px #00ffff;
+    transition: 0.2s;
+}
+
+#volume::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+/* Firefox support */
+#volume::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: #00ffff;
+    border-radius: 50%;
+    border: 2px solid #000;
+    cursor: pointer;
+    box-shadow: 0 0 8px #00ffff;
+}
+		
+.btn:hover {
+    background: #B71C1C;
+    color: #000;
+    box-shadow: 0 0 18px #B71C1C;
+    transform: scale(1.05);
+}
+
+
+#playBtn:hover {
+    background: #00ffff;
+    color: #000;
+    box-shadow: 0 0 18px #00ffff;
+}
+
+#stats-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: bold;
+    opacity: 0.8;
+    margin-top: 5px;
+    gap: 5px;
+}
+
+#date-time-box {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+		
+		#dj-tag {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+		
+#stopBtn:hover {
+    background: #B71C1C;
+    color: #fff;
+    border: 2px solid #B71C1C;
+    box-shadow: 0 0 18px #B71C1C;
+    transform: scale(1.05);
+}
+
+#volValue {
+    margin-left: 10px;
+    font-weight: bold;
+    color: #00ffff;
+    min-width: 45px;
+    display: inline-block;
+    text-align: center;
+}
+
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes scroll { 0% { transform: translateX(450px); } 100% { transform: translateX(-100%); } }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+<script id='sonic_js' data-port='8132' src='https://radio.sonicpanel.ro/cp/widgets.js?r=497'></script>
+
+<div id="widget-container">
+    <div id="left-zone">
+        <div id="vinil"><img id="cover" src="https://xatimg.com/image/oacvd5ltA14X.png" alt="Cover"></div>
+    </div>
+
+    <div id="right-zone">
+        <p id="radio-title">★ Radio LaFamilia ★</p>
+        <center><div id="dj-tag">
+		          <div></div>★ <div></div>
+                Dj Live: <div id="sonic_dj"></div><div></div><div></div>
+				  <div></div>★ <div></div> 
+			    Bpm: <div id='sonic_bitrate'></div><div></div><div></div>
+				  <div></div>★ <div></div>
+				  <span id="ascoltatori">ASCOLTATORI: 0</span>
+				  <div></div>★ <div></div>
+        </div></center>
+        <div id="track-box"><div id="track-text">Încărcare...</div></div>
+        
+        <div id="controls-row">
+            <button id="playBtn" class="btn">PLAY</button>
+            <button id="stopBtn" class="btn">STOP</button>
+            <input type="range" id="volume" min="0" max="1" step=".01" value="1">
+            <span id="volValue">100%</span>
+        </div>
+
+        <div id="stats-row">
+            <div id="date-time-box">
+             ★—★ <span id="data-oggi">--/--/----</span> ★• • • ♫ • • •★ <span id="orologio">00:00:00</span> ★—★ 
+            </div>
+        </div>
+    </div>
+</div>
+
+<audio id="audio" crossorigin="anonymous"></audio>
+
+<script>
+    /* PROTEZIONI AVANZATE */
+    document.addEventListener('keydown', function(e) {
+        if (e.ctrlKey && (e.key === 'u' || e.key === 's' || e.key === 'i' || e.key === 'j')) e.preventDefault();
+        if (e.key === 'F12') e.preventDefault();
+    });
+
+    const STREAM = "https://radio.sonicpanel.ro:10922/stream";
+    const STATS = "https://radio.sonicpanel.ro:10922/stats?json=1";
+    const audio = document.getElementById("audio");
+    const vinil = document.getElementById("vinil");
+    const cover = document.getElementById("cover");
+    const trackText = document.getElementById("track-text");
+	let currentSong = "";
+    let lastCoverSong = "";
+	let updating = false;
+
+function updateClock() {
+    const ora = new Date();
+    document.getElementById("orologio").innerText =
+        ora.toLocaleTimeString('ro-RO');
+    document.getElementById("data-oggi").innerText =
+        ora.toLocaleDateString('ro-RO');
+}
+
+
+
+
+
+function updateStats() {
+    fetch(STATS)
+        .then(r => r.json())
+        .then(data => {
+            document.getElementById("ascoltatori").innerText =
+                "ASCOLTATORI: " + (data.currentlisteners || 0);
+
+            if (data.songtitle && data.songtitle !== currentSong) {
+                currentSong = data.songtitle;
+
+                trackText.innerText =
+                    " ★• • • ♫ • • •★ " + data.songtitle + " ★• • • ♫ • • •★ Radio LaFamilia ★• • • ♫ • • •★  " + data.songtitle + " ★• • • ♫ • • •★ Radio LaFamilia ★• • • ♫ • • •★ ©ByDesegn™ ★• • • ♫ • • •★";
+
+                // cover DOAR dacă s-a schimbat
+                if (data.songtitle !== lastCoverSong) {
+                    lastCoverSong = data.songtitle;
+                    getCover(data.songtitle);
+                }
+            }
+        })
+        .catch(console.error);
+}
+
+function getCover(t) {
+    const script = document.createElement("script");
+
+    const query = encodeURIComponent(t.replace(" - ", " "));
+
+    script.src = `https://itunes.apple.com/search?term=${query}&entity=song&limit=1&callback=handleCover`;
+
+    document.body.appendChild(script);
+
+    setTimeout(() => script.remove(), 1500);
+}
+
+    document.getElementById("playBtn").onclick = () => { 
+        audio.src = STREAM + "?t=" + Date.now(); 
+        audio.play().catch(() => alert("Clicca sulla pagina per attivare l'audio")); 
+        vinil.style.animationPlayState = "running"; 
+    };
+    document.getElementById("stopBtn").onclick = () => { 
+        audio.pause(); audio.src = ""; 
+        vinil.style.animationPlayState = "paused"; 
+    };
+const volume = document.getElementById("volume");
+const volValue = document.getElementById("volValue");
+
+function updateVolumeUI(value) {
+    const percent = value * 100;
+
+    volume.style.background =
+        `linear-gradient(to right,
+        #B71C1C ${percent}%,
+        #000001 ${percent}%)`;
+
+    if (volValue) {
+        volValue.innerText = Math.round(percent) + "%";
+    }
+
+    audio.volume = value;
+}
+
+volume.oninput = (e) => {
+    updateVolumeUI(e.target.value);
+};
+volValue.innerText = Math.round(volume.value * 100) + "%";
+
+    updateStats();
+    setInterval(updateStats, 500);
+	setInterval(updateClock, 1000);
+updateClock();
+
+// --- PROTECT SCRIPT ---
+
+
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+document.onkeydown = function(e) {
+
+if(e.keyCode == 123) return false; // F12
+
+if(e.ctrlKey && e.shiftKey && e.keyCode == 73) return false; // CTRL+SHIFT+I
+
+if(e.ctrlKey && e.shiftKey && e.keyCode == 74) return false; // CTRL+SHIFT+J
+
+if(e.ctrlKey && e.keyCode == 85) return false; // CTRL+U
+
+};
+</script>
+</body>
+</html>

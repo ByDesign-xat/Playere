@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>ByDesign</title>
+</head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<body style="margin: 0; padding: 0; background: black;">
+
+<div style="display: flex; justify-content: center; align-items: center; width: 100%; min-height: 100vh;">
+    <div id="xat-radio-container" style="width: 728px; height: 500px; background-image: url('https://xatimg.com/image/7srGtsypPElQ.gif'); background-size: 120%; background-position: center; border: 2px solid #00f2ff; border-radius: 10px; position: relative; overflow: hidden; font-family: 'Courier New', Courier, monospace; box-shadow: 0 0 30px rgba(0, 242, 255, 0.4);">
+        
+        <style>            
+            @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }            
+            @keyframes spin-reverse { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }            
+            @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }            
+            @keyframes colorShift { 
+                0% { color: #00f2ff; text-shadow: 0 0 8px #00f2ff; } 
+                25% { color: #00f2ff; text-shadow: 0 0 8px #00f2ff; } 
+                50% { color: #00f2ff; text-shadow: 0 0 8px #00f2ff; } 
+                75% { color: #00f2ff; text-shadow: 0 0 8px #00f2ff; } 
+                100% { color: #00f2ff; text-shadow: 0 0 8px #00f2ff; } 
+            }
+            .star-xat { position: absolute; z-index: 20; animation: spin 4s infinite linear; }            
+            .btn-xat { transition: 0.3s; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); border: 2px solid #00f2ff; color: #00f2ff; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; }            
+            .btn-xat:hover { background: #00f2ff !important; color: #000 !important; }                        
+            .vol-led-container { display: flex; gap: 4px; align-items: flex-end; height: 35px; }            
+            .vol-bar { width: 12px; height: 100%; background: rgba(0, 242, 255, 0.2); border: 1px solid #00f2ff; cursor: pointer; transition: 0.2s; }            
+            .vol-bar.active { background: #00f2ff; box-shadow: 0 0 10px #00f2ff; }            
+            .vol-bar:nth-child(n+6).active { background: #ffff00; border-color: #ffff00; box-shadow: 0 0 10px #ffff00; }            
+            .vol-bar:nth-child(n+8).active { background: #ff0000; border-color: #ff0000; box-shadow: 0 0 10px #ff0000; }
+            .globo-cover { width: 220px; height: 220px; border-radius: 50%; border: 5px solid #00f2ff; box-shadow: 0 0 40px rgba(0, 242, 255, 0.7); background-size: cover; background-position: center; animation: spin 15s linear infinite; animation-play-state: paused; z-index: 5; }
+            .animated-text { animation: colorShift 4s infinite alternate; }
+            .signature-box { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); width: 400px; overflow: hidden; white-space: nowrap; text-align: center; }
+            .signature-text { display: inline-block; font-size: 11px; font-weight: bold; letter-spacing: 2px; animation: marquee 8s linear infinite, colorShift 4s infinite alternate; }
+      
+#stop-xat:hover {
+    background: #ff0000 !important;
+    border-color: #ff0000 !important;
+    color: #fff !important;
+    box-shadow: 0 0 15px #ff0000;
+}
+
+
+#stop-xat:hover i {
+    color: #000 !important;
+}
+
+.viz-box {
+    width: 200px;
+    height: 100px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 3px;
+    padding: 5px;
+    background: rgba(0,0,0,0.6);
+    border: 1px solid #00f2ff;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0,242,255,0.3);
+}
+
+.viz-bar {
+    width: 4px;
+    height: 10%;
+    background: #00f2ff;
+    box-shadow: 0 0 8px #00f2ff;
+    transition: 0.05s;
+}
+
+#viz-wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 25px;
+}
+
+.viz-box {
+    width: 200px;
+    height: 100px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 3px;
+    padding: 5px;
+    background: rgba(0,0,0,0.6);
+    border: 1px solid #00f2ff;
+    border-radius: 8px;
+}
+
+.globo-cover {
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    border: 5px solid #00f2ff;
+    box-shadow: 0 0 40px rgba(0, 242, 255, 0.7);
+    background-size: cover;
+    background-position: center;
+    animation: spin 15s linear infinite;
+}
+
+.viz-box {
+    overflow: hidden;
+}
+
+	  </style>
+
+        <svg class="star-xat" style="top:15px; left:15px; width:40px; height:40px; filter: drop-shadow(0 0 10px #00f2ff);" viewBox="0 0 51 48"><path fill="#00f2ff" d="m25,1 6,17h18l-14,11 5,17-15-10-15,10 5-17-14-11h18z"/></svg>        
+        <svg class="star-xat" style="top:15px; right:15px; width:40px; height:40px; filter: drop-shadow(0 0 10px #00f2ff);" viewBox="0 0 51 48"><path fill="#00f2ff" d="m25,1 6,17h18l-14,11 5,17-15-10-15,10 5-17-14-11h18z"/></svg>
+        <svg class="star-xat" style="bottom:15px; left:15px; width:45px; height:45px; filter: drop-shadow(0 0 10px #00f2ff);" viewBox="0 0 51 48"><path fill="#00f2ff" d="m25,1 6,17h18l-14,11 5,17-15-10-15,10 5-17-14-11h18z"/></svg>
+        <svg class="star-xat" style="bottom:15px; right:15px; width:45px; height:45px; filter: drop-shadow(0 0 10px #00f2ff);" viewBox="0 0 51 48"><path fill="#00f2ff" d="m25,1 6,17h18l-14,11 5,17-15-10-15,10 5-17-14-11h18z"/></svg>
+
+        <div style="position: absolute; top: 70px; left: 20px; background: rgba(0, 0, 0, 0.8); border: 1px solid #00f2ff; padding: 8px; border-radius: 5px; z-index: 30; text-align: center; min-width: 120px;">            
+            <span id="clock-xat" class="animated-text" style="font-size: 18px; font-weight: bold; display: block;">00:00:00</span>            
+            <span id="date-xat" class="animated-text" style="font-size: 9px; text-transform: uppercase;">Încărcare...</span>        
+        </div>
+
+<div id="viz-wrapper">
+    
+    <div id="viz-left" class="viz-box"></div>
+
+    <div id="globo-xat" class="globo-cover"></div>
+
+    <div id="viz-right" class="viz-box"></div>
+
+</div>
+
+        <div style="position: absolute; top: 25px; left: 50%; transform: translateX(-50%); width: 320px; background: rgba(0, 0, 0, 0.9); border: 1px solid #ff0000; border-radius: 5px; padding: 10px; overflow: hidden; z-index: 10;">            
+            <div style="color: #ff0000; font-size: 20px; font-weight: bold; text-align: center; margin-bottom: 5px;">★ Radio LaFamilia ★</div>            
+            <div style="width: 100%; overflow: hidden; white-space: nowrap;">                
+                <span id="marqueeMusic-xat" style="display: inline-block; color: #00f2ff; font-size: 20px; animation: marquee 12s linear infinite;">Încărcare...</span>            
+            </div>        
+        </div>
+	
+
+
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 380px; height: 380px; display: flex; justify-content: center; align-items: center;">            
+            <div style="position: absolute; width: 370px; height: 370px; animation: spin-reverse 20s infinite linear;">                
+               
+                </svg>            
+            </div>            
+            <div id="globo-xat" class="globo-cover" style="background-image: url('https://xatimg.com/image/oacvd5ltA14X.png');"></div>        
+        </div>
+		
+	
+		
+				<div id="city-box" style="position: absolute; top: 70px; left: 570px; background: rgba(0, 0, 0, 0.8); border: 1px solid #00f2ff; padding: 8px; border-radius: 5px; z-index: 30; text-align: center; min-width: 120px;">
+    <span class="animated-text" style="font-size: 16px; font-weight: bold; display: block;">
+        🌍 Loading...
+    </span>
+    <span style="font-size: 9px; text-transform: uppercase; color:#00f2ff;">
+        CITY
+    </span>
+</div>
+
+
+
+        <div style="position: absolute; bottom: 45px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 20px; background: rgba(0, 0, 0, 0.85); padding: 12px 25px; border: 2px solid #00f2ff; border-radius: 50px; z-index: 100;">            
+<button class="btn-xat" id="play-xat" title="Play/Pause">
+    <i class="fa-solid fa-play"></i>
+</button>                       
+            <div class="vol-led-container" id="vol-leds">                
+                <div class="vol-bar active" data-v="0.1"></div>                
+                <div class="vol-bar active" data-v="0.2"></div>                
+                <div class="vol-bar active" data-v="0.4"></div>                
+                <div class="vol-bar active" data-v="0.5"></div>                
+                <div class="vol-bar active" data-v="0.6"></div>                
+                <div class="vol-bar active" data-v="0.7"></div>                
+                <div class="vol-bar active" data-v="0.8"></div>                
+                <div class="vol-bar active" data-v="1.0"></div>            
+            </div>            
+<button class="btn-xat" id="stop-xat" title="Stop">
+    <i class="fa-solid fa-stop"></i>
+</button>
+</div>
+        <div class="signature-box">
+            <span class="signature-text">★ ©ByDesegn™ ★</span>
+        </div>
+
+        <audio id="audio-xat" src="https://radio.sonicpanel.ro:10922/radio.mp3" crossorigin="anonymous"></audio>
+
+<script>
+            // Variabili Globali
+ var audio = document.getElementById('audio-xat');
+var ctx = new (window.AudioContext || window.webkitAudioContext)();
+var analyser = ctx.createAnalyser();
+var source = ctx.createMediaElementSource(audio);
+
+source.connect(analyser);
+analyser.connect(ctx.destination);
+
+analyser.fftSize = 64;
+
+var bufferLength = analyser.frequencyBinCount;
+var dataArray = new Uint8Array(bufferLength);
+            var playBtn = document.getElementById('play-xat');
+            var stopBtn = document.getElementById('stop-xat');
+            var globo = document.getElementById('globo-xat');
+            var marquee = document.getElementById('marqueeMusic-xat');
+            var lastSong = "";
+			
+			
+			
+
+            // Funzione Orologio
+            function updateClock() {
+                var ora = new Date();
+                document.getElementById('clock-xat').innerHTML = ora.toLocaleTimeString('ro-RO');
+                document.getElementById('date-xat').innerHTML = ora.toLocaleDateString('ro-RO', { weekday: 'short', day: '2-digit', month: 'short', years: '2-digit' }).toUpperCase();
+            }
+            setInterval(updateClock, 1000);
+            updateClock();
+			
+			
+
+
+            // Funzione Titoli e Cover
+function updateMusicInfo() {
+    fetch("https://radio.sonicpanel.ro:10922/stats?json=1")
+    .then(response => response.json())
+    .then(data => {
+
+        console.log(data);
+
+        var songTitle = data.songtitle || "UNKNOWN";
+
+        if (songTitle !== lastSong) {
+            lastSong = songTitle;
+            marquee.textContent = "NOW ON AIR: ★ " + songTitle + " ★";
+        }
+
+        if (data.servertitle) {
+            document.title = data.servertitle;
+        }
+
+    })
+    .catch(err => {
+        console.log("API error", err);
+        marquee.textContent = "RADIO ONLINE ★";
+    });
+}
+            setInterval(updateMusicInfo, 8000);
+            updateMusicInfo();
+
+            // Controlli Play/Pause
+playBtn.onclick = function() {
+
+    if (ctx.state === "suspended") {
+        ctx.resume();
+    }
+
+    if (audio.paused) {
+        audio.play();
+        animateViz();
+        playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+    } else {
+        audio.pause();
+        playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+    }
+};
+
+            // Controllo Stop
+stopBtn.onclick = function() {
+    audio.pause();
+    audio.currentTime = 0;
+    playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+    globo.style.animationPlayState = "paused";
+};
+
+            // Controllo Volume
+            var bars = document.querySelectorAll('.vol-bar');
+            bars.forEach(function(bar, index) {
+                bar.onclick = function() {
+                    var v = parseFloat(bar.getAttribute('data-v'));
+                    audio.volume = v;
+                    bars.forEach(function(b, i) {
+                        if (i <= index) b.classList.add('active');
+                        else b.classList.remove('active');
+                    });
+                };
+            });
+			
+			function getCity() {
+    if (!navigator.geolocation) {
+        document.querySelector("#city-box span").innerHTML = "NO GEO";
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(function(pos) {
+
+        var lat = pos.coords.latitude;
+        var lon = pos.coords.longitude;
+
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+        .then(res => res.json())
+        .then(data => {
+
+            var city =
+                data.address.city ||
+                data.address.town ||
+                data.address.village ||
+                data.address.county ||
+                "UNKNOWN";
+
+            document.querySelector("#city-box span").innerHTML = "📍 " + city;
+
+        })
+        .catch(() => {
+            document.querySelector("#city-box span").innerHTML = "UNKNOWN";
+        });
+
+    }, function() {
+        document.querySelector("#city-box span").innerHTML = "BLOCKED";
+    });
+}
+
+getCity();
+
+
+			function createBars(container) {
+    for (let i = 0; i < 16; i++) {
+        let bar = document.createElement("div");
+        bar.className = "viz-bar";
+        container.appendChild(bar);
+    }
+}
+
+createBars(document.getElementById("viz-left"));
+createBars(document.getElementById("viz-right"));
+
+
+
+// ================== ADD-ON VIZUALIZER FIX (NU ȘTERGE NIMIC) ==================
+
+// prevenim pornirea multiplă
+var vizStarted = false;
+
+// animatie reala
+function animateViz() {
+    requestAnimationFrame(animateViz);
+
+    if (!analyser) return;
+
+    analyser.getByteFrequencyData(dataArray);
+
+    let barsL = document.querySelectorAll("#viz-left .viz-bar");
+    let barsR = document.querySelectorAll("#viz-right .viz-bar");
+
+    for (let i = 0; i < barsL.length; i++) {
+
+        let val = dataArray[i] || 0;
+let boxHeight = document.getElementById("viz-left").clientHeight;
+let height = (val / 255) * boxHeight;
+
+        if (barsL[i]) barsL[i].style.height = height + "px";
+        if (barsR[i]) barsR[i].style.height = height + "px";
+    }
+}
+
+// PATCH peste play (fara sa stergem codul tau)
+var oldPlay = playBtn.onclick;
+
+playBtn.onclick = function() {
+
+    // porneste audio context daca e blocat
+    if (ctx.state === "suspended") {
+        ctx.resume();
+    }
+
+    // ruleaza functia ta originala
+    oldPlay();
+
+    // porneste vizualizer o singura data
+    if (!vizStarted) {
+        animateViz();
+        vizStarted = true;
+    }
+};
+
+
+
+
+// --- PROTECT SCRIPT ---
+
+
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+document.onkeydown = function(e) {
+
+if(e.keyCode == 123) return false; // F12
+
+if(e.ctrlKey && e.shiftKey && e.keyCode == 73) return false; // CTRL+SHIFT+I
+
+if(e.ctrlKey && e.shiftKey && e.keyCode == 74) return false; // CTRL+SHIFT+J
+
+if(e.ctrlKey && e.keyCode == 85) return false; // CTRL+U
+
+};
+
+ </script>
+</div>
+</div>
+
+</body>
+</html>

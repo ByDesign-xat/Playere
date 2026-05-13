@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>ByDesign</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+       * {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        body { 
+            background: transparent; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+            overflow: hidden; 
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        #super-container {
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            justify-content: center;
+            background: #2b2b2b;
+            background-size: cover;
+            width: 620px; 
+            height: 480px;
+            border-radius: 18px; 
+            position: relative; 
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8); 
+        }
+
+        #super-container::before {
+            content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: conic-gradient(transparent, #e5e5e5, #4f4f4f, #e5e5e5, #4f4f4f, #e5e5e5, transparent 50%);
+            animation: laserRotate 4s linear infinite; z-index: 0;
+        }
+
+        #super-container::after { 
+            content: ""; position: absolute; inset: 5px; background: rgba(0, 0, 0, 0.4); 
+            backdrop-filter: blur(2px); border-radius: 14px; z-index: 1; 
+        } 
+
+        @keyframes laserRotate { 100% { transform: rotate(360deg); } }
+
+        .top-signature {
+            position: absolute; top: 7px; width: 98.5%; z-index: 25; overflow: hidden; white-space: nowrap;
+        }
+        .signature-text {
+            display: inline-block; padding-left: 100%; color: #e5e5e5; font-size: 14px; font-weight: bold;
+            text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 10px #e5e5e5;
+            animation: scrollSignature 10s linear infinite;
+        }
+        @keyframes scrollSignature { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+
+        .oval-wrapper {
+            position: absolute; top: 21%; right: 19px; transform: translateY(-50%);
+            width: 110px; height: 110px; z-index: 30; display: flex;
+            align-items: center; justify-content: center; animation: ovalRotation 6s linear infinite;
+        }
+        .multicolor-border-oval {
+            position: absolute; width: 100%; height: 100%; border-radius: 50%;
+            background: conic-gradient(red, yellow, lime, cyan, blue, magenta, red);
+            padding: 3px; display: flex; align-items: center; justify-content: center;
+        }
+        #vinylCover {
+            width: 100%; height: 100%; border-radius: 50%;
+            background: url('https://xatimg.com/image/oacvd5ltA14X.png') no-repeat center center;
+            background-size: cover; z-index: 31; transition: background-image 0.8s ease;
+        }
+        @keyframes ovalRotation { from { transform: translateY(-50%) rotate(0deg); } to { transform: translateY(-50%) rotate(360deg); } }
+
+        .content-z { 
+            position: relative; z-index: 10; width: 590px; height: 300px; 
+            background: url('https://xatimg.com/image/oacvd5ltA14X.png') no-repeat center center;
+            background-size: 70% 100%; border: 2px solid #e5e5e5; border-radius: 12px; margin-bottom: 5px;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+.ghost-name {
+    font-size: 24px;
+    font-weight: bold;
+    letter-spacing: 4px;
+    background: linear-gradient(to right, #ffffff, #ffffff, #d6d6d6, #747474, #d6d6d6, #ffffff, #ffffff);
+    background-size: 400% 400%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
+    opacity: 0;
+    animation: fadeInOut 6s ease-in-out infinite, colorFlow 4s linear infinite;
+
+    transform: translateY(40px); /* 👈 MUTĂ MAI JOS */
+}
+
+.content-z {
+    display: flex;
+    align-items: flex-end; /* îl duce jos în container */
+    justify-content: center;
+    padding-bottom: 10px;
+}
+
+        @keyframes fadeInOut { 0%, 100% { opacity: 0; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.1); } }
+        @keyframes colorFlow { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
+
+        .metadata-container {
+            position: relative; z-index: 20; width: 96.5%; background: transparent; border: none;
+            padding: 5px; color: #e5e5e5; font-size: 14px; text-align: center; font-weight: bold;
+            overflow: hidden; white-space: nowrap; margin-bottom: 5px; text-shadow: 2px 2px 5px rgba(0,0,0,1);
+        }
+        .scrolling-text { display: inline-block; padding-left: 100%; animation: scrollText 15s linear infinite; }
+        @keyframes scrollText { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+
+        .controls {
+            position: relative; z-index: 20; display: flex; align-items: center; gap: 15px;
+            background: transparent; border: none; padding: 8px 15px; margin-bottom: 10px;
+        }
+        .btn {
+            background: rgba(0, 0, 0, 0.6); border: 2px solid #e5e5e5; color: #e5e5e5; 
+            border-radius: 50%; width: 38px; height: 38px; cursor: pointer; 
+            display: flex; align-items: center; justify-content: center;
+        }
+        .btn:hover { background: #e5e5e5; color: #000; box-shadow: 0 0 20px #e5e5e5; }
+        input[type="range"] { accent-color: #e5e5e5; width: 100px; cursor: pointer; }
+
+        .info-bottom {
+            position: absolute; bottom: 12px; width: 92%; display: flex; justify-content: space-between;
+            z-index: 20; color: #e5e5e5; font-size: 14px; font-weight: bold; text-shadow: 1px 1px 3px #000;
+        }
+		
+		
+		.volume-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 230px;
+}
+
+.volume-icon {
+    color: #e5e5e5;
+    font-size: 16px;
+}
+
+#volumePercent {
+    color: #e5e5e5;
+    font-size: 13px;
+    font-weight: bold;
+    min-width: 45px;
+    text-align: right;
+}
+
+#volumeSlider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 140px;
+    height: 6px;
+    border-radius: 10px;
+    outline: none;
+    cursor: pointer;
+
+    background: linear-gradient(
+        to right,
+        #e5e5e5 100%,
+        rgba(255,255,255,0.2) 100%
+    );
+
+    box-shadow: 0 0 8px rgba(255,255,255,0.3);
+}
+
+/* Linie slider */
+#volumeSlider::-webkit-slider-runnable-track {
+    height: 6px;
+    border-radius: 10px;
+}
+
+/* Cerc slider */
+#volumeSlider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+
+    background: #ffffff;
+    border: 2px solid #000;
+
+    margin-top: -6px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 0 10px rgba(255,255,255,0.8),
+        0 0 20px rgba(255,255,255,0.4);
+
+    transition: 0.2s;
+}
+
+#volumeSlider::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+}
+
+/* Firefox */
+#volumeSlider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: white;
+    border: none;
+    cursor: pointer;
+}
+.volume-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 230px;
+    flex-shrink: 0; /* 👈 IMPORTANT: nu se mișcă */
+}
+
+#volumePercent {
+    width: 45px;        /* 👈 FIXEAZĂ spațiul */
+    text-align: right;
+    display: inline-block;
+}
+
+#volumeSlider {
+    transition: background 0.1s linear;
+}
+
+#listeners {
+    color: #e5e5e5;
+    font-size: 17px;
+    font-weight: bold;
+    text-shadow: 1px 1px 3px #000;
+	position: relative;
+	top: -5px; /* 👈 îl ridică puțin */
+}
+
+.info-bottom {
+    align-items: center;
+}
+
+</style>
+</head>
+<body oncontextmenu="return false;"> 
+
+<div id="super-container">
+    <div class="top-signature">
+        <span class="signature-text">🎧 ★★★ Asculți cele mai bune hituri muzicale ★★★ 🎧</span>
+    </div>
+
+	
+
+    <div class="content-z">
+        <div class="ghost-name">Radio LaFamilia</div>
+    </div>
+
+    <div class="metadata-container">
+        <span id="track-info" class="scrolling-text">Loading...</span>
+    </div>
+
+<div class="controls">
+
+    <button class="btn" id="playBtn" onclick="togglePlay()">
+        <i class="fa-solid fa-play"></i>
+    </button>
+
+    <div class="volume-wrapper">
+        <i class="fa-solid fa-volume-high volume-icon"></i>
+
+        <input 
+            type="range"
+            id="volumeSlider"
+            min="0"
+            max="100"
+            step="1"
+            value="100"
+            oninput="setVolume(this.value)"
+        >
+
+        <span id="volumePercent">100%</span>
+    </div>
+
+    <button class="btn" onclick="stopAudio()">
+        <i class="fa-solid fa-stop"></i>
+    </button>
+
+</div>
+
+    <div class="info-bottom">
+		<div id="listeners">🎧 0 Listen 🎧</div>
+		<div id="clock">Loading...</div>
+        <div id="date">Loading...</div>
+    </div>
+</div>
+
+<audio id="myAudio" src="https://radio.sonicpanel.ro:10922/stream" crossorigin="anonymous"></audio>
+
+<script>
+    
+    document.onkeydown = function(e) {
+        if (e.keyCode == 123) return false; 
+        if (e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0) || e.keyCode == 'J'.charCodeAt(0))) return false; 
+        if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; 
+        if (e.ctrlKey && e.keyCode == 'S'.charCodeAt(0)) return false; 
+    };
+
+    const audio = document.getElementById('myAudio');
+	audio.volume = 1;
+    const trackInfo = document.getElementById('track-info');
+    let lastSong = "";
+	const playBtn = document.getElementById("playBtn");
+    let isPlaying = false;
+
+    function playAudio() { audio.play().catch(err => console.log(err)); }
+    function stopAudio() { audio.pause(); audio.currentTime = 0; }
+	
+function setVolume(val) {
+
+    audio.volume = val / 100;
+
+    const slider = document.getElementById("volumeSlider");
+    const percent = document.getElementById("volumePercent");
+
+    percent.textContent = `${val}%`;
+
+    slider.style.background = `linear-gradient(
+        to right,
+        #e5e5e5 ${val}%,
+        rgba(255,255,255,0.2) ${val}%
+    )`;
+
+    // schimbă iconița în funcție de volum
+const icon = document.querySelector(".volume-icon");
+
+// scoatem doar iconițele de volum
+icon.classList.remove(
+    "fa-volume-high",
+    "fa-volume-low",
+    "fa-volume-xmark"
+);
+
+// adăugăm doar ce trebuie
+if (val == 0) {
+    icon.classList.add("fa-volume-xmark");
+} else if (val < 50) {
+    icon.classList.add("fa-volume-low");
+} else {
+    icon.classList.add("fa-volume-high");
+}
+}
+	
+	
+	
+	function togglePlay() {
+    if (!isPlaying) {
+        audio.play().then(() => {
+            isPlaying = true;
+            playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+        }).catch(err => console.log(err));
+    } else {
+        audio.pause();
+        isPlaying = false;
+        playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+    }
+}
+
+
+function stopAudio() {
+    audio.pause();
+    audio.currentTime = 0;
+
+    isPlaying = false;
+    playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+}
+
+
+    function updateDateTime() {
+        const now = new Date();
+        document.getElementById('clock').innerText = now.toLocaleTimeString('ro-RO');
+        const options = { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' };
+        let formattedDate = now.toLocaleDateString('ro-RO', options);
+        document.getElementById('date').innerText = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+    }
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+
+async function updateMetadata() {
+    try {
+        const response = await fetch("https://radio.sonicpanel.ro:10922/stats?sid=1&json=1");
+        const data = await response.json();
+
+        const raw = data.songtitle || "Live - ...";
+
+        let artist = "Live";
+        let title = raw;
+
+        if (raw.includes("-")) {
+            const parts = raw.split("-");
+            artist = parts[0].trim();
+            title = parts.slice(1).join("-").trim();
+        }
+
+        const currentSong = `${artist}-${title}`;
+
+        if (currentSong !== lastSong) {
+            lastSong = currentSong;
+
+            trackInfo.innerText =
+                "★ Live: " +
+                artist.toUpperCase() +
+                " - " +
+                title.toUpperCase() +
+                " ★ ";
+        }
+
+        // 👇 ASCULTĂTORI LIVE
+        const listeners = data.currentlisteners || 0;
+        document.getElementById("listeners").innerText =
+            `🎧 ${listeners} Listen 🎧`;
+
+    } catch (error) {
+        console.log("Metadata error:", error);
+        trackInfo.innerText = "LIVE RADIO";
+    }
+}
+    setInterval(updateMetadata, 5000);
+    updateMetadata();
+	
+</script>
+
+<script>	
+/* ── Bloqueo de herramientas de desarrollador ── */
+(function(){
+  // Bloquear F12, Ctrl+Shift+I/J/U, Ctrl+U
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'F12') { e.preventDefault(); return false; }
+    if(e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' ||
+       e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) {
+      e.preventDefault(); return false;
+    }
+    if(e.ctrlKey && (e.key === 'U' || e.key === 'u')) {
+      e.preventDefault(); return false;
+    }
+  }, true);
+
+  // Clic derecho: mensaje personalizado dentro del reproductor, bloqueado fuera
+  (function(){
+    var tip = document.createElement('div');
+    tip.id = 'ctx-tip';
+    tip.textContent = '\u00A92026 ByDesign';
+    tip.style.cssText = [
+      'position:fixed',
+      'z-index:99999',
+      'background:rgba(10,10,10,0.93)',
+      'color:#fff',
+      'font-family:Inter,Helvetica Neue,Helvetica,Arial,sans-serif',
+      'font-size:12px',
+      'font-weight:600',
+      'letter-spacing:.3px',
+      'padding:9px 14px',
+      'border-radius:8px',
+      'border:1px solid rgba(255,255,255,0.12)',
+      'box-shadow:0 6px 20px rgba(0,0,0,0.6)',
+      'pointer-events:none',
+      'opacity:0',
+      'transition:opacity .18s ease',
+      'max-width:280px',
+      'line-height:1.45',
+      'white-space:normal',
+      'text-align:center'
+    ].join(';');
+    document.body.appendChild(tip);
+
+    var hideTimer = null;
+    function hideTip(){ tip.style.opacity = '0'; }
+
+    document.addEventListener('contextmenu', function(e){
+      e.preventDefault();
+      var ipod = document.getElementById('ipod');
+      if(ipod && ipod.contains(e.target)){
+        var x = e.clientX + 12, y = e.clientY + 12;
+        tip.style.left = x + 'px';
+        tip.style.top  = y + 'px';
+        tip.style.opacity = '1';
+        requestAnimationFrame(function(){
+          var r = tip.getBoundingClientRect();
+          if(r.right  > window.innerWidth  - 8) tip.style.left = (window.innerWidth  - r.width  - 16) + 'px';
+          if(r.bottom > window.innerHeight - 8) tip.style.top  = (window.innerHeight - r.height - 16) + 'px';
+        });
+        if(hideTimer) clearTimeout(hideTimer);
+        hideTimer = setTimeout(hideTip, 2800);
+      } else {
+        hideTip();
+      }
+      return false;
+    }, true);
+
+    document.addEventListener('click',  hideTip, true);
+    document.addEventListener('scroll', hideTip, true);
+  })();
+
+  // Detección de DevTools desactivada: en iframes y embeds (xat, webs externas)
+  // outerWidth/outerHeight no reflejan la ventana real y disparan un falso positivo
+  // que ejecuta document.body.innerHTML='' borrando el reproductor.
+})();
+
+
+// --- PROTECT SCRIPT ---
+
+
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+document.onkeydown = function(e) {
+
+if(e.keyCode == 123) return false; // F12
+
+if(e.ctrlKey && e.shiftKey && e.keyCode == 73) return false; // CTRL+SHIFT+I
+
+if(e.ctrlKey && e.shiftKey && e.keyCode == 74) return false; // CTRL+SHIFT+J
+
+if(e.ctrlKey && e.keyCode == 85) return false; // CTRL+U
+
+};
+</script>
+</body>
+</html>

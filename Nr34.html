@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ByDesign</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Quicksand:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --accent: #0015b8; 
+            --glow: #0ae1f8; 
+            --bg-glass: rgba(28,79,105);
+            --disco-speed: 6s; 
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { display: flex; justify-content: center; align-items: center; height: 100vh; width: 100vw; background: #000; font-family: 'Quicksand', sans-serif; color: white; overflow: hidden; }
+              
+        .neon-box { 
+            position: relative; width: 720px; height: 460px; padding: 3px; border-radius: 40px; overflow: hidden; z-index: 10; 
+            box-shadow: 0 0 45px rgba(212, 175, 55, 0.25); 
+        }
+        .neon-box::before { 
+            content: ''; position: absolute; width: 200%; height: 200%; top: -50%; left: -50%; 
+            background: conic-gradient(from 180deg, transparent, var(--accent), #fff, var(--glow), transparent); 
+            animation: rotate var(--disco-speed) linear infinite; 
+        }
+        @keyframes rotate { 100% { transform: rotate(360deg); } }
+
+        .player-glass { 
+            background: var(--bg-glass); backdrop-filter: blur(40px); border-radius: 37px; width: 100%; height: 100%; 
+            display: flex; padding: 25px; gap: 25px; position: relative; z-index: 11; 
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+         .left-side { 
+            width: 260px; display: flex; flex-direction: column; align-items: center; 
+            justify-content: space-between; border-right: 1px solid rgba(212, 175, 55, 0.15); 
+            padding-right: 15px; 
+        }
+
+        .radar-container { 
+            position: relative; width: 160px; height: 160px; 
+            display: flex; justify-content: center; align-items: center; 
+        }
+        
+        .radar-container svg { 
+            position: absolute; width: 100%; height: 100%; 
+            transform: rotate(-90deg); filter: drop-shadow(0 0 10px var(--accent)); 
+        }
+        
+        .circle-prog { fill: none; stroke-width: 4; stroke-linecap: round; animation: softGlow 3s ease-in-out infinite; }
+
+        .time-digital { 
+            text-align: center; z-index: 5; position: relative; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+
+        #time-text { font-family: 'Orbitron', sans-serif; font-size: 1.4rem; font-weight: 700; color: #fff; letter-spacing: 3px; text-shadow: none; }
+        #date-text { font-size: 0.65rem; color: #fff; text-transform: uppercase; letter-spacing: 2px; margin-top: 5px; }
+
+        .couple-gif { 
+            width: 100%; border-radius: 25px; border: 1px solid rgba(212, 175, 55, 0.3);
+            filter: sepia(0.3) brightness(1.1); box-shadow: 0 0 25px rgba(212, 175, 55, 0.15); 
+            animation: dreamy 5s ease-in-out infinite;
+        }
+        @keyframes dreamy { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+        .right-side { flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        h1 { 
+            font-family: 'Orbitron', sans-serif; font-size: 1.5rem; 
+            background: linear-gradient(to bottom, #fff, #9DF5FE, #0AE1F8, #9DF5FE, #fff);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-align: center; letter-spacing: 4px; text-transform: uppercase;
+        }
+        
+        .music-card { 
+            background: rgba(255, 255, 255, 0.03); border-radius: 30px; padding: 15px; 
+            border: 1px solid rgba(212, 175, 55, 0.2); display: flex; align-items: center; gap: 20px;
+        }
+
+        .vinilo { 
+            width: 95px; height: 95px; border-radius: 50%; border: 2px solid #222; 
+            overflow: hidden; flex-shrink: 0; box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        .playing .vinilo { animation: spin 8s linear infinite; box-shadow: 0 0 30px rgba(212, 175, 55, 0.4); }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        .status-tag { font-size: 0.6rem; color: #fff; letter-spacing: 2px; text-shadow: 0 0 8px var(--glow); animation: breathe 2s infinite; }
+        @keyframes breathe { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+        .controls { display: flex; align-items: center; gap: 20px; margin: 10px 0; }
+        .btn-play { 
+            background: linear-gradient(135deg, #fff, var(--accent)); border: none; width: 60px; height: 60px; border-radius: 50%; 
+            color: #000; cursor: pointer; font-size: 1.3rem; box-shadow: 0 0 25px var(--glow); transition: 0.4s; 
+        }
+        .btn-play:hover { transform: scale(1.1); box-shadow: 0 0 35px #fff; }
+        
+        input[type=range] { flex: 1; accent-color: var(--accent); cursor: pointer; height: 4px; }
+
+		
+/* RESET slider */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  background: rgba(0,0,0,0.2);
+  border-radius: 10px;
+}
+
+/* TRACK */
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
+  background: #0049FF;
+  border-radius: 10px;
+}
+
+/* THUMB - EXACT CE VREI */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+
+  width: 16px;
+  height: 16px;
+
+  border-radius: 50%;          /* 🔥 rotund */
+  background: #1C4F69;         /* 🔵 fill permanent */
+  border: 2px solid #0AE1F8;   /* ✨ dunga (contur) */
+
+  cursor: pointer;
+
+  margin-top: -5px; /* centrare perfectă */
+}
+
+/* Firefox */
+input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #1C4F69;
+  border: 2px solid #0AE1F8;
+  cursor: pointer;
+}
+
+
+
+.social-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 80px);
+  justify-content: center;
+  gap: 12px;
+}
+        .s-btn { 
+            padding: 12px; border-radius: 20px; text-decoration: none; color: #fff; 
+            font-size: 0.75rem; font-weight: 400; text-align: center;
+            background: rgba(212, 175, 55, 0.1); border: 1px solid rgba(212, 175, 55, 0.4); 
+            transition: 0.3s; backdrop-filter: blur(5px);
+        }
+.btn-play.pause {
+  background: linear-gradient(135deg, #ffffff, #0AE1F8);
+  color: #000;
+  box-shadow: 0 0 25px rgba(255, 0, 0, 0.6);
+}
+        .s-btn:hover { background: var(--accent); color: #fff; transform: translateY(-2px); }
+
+        .meta-footer { font-size: 0.65rem; color: rgba(255,255,255,0.5); display: flex; justify-content: space-between; border-top: 1px solid rgba(212, 175, 55, 0.1); padding-top: 14px; }
+    </style>
+</head>
+<body>
+    <div class="neon-box">
+        <div class="player-glass" id="player-container">
+            <div class="left-side">
+                <div class="radar-container"
+     style="position:relative; width:160px; height:160px; margin-top:-15px;">
+                    <svg viewBox="0 0 120 120">
+                        <circle id="ss" class="circle-prog" cx="60" cy="60" r="56" stroke="rgba(255, 255, 255, 0.2)" stroke-dasharray="351.8" stroke-dashoffset="351.8"></circle>
+                        <circle id="hh" class="circle-prog" cx="60" cy="60" r="48" stroke="var(--accent)" stroke-dasharray="301.6" stroke-dashoffset="301.6"></circle>
+                        <circle id="mm" class="circle-prog" cx="60" cy="60" r="40" stroke="var(--glow)" stroke-dasharray="251.3" stroke-dashoffset="251.3"></circle>
+                    </svg>
+                    <div class="time-digital">
+                        <span id="time-text">00:00</span>
+                        <span id="date-text">-- ---</span>
+                    </div>
+                </div>
+                <img src="https://xatimg.com/image/oacvd5ltA14X.png" class="couple-gif">
+            </div>
+
+            <div class="right-side">
+                <h1>RADIO Lafamilia</h1>
+                <div class="music-card">
+                    <div class="vinilo"><img id="cover-art" src="https://xatimg.com/image/oacvd5ltA14X.png" style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div class="track-details">
+                        <center><div class="status-tag"><i class="fas fa-heart"></i>★ Radio LaFamilia ★<i class="fas fa-heart"></i></div></center>
+                        <div class="scroll-wrap"><marquee id="track-info" scrollamount="3">★★★ Asculți cele mai bune hituri muzicale ★★★</marquee></div>
+						<script id='sonic_js' data-port='8132' src='https://radio.sonicpanel.ro/cp/widgets.js?r=273'></script>
+						<div class="scroll-wrap"><marquee id="sonic_title" scrollamount="5">Încărcare...</marquee></div>
+						<div class="scroll-wrap"><marquee id="sonic_dj" scrollamount="3">Încărcare...</marquee></div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="btn-play" id="play-pause"><i class="fas fa-play" id="btn-icon"></i></button>
+                    <input type="range" id="volume" min="0" max="1" step="0.01" value="1">
+					<div id="volume-percent"
+                      style="
+                      text-align:center;
+                      font-size:12px;
+                      color:#0AE1F8;
+                      font-weight:bold;
+                      margin-bottom:6px;
+                      ">
+                     100%
+                   </div>
+                </div>
+                <div class="social-grid">
+                    <a href="https://www.google.com" target="_blank" class="s-btn">Site</a>
+                    <a href="https://www.facebook.com" target="_blank" class="s-btn">Facebook</a>
+					<a href="https://radio.sonicpanel.ro/lafamilia/stream" target="_blank" class="s-btn">Listen</a>
+					<a href="https://play.google.com" target="_blank" class="s-btn">App</a>
+                </div>
+                <div class="meta-footer">
+                    <span>©<strong>ByDesign™  ¬</strong></span>
+					<small style="color:#0AE1F8;font-size:10px;font-weight:800;">Ascultatori</small><div id="sonic_listeners"></div
+                    <span>★ Radio LaFamilia ★<strong id="listeners">©ByDesegn™ ★</strong></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <audio id="stream" src="https://radio.sonicpanel.ro:10922/stream" crossorigin="anonymous"></audio>
+
+    <script>
+        const audio = document.getElementById('stream');
+        const playBtn = document.getElementById('play-pause');
+        const icon = document.getElementById('btn-icon');
+        const coverArt = document.getElementById('cover-art');
+        const trackDisplay = document.getElementById('track-info');
+        const listenerCount = document.getElementById('listeners');
+        let lastTrack = "";
+
+        function updateClock() {
+            const now = new Date();
+            const h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
+            document.getElementById('time-text').innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}`;
+            document.getElementById('date-text').innerText = now.toLocaleDateString('ro-RO', {day:'2-digit', month:'long'});
+            document.getElementById('ss').style.strokeDashoffset = 351.8 - (351.8 * s) / 60;
+            document.getElementById('mm').style.strokeDashoffset = 251.3 - (251.3 * m) / 60;
+            document.getElementById('hh').style.strokeDashoffset = 301.6 - (301.6 * (h % 12 + m/60)) / 12;
+        }
+        setInterval(updateClock, 1000); updateClock();
+
+        async function updateRadioData() {
+            try {
+                const r = await fetch("https://radio.sonicpanel.ro:10922/stats?json=1");
+                const data = await r.json();
+                if (data && data.now_playing) {
+                    const song = data.now_playing.song;
+                    const currentTrack = `${song.artist} - ${song.title}`;
+                    if (lastTrack !== currentTrack) {
+                        lastTrack = currentTrack;
+                        trackDisplay.innerText = currentTrack.toUpperCase();
+                        listenerCount.innerText = data.listeners.total;
+                        let foundSource = (song.art && !song.art.includes('default')) ? song.art : "";
+                        if (!foundSource) {
+                            const itunes = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(currentTrack)}&limit=1`);
+                            const itData = await itunes.json();
+                            if (itData.results.length > 0) foundSource = itData.results[0].artworkUrl100.replace('100x100', '600x600');
+                        }
+                        if (foundSource) {
+                            let img = new Image();
+                            img.src = foundSource;
+                            img.onload = () => { coverArt.src = foundSource; coverArt.style.opacity = 1; };
+                        }
+                    }
+                }
+            } catch (e) { console.error("Error"); }
+        }
+        setInterval(updateRadioData, 10000); updateRadioData();
+
+playBtn.onclick = () => {
+  if (audio.paused) { 
+    audio.play(); 
+    icon.className = 'fas fa-pause'; 
+
+    playBtn.classList.add("pause"); // 🔴 devine roșu
+
+    document.getElementById('player-container').classList.add('playing');
+    document.documentElement.style.setProperty('--disco-speed', '2s');
+
+  } else { 
+    audio.pause(); 
+    icon.className = 'fas fa-play'; 
+
+    playBtn.classList.remove("pause"); // 🔵 revine albastru
+
+    document.getElementById('player-container').classList.remove('playing');
+    document.documentElement.style.setProperty('--disco-speed', '6s');
+  }
+};
+document.getElementById('volume').oninput = (e) => {
+  const v = e.target.value;
+  audio.volume = v;
+
+  const percent = Math.round(v * 100);
+  document.getElementById("volume-percent").innerText = percent + "%";
+};
+
+// --- PROTECT SCRIPT ---
+
+
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+document.onkeydown = function(e) {
+
+if(e.keyCode == 123) return false; // F12
+
+if(e.ctrlKey && e.shiftKey && e.keyCode == 73) return false; // CTRL+SHIFT+I
+
+if(e.ctrlKey && e.shiftKey && e.keyCode == 74) return false; // CTRL+SHIFT+J
+
+if(e.ctrlKey && e.keyCode == 85) return false; // CTRL+U
+
+};
+
+</script>
+</body>
+</html>

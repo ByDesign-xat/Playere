@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>Radio LaFamilia</title>
+    <style>
+        :root {
+            --header-bg: rgba(0, 123, 255, 0.85);
+            --footer-bg: rgba(151, 0, 255, 0.85);
+            --marquee-bg: #ffef00;
+            --marquee-text: #000;
+            --accent-border: #fff;
+            --rainbow-vivid: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+            --date-color: #00f2ff;
+            --time-color: #ffcc00;
+        }
+
+        html, body {
+            height: 100%; margin: 0; padding: 0;
+            background-color: #000; display: grid; place-items: center;
+            font-family: 'Arial Black', sans-serif; overflow: hidden;
+        }
+
+        .dashboard {
+            width: 728px; height: 486px;
+            background: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), 
+                        url('https://xatimg.com/image/oacvd5ltA14X.png');
+            background-size: cover; background-position: center;
+            border: 4px solid var(--accent-border);
+            border-radius: 30px; position: relative;
+            display: flex; flex-direction: column; overflow: hidden;
+            box-shadow: 0 0 50px rgba(0,0,0,0.7);
+            transition: border 0.5s ease;
+        }
+
+        .header {
+            height: 70px; padding: 0 25px; display: flex; justify-content: space-between;
+            align-items: center; background: var(--header-bg);
+            border-bottom: 3px solid var(--accent-border); z-index: 10;
+            backdrop-filter: blur(12px); transition: background 0.5s;
+        }
+
+        .user-name { color: #fff; font-size: 26px; text-shadow: 2px 2px 4px #000; }
+
+        #date { color: var(--date-color); background: rgba(0,0,0,0.6); padding: 4px 12px; border-radius: 8px; font-size: 18px; border: 2px solid var(--date-color); box-shadow: 0 0 10px var(--date-color); }
+        #time { color: var(--time-color); background: rgba(0,0,0,0.6); padding: 4px 12px; border-radius: 8px; font-size: 18px; border: 2px solid var(--time-color); box-shadow: 0 0 10px var(--time-color); }
+
+        .marquee-container { background: var(--marquee-bg); height: 35px; display: flex; align-items: center; border-bottom: 3px solid #000; }
+        .marquee-text { white-space: nowrap; animation: marquee 15s linear infinite; font-size: 16px; color: var(--marquee-text); font-weight: 900; }
+        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+
+        .main-display { flex: 1; display: flex; align-items: center; justify-content: flex-start; padding-left: 50px; position: relative; }
+
+        .vinyl-container {
+            width: 190px; height: 190px; border-radius: 50%;
+            background: var(--rainbow-vivid); background-size: 300% 300%;
+            display: flex; justify-content: center; align-items: center;
+            border: 6px solid var(--accent-border); box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            z-index: 5;
+        }
+        
+        .vinyl-cover { width: 180px; height: 180px; border-radius: 50%; border: 3px solid #fff; background-size: cover; background-position: center; }
+        .spin { animation: rotate 3s linear infinite, rainbow-bg 5s linear infinite; }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes rainbow-bg { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+
+        .color-picker {
+            position: absolute; right: 20px; top: 20px;
+            display: flex; flex-direction: column; gap: 8px;
+            background: rgba(0,0,0,0.8); padding: 12px; border-radius: 25px;
+            border: 2px solid var(--accent-border); z-index: 20;
+            backdrop-filter: blur(5px);
+        }
+        .color-btn { width: 25px; height: 25px; border-radius: 50%; cursor: pointer; border: 2px solid #fff; transition: transform 0.2s; }
+
+        /* REGOLATORE VOLUME ALLUNGATO */
+        .volume-wrapper {
+            display: flex; flex-direction: column; align-items: center;
+            width: 280px; /* Larghezza aumentata */
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            border: 2px solid #fff;
+            outline: none;
+            cursor: pointer;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 25px; height: 25px;
+            background: #fff; border-radius: 50%;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            cursor: pointer; border: 2px solid #000;
+        }
+
+        .controls-panel {
+            height: 95px; background: var(--footer-bg);
+            display: flex; justify-content: space-between;
+            align-items: center; padding: 0 30px; border-top: 3px solid var(--accent-border);
+            backdrop-filter: blur(12px); transition: background 0.5s;
+        }
+        .btn-control { border: 3px solid #fff; padding: 12px 30px; border-radius: 15px; font-weight: 900; cursor: pointer; color: #fff; text-shadow: 1px 1px 2px #000; font-size: 16px; }
+        #playBtn { background: #00ff00; color: #000; text-shadow: none; }
+        #stopBtn { background: #ff0000; }
+
+        .note-fall-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; display: none; }
+        .playing .note-fall-overlay { display: block; }
+        .music-note { position: absolute; font-size: 24px; animation: fall linear infinite; color: white; }
+        @keyframes fall { 0% { transform: translateY(-50px); opacity: 0; } 10% { opacity: 1; } 100% { transform: translateY(500px); opacity: 0; } }
+    </style>
+</head>
+<body>
+
+<div class="dashboard" id="dbContainer">
+    <div class="note-fall-overlay" id="noteOverlay"></div>
+
+    <div class="header">
+        <div id="date">--/--</div>
+        <div class="user-name">Radio LaFamilia</div>
+        <div id="time">00:00</div>
+    </div>
+
+    <div class="marquee-container">
+        <div class="marquee-text" id="live-marquee">Încărcare...</div>
+    </div>
+
+    <div class="main-display">
+        <div class="vinyl-container" id="vinylBase">
+            <div id="vinyl-cover" class="vinyl-cover" style="background-image: url('https://xatimg.com/image/oacvd5ltA14X.png');"></div>
+        </div>
+
+        <div class="color-picker">
+            <div class="color-btn" style="background: #007bff;" onclick="changeTheme('classic')"></div>
+            <div class="color-btn" style="background: #ff00ff;" onclick="changeTheme('neon')"></div>
+            <div class="color-btn" style="background: #ff8c00;" onclick="changeTheme('sunset')"></div>
+            <div class="color-btn" style="background: #00ff00;" onclick="changeTheme('matrix')"></div>
+            <div class="color-btn" style="background: #ff0000;" onclick="changeTheme('fire')"></div>
+            <div class="color-btn" style="background: #ffffff;" onclick="changeTheme('ice')"></div>
+        </div>
+    </div>
+
+    <div class="controls-panel">
+        <button id="playBtn" class="btn-control">PLAY</button>
+        
+        <div class="volume-wrapper">
+            <input type="range" id="volume" min="0" max="1" step="0.01" value="1">
+            <div style="color:white;font-size:11px;font-weight:bold;text-shadow:1px 1px 2px #000;margin-top:5px;display:flex;justify-content:center;gap:6px;align-items:center;">
+            <span>VOLUM MASTER</span>
+            <span id="volPercent">100%</span>
+            </div>
+        </div>
+        
+        <button id="stopBtn" class="btn-control">STOP</button>
+    </div>
+</div>
+
+<audio id="radioStream" crossorigin="anonymous">
+    <source src="https://radio.sonicpanel.ro:10922/stream" type="audio/mpeg">
+</audio>
+
+<script>
+    const audio = document.getElementById('radioStream');
+    const vinylCover = document.getElementById('vinyl-cover');
+    const vinylBase = document.getElementById('vinylBase');
+    const marquee = document.getElementById('live-marquee');
+    const db = document.getElementById('dbContainer');
+
+    const themes = {
+        classic: { h: 'rgba(0,123,255,0.85)', f: 'rgba(151,0,255,0.85)', m: '#ffef00', mt: '#000', b: '#fff' },
+        neon: { h: 'rgba(255,0,255,0.85)', f: 'rgba(0,255,255,0.85)', m: '#000', mt: '#0f0', b: '#ff00ff' },
+        sunset: { h: 'rgba(255,78,80,0.85)', f: 'rgba(249,212,35,0.85)', m: '#fc913a', mt: '#fff', b: '#f9d423' },
+        matrix: { h: 'rgba(0,51,0,0.9)', f: 'rgba(0,17,0,0.9)', m: '#00ff00', mt: '#000', b: '#00ff00' },
+        fire: { h: 'rgba(128,0,0,0.85)', f: 'rgba(255,69,0,0.85)', m: '#000', mt: '#ff0', b: '#ff4500' },
+        ice: { h: 'rgba(173,216,230,0.85)', f: 'rgba(70,130,180,0.85)', m: '#fff', mt: '#000', b: '#fff' }
+    };
+
+    function changeTheme(name) {
+        const t = themes[name];
+        document.documentElement.style.setProperty('--header-bg', t.h);
+        document.documentElement.style.setProperty('--footer-bg', t.f);
+        document.documentElement.style.setProperty('--marquee-bg', t.m);
+        document.documentElement.style.setProperty('--marquee-text', t.mt);
+        document.documentElement.style.setProperty('--accent-border', t.b);
+    }
+
+    function createNotes() {
+        const notes = ['♪', '♫', '♬', '♩'];
+        for (let i = 0; i < 20; i++) {
+            const n = document.createElement('div');
+            n.className = 'music-note';
+            n.innerText = notes[Math.floor(Math.random() * notes.length)];
+            n.style.left = Math.random() * 100 + '%';
+            n.style.animationDuration = (3 + Math.random() * 4) + 's';
+            n.style.animationDelay = (Math.random() * -5) + 's';
+            document.getElementById('noteOverlay').appendChild(n);
+        }
+    }
+
+    function updateClock() {
+        const now = new Date();
+        document.getElementById('date').innerText = now.toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit' });
+        document.getElementById('time').innerText = now.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+    }
+
+async function updateMetadata() {
+    try {
+        const res = await fetch("https://radio.sonicpanel.ro:10922/played?sid=1&type=json");
+        const data = await res.json();
+
+        console.log("METADATA RAW:", data);
+
+        let text = "";
+
+        // 🔥 normalize safe value
+        const clean = (v) => (v ? String(v).trim() : "");
+
+        // CASE 1
+        if (typeof data === "string") {
+            text = clean(data);
+        }
+
+        // CASE 2
+        else if (Array.isArray(data) && data.length) {
+            text = clean(data[0]?.song || data[0]?.title);
+        }
+
+        // CASE 3
+        else if (data?.artist || data?.title) {
+            text = `${clean(data.artist)} - ${clean(data.title)}`;
+        }
+
+        // CASE 4
+        else if (data?.data?.artist || data?.data?.title) {
+            text = `${clean(data.data.artist)} - ${clean(data.data.title)}`;
+        }
+
+        // CASE 5
+        else if (data?.response) {
+            text = clean(data.response);
+        }
+
+        // ❗ FINAL SAFETY CHECK
+        if (!text || text === "-" || text === "null - null") {
+            marquee.innerText = "Radio LIVE 🔊";
+            return;
+        }
+
+        marquee.innerText = "🎧 Acum: " + text; 
+
+    } catch (e) {
+        console.log("Eroare metadata:", e);
+        marquee.innerText = "Radio LIVE 🔊";
+    }
+}
+
+audio.addEventListener("playing", () => {
+    db.classList.add('playing');
+    vinylBase.classList.add('spin');
+});
+
+audio.addEventListener("pause", () => {
+    db.classList.remove('playing');
+    vinylBase.classList.remove('spin');
+});
+
+    document.getElementById('playBtn').onclick = () => { audio.play(); db.classList.add('playing'); vinylBase.classList.add('spin'); };
+    document.getElementById('stopBtn').onclick = () => { audio.pause(); audio.currentTime = 0; db.classList.remove('playing'); vinylBase.classList.remove('spin'); };
+    const volume = document.getElementById('volume');
+const volPercent = document.getElementById('volPercent');
+
+volume.oninput = (e) => {
+    const val = e.target.value;
+    audio.volume = val;
+    volPercent.innerText = Math.round(val * 100) + "%";
+};
+audio.volume = 1;
+document.getElementById('volPercent').innerText = "100%";
+
+    setInterval(updateClock, 1000);
+    setInterval(updateMetadata, 8000);
+    updateClock(); updateMetadata(); createNotes();
+	
+	
+// 🎵 MOUSE MUSIC NOTES FOLLOW CURSOR (PRO EFFECT)
+const mouseNotes = ['♪','♫','♬','♩'];
+let mouseActive = true;
+let lastMove = 0;
+let notePool = [];
+const MAX_MOUSE_NOTES = 25;
+
+function spawnMouseNote(x, y) {
+    const note = document.createElement('div');
+    note.innerText = mouseNotes[Math.floor(Math.random() * mouseNotes.length)];
+
+    note.style.position = 'fixed';
+    note.style.left = x + 'px';
+    note.style.top = y + 'px';
+    note.style.pointerEvents = 'none';
+    note.style.fontSize = '18px';
+    note.style.color = '#fff';
+    note.style.textShadow = '0 0 10px #00f2ff, 0 0 20px #ff00ff';
+    note.style.zIndex = '9999';
+    note.style.transition = 'transform 1s ease-out, opacity 1s ease-out';
+    note.style.opacity = '1';
+
+    document.body.appendChild(note);
+    notePool.push(note);
+
+    if (notePool.length > MAX_MOUSE_NOTES) {
+        const old = notePool.shift();
+        old.remove();
+    }
+
+    requestAnimationFrame(() => {
+        note.style.transform = 'translateY(-40px) scale(1.3)';
+        note.style.opacity = '0';
+    });
+
+    setTimeout(() => note.remove(), 1000);
+}
+
+// throttle mouse move (performance)
+document.addEventListener('mousemove', (e) => {
+    const now = Date.now();
+    if (now - lastMove < 40) return; // limit spawn rate
+    lastMove = now;
+
+    if (!mouseActive) return;
+
+    spawnMouseNote(e.clientX, e.clientY);
+});
+
+
+// --- PROTECT SCRIPT ---
+
+
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+document.onkeydown = function(e) {
+
+if(e.keyCode == 123) return false; // F12
+
+if(e.ctrlKey && e.shiftKey && e.keyCode == 73) return false; // CTRL+SHIFT+I
+
+if(e.ctrlKey && e.shiftKey && e.keyCode == 74) return false; // CTRL+SHIFT+J
+
+if(e.ctrlKey && e.keyCode == 85) return false; // CTRL+U
+
+};
+
+
+</script>
+
+</body>
+</html>

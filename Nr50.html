@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>ByDesign</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lucida:wght@400;700&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --neon-cyan: #00f2ff;
+        --neon-red: #c7c7c7;
+        --glow: 0 0 15px rgba(0, 242, 255, 0.6);
+		--silver: #9d9d9d;
+		--silver1: #525252;
+		--silver2: #f1f1f1;
+    }
+
+    body {
+        background-color: transparente;
+        color: ;
+        font-family: 'Lucida', sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        overflow: hidden;
+    }
+
+    .player-container {
+        width: 700px;
+        padding: 25px;
+        border: 2px solid var(--neon-cyan);
+        border-radius: 25px;
+        box-shadow: var(--glow);
+        background: radial-gradient(circle, #9d9d9d 0%, #000 90%);
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        position: relative;
+    }
+
+    /* TOP BAR */
+    .top-bar {
+        height: 45px;
+        border-color: var(--neon-red);
+        color: var(--neon-red);
+        box-shadow: 0 0 15px var(--neon-red);
+        border-radius: 12px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        color: var(--neon-cyan);
+        font-size: 1rem;
+        text-shadow: var(--glow);
+        background: rgba(0, 242, 255, 0.05);
+    }
+
+    .top-bar span b {
+        color: var(--silver2);
+    }
+
+    .middle-section {
+        display: flex;
+        gap: 20px;
+        height: 320px;
+    }
+
+    .side-slot {
+        flex: 1;
+        border: 0px solid rgba(0, 242, 255, 0.2);
+        border-radius: 15px;
+        background: ;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+    }
+
+    /* PEAK LEDS */
+    .peak-led {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--silver);
+        border: 1px solid #100;
+        margin-bottom: 10px;
+        transition: 0.05s;
+    }
+
+    .peak-active {
+        background: var(--neon-red);
+        box-shadow: 0 0 15px var(--neon-red);
+    }
+
+    .main-screen {
+        flex: 2;
+        border-color: var(--neon-red);
+        color: var(--neon-red);
+        box-shadow: 0 0 15px var(--neon-red);
+        border-radius: 15px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: radial-gradient(circle, #9d9d9d 0%, #000 90%);
+    }
+
+    #album-art {
+        width: 180px;
+        height: 180px;
+        border: 2px solid var(--neon-cyan);
+        border-color: var(--neon-red);
+        color: var(--neon-red);
+        box-shadow: 0 0 15px var(--neon-red);
+        border-radius: 10px;
+        margin-bottom: 15px;
+        object-fit: cover;
+        background: radial-gradient(circle, #9d9d9d 5%, #000 90%);
+    }
+
+    #track-title {
+        color: var(--neon-cyan);
+        font-size: 1.1rem;
+        text-align: center;
+        text-shadow: var(--glow);
+        padding: 0 15px;
+        text-transform: uppercase;
+        font-weight: bold;
+    }
+
+    .vu-meter {
+        position: relative;
+        width: 200px;
+        height: 90px;
+        border-color: var(--neon-red);
+        color: var(--neon-red);
+        box-shadow: 0 0 15px var(--neon-red);
+        border-radius: 5px;
+        background: #111;
+        overflow: hidden;
+        background-image: url('https://xatimg.com/image/d1hbRr2LmkvA.png');
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: top;
+    }
+
+    .needle {
+        position: absolute;
+        bottom: -5px;
+        left: 50%;
+        width: 2px;
+        height: 75px;
+        background: var(--neon-red);
+        transform-origin: bottom center;
+        transform: rotate(-58deg);
+        transition: transform 0.1s ease-out;
+        box-shadow: 0 0 5px var(--neon-red);
+    }
+
+    .bottom-controls {
+        height: 160px;
+        border-color: var(--neon-red);
+        color: var(--neon-red);
+        box-shadow: 0 0 15px var(--neon-red);
+        border-radius: 15px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 40px;
+    }
+
+    .digital-counter {
+        font-size: 1.3rem;
+        color: var(--silver2);
+        text-shadow: var(--glow);
+        border: 1px solid rgba(0, 242, 255, 0.3);
+        padding: 5px 25px;
+        border-radius: 8px;
+        background: ;
+        margin-bottom: 10px;
+        font-family: Lucida;
+    }
+
+    .btn-toggle {
+        width: 180px;
+        padding: 15px;
+        font-size: 1rem;
+        font-weight: bold;
+        border: 2px solid var(--neon-cyan);
+        border-radius: 10px;
+        color: var(--neon-cyan);
+        background: transparent;
+        cursor: pointer;
+        transition: 0.3s;
+        font-family: 'Lucida';
+        box-shadow: var(--glow);
+    }
+
+    .btn-toggle.playing {
+        border-color: var(--neon-red);
+        color: var(--neon-red);
+        box-shadow: 0 0 15px var(--neon-red);
+    }
+
+    .control-label {
+        font-size: 15px;
+        color: var(--silver2);
+        margin-bottom: 5px;
+    }
+
+    .val-display {
+        font-size: 15px;
+        color: var(--silver2);
+        margin-top: 5px;
+        font-family: monospace;
+    }
+
+    input[type=range] {
+        -webkit-appearance: none;
+        width: 120px;
+        background: transparent;
+        cursor: pointer;
+    }
+
+    input[type=range]::-webkit-slider-runnable-track {
+        height: 4px;
+        background: var(--neon-cyan);
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+        height: 16px;
+        width: 16px;
+        border-radius: 50%;
+        background: var(--silver1);
+        -webkit-appearance: none;
+        margin-top: -6px;
+        border: 2px solid var(--neon-cyan);
+    }
+
+    #album-art1 {
+        position: absolute;
+        left: 85px;
+        top: 90px;
+        width: 80px;
+        height: 80px;
+        border: 2px solid var(--neon-cyan);
+        border-color: var(--neon-red);
+        color: var(--neon-red);
+        box-shadow: 0 0 15px var(--neon-red);
+        border-radius: 10px;
+        margin-bottom: 15px;
+        object-fit: cover;
+        background-color: #111;
+    }
+
+    #album-art2 {
+        position: absolute;
+        right: 85px;
+        top: 90px;
+        width: 80px;
+        height: 80px;
+        border: 2px solid var(--neon-cyan);
+        border-color: var(--neon-red);
+        color: var(--neon-red);
+        box-shadow: 0 0 15px var(--neon-red);
+        border-radius: 10px;
+        margin-bottom: 15px;
+        object-fit: cover;
+        background-color: #111;
+    }
+
+    #btn-toggle {
+        position: absolute;
+        left: 410px;
+        bottom: 56px;
+        width: 50px;
+        height: 50px;
+        border: 0px;
+        background-color: transparent;
+    }
+
+    #btn-toggle1 {
+        position: absolute;
+        left: 85px;
+        bottom: 210px;
+        width: 70px;
+        height: 70px;
+        border: 0px;
+        background-color: transparent;
+    }
+
+    #btn-toggle2 {
+        position: absolute;
+        right: 85px;
+        bottom: 210px;
+        width: 70px;
+        height: 70px;
+        border: 0px;
+        background-color: transparent;
+    }
+	
+#server-main,
+#server-sec {
+    position: absolute;
+    left: 30px;
+    top: 250px; /* 🔥 mai jos */
+    width: 140px;
+    height: 45px;
+    border-radius: 15px;
+
+    border: 2px solid var(--neon-cyan);
+    background: rgba(255, 0, 85, 0.05);
+
+    color: var(--neon-cyan);
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+
+    box-shadow: 0 0 15px var(--silver);
+
+    transition: all 0.25s ease;
+}
+
+/* HOVER */
+#server-main:hover,
+#server-sec:hover {
+    background: var(--silver1);
+    box-shadow: 0 0 25px var(--neon-cyan);
+    transform: scale(1.05);
+}
+
+/* CLICK */
+#server-main:active,
+#server-sec:active {
+    transform: scale(0.95);
+}
+
+/* ACTIVE SERVER (FOARTE IMPORTANT) */
+#server-main.active,
+#server-sec.active {
+    border-color: var(--neon-cyan);;
+    color: var(--neon-cyan);;
+    background: var(--silver);
+    box-shadow: 0 0 25px var(--silver);
+}
+</style>
+</head>
+
+<div class="player-container">
+    <div class="top-bar">
+        <span>LISTENERS: <b id="listeners">0</b></span>
+        <span> <b id="status"><span style="color: #FFFFFF">CLICK PLAY</span></b></span>
+        <span>BITRATE: <b id="bitrate">...</b> KBPS</span>
+    </div>
+
+    <div class="middle-section">
+        <div class="side-slot">
+            <div id="peak-l" class="peak-led"></div>
+            <div class="vu-meter"><div id="nL" class="needle"></div></div>
+            <span style="font-size:12px; margin-top:5px; color:var(--silver2)">LEFT CHANNEL</span>
+			<button id="server-main">SERVER 1</button>
+        </div>
+
+        <div class="main-screen">
+            <img id="album-art" src="https://xatimg.com/image/oacvd5ltA14X.png" alt="Art">
+            <img id="album-art1" src="https://xatimg.com/image/3EzeMmxBgRNV.png" alt="Art">
+            <img id="album-art2" src="https://xatimg.com/image/3EzeMmxBgRNV.png" alt="Art">
+             <img id="btn-toggle" src="https://xatimg.com/image/XaWxzhlJLxW4.gif" alt="Art">
+            <div id="track-title">Încărcare...</div>
+            <marquee><div id="artist-name" style="font-size:0.9rem; opacity:1; margin-top:5px; margin-left:20px;  color:var(--silver2);">READY</div></marquee>
+        </div>
+
+        <div class="side-slot">
+            <div id="peak-r" class="peak-led"></div>
+            <div class="vu-meter"><div id="nR" class="needle"></div></div>
+            <span style="font-size:12px; margin-top:5px; color:var(--silver2)">RIGHT CHANNEL</span>
+			<button id="server-sec">SERVER 2</button>
+        </div>
+    </div>
+
+    <div class="bottom-controls">
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <span class="control-label">VOLUME</span>
+            <input type="range" id="vol" min="0" max="1" step="0.01" value="1">
+            <span id="vol-val" class="val-display">100%</span>
+        </div>
+
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <div class="digital-counter" id="timer"><span style="color: var(--silver1)">00:00</span></div>
+            <button class="btn-toggle" id="mainBtn">PLAY</button>
+        </div>
+
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <span class="control-label">BALANCE</span>
+            <input type="range" id="pan" min="-1" max="1" step="0.1" value="0">
+            <span id="pan-val" class="val-display">CENTER</span>
+        </div>
+    </div>
+</div>
+
+<audio id="audio" crossorigin="anonymous"></audio>
+
+
+
+<script>
+window.addEventListener("DOMContentLoaded", () => {
+
+const audio = document.getElementById("audio");
+const btn = document.getElementById("mainBtn");
+
+const title = document.getElementById("track-title");
+const artist = document.getElementById("artist-name");
+const listeners = document.getElementById("listeners");
+const bitrate = document.getElementById("bitrate");
+const status = document.getElementById("status");
+
+const timer = document.getElementById("timer");
+
+const vol = document.getElementById("vol");
+const pan = document.getElementById("pan");
+
+const volVal = document.getElementById("vol-val");
+const panVal = document.getElementById("pan-val");
+
+const leftNeedle = document.getElementById("nL");
+const rightNeedle = document.getElementById("nR");
+
+const albumArt = document.getElementById("album-art");
+
+// ================= SERVERE =================
+const servers = {
+    main: {
+        stream: "https://radio.sonicpanel.ro:10922/stream",
+        stats:  "https://radio.sonicpanel.ro/cp/get_info.php?p=8132",
+        cover:  "https://xatimg.com/image/oacvd5ltA14X.png"
+    },
+    secondary: {
+        stream: "https://radio.sonicpanel.ro:8130/stream",
+        stats:  "https://radio.sonicpanel.ro/cp/get_info.php?p=8130",
+        cover:  "https://xatimg.com/image/X5GNt0MIQzb9.png"
+    }
+};
+
+let currentServer = "main";
+let running = false;
+let startTime = 0;
+
+// ================= AUDIO CONTEXT =================
+let audioCtx;
+let source;
+let panner;
+let analyser;
+
+function initAudio() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+
+    // 🔥 IMPORTANT: trebuie resume pe click user
+    if (audioCtx.state === "suspended") {
+        audioCtx.resume();
+    }
+
+    if (source) return; // 🔥 NU recrea source
+
+    source = audioCtx.createMediaElementSource(audio);
+    panner = audioCtx.createStereoPanner();
+    analyser = audioCtx.createAnalyser();
+
+    analyser.fftSize = 256;
+
+    source.connect(panner);
+    panner.connect(analyser);
+    analyser.connect(audioCtx.destination);
+}
+
+// ================= SERVER SWITCH =================
+async function setServer(name) {
+
+    currentServer = name;
+    initAudio();
+
+    albumArt.src = servers[name].cover;
+
+    audio.pause();
+    audio.src = servers[name].stream;
+    audio.load();
+
+    await fetchMeta();
+
+    try {
+        await audio.play();
+
+        running = true;
+        startTime = Date.now();
+
+        btn.textContent = "Radio STOP";
+        status.innerHTML = `<span style="color:var(--silver2)">Radio LIVE</span>`;
+
+        loop();
+        vuLoop();
+
+    } catch (e) {
+        console.log("PLAY ERROR:", e);
+
+        running = false;
+        btn.textContent = "PLAY";
+        status.innerHTML = `<span style="color:#FFFFFF">CLICK PLAY</span>`;
+    }
+}
+
+// ================= PLAY BUTTON =================
+btn.onclick = async () => {
+    initAudio();
+
+    if (!running) {
+        try {
+            await audio.play();
+
+            running = true;
+            startTime = Date.now();
+
+            btn.textContent = "STOP";
+            status.innerHTML = `<span style="color:var(--silver2)">Radio LIVE</span>`;
+
+            loop();
+            vuLoop();
+
+        } catch (e) {
+            alert("Browser blocked audio");
+        }
+    } else {
+        audio.pause();
+        running = false;
+
+        btn.textContent = "PLAY";
+        status.innerHTML = `<span style="color:var(--silver1)">Radio STOP</span>`;
+    }
+};
+
+// ================= SERVER BUTTONS =================
+document.getElementById("server-main").onclick = () => setServer("main");
+document.getElementById("server-sec").onclick = () => setServer("secondary");
+
+// ================= VOLUME =================
+vol.oninput = (e) => {
+    audio.volume = e.target.value;
+    volVal.textContent = Math.round(audio.volume * 100) + "%";
+};
+
+// ================= BALANCE =================
+pan.oninput = (e) => {
+    if (panner) panner.pan.value = parseFloat(e.target.value);
+
+    panVal.textContent =
+        e.target.value == 0 ? "CENTER" :
+        e.target.value < 0 ? "LEFT" : "RIGHT";
+};
+
+// ================= TIMER =================
+function loop() {
+    if (!running) return;
+    requestAnimationFrame(loop);
+
+    const t = Math.floor((Date.now() - startTime) / 1000);
+
+    timer.textContent =
+        String(Math.floor(t / 60)).padStart(2,"0") +
+        ":" +
+        String(t % 60).padStart(2,"0");
+}
+
+// ================= VU METER =================
+function vuLoop() {
+    if (!running || !analyser) return;
+
+    requestAnimationFrame(vuLoop);
+
+    const data = new Uint8Array(analyser.frequencyBinCount);
+    analyser.getByteFrequencyData(data);
+
+    const avg = data.reduce((a,b)=>a+b,0) / data.length;
+    const angle = -60 + (avg / 255) * 120;
+
+    leftNeedle.style.transform = `rotate(${angle}deg)`;
+    rightNeedle.style.transform = `rotate(${angle}deg)`;
+}
+
+// ================= METADATA =================
+async function fetchMeta() {
+    try {
+        const server = servers[currentServer];
+
+        const res = await fetch(server.stats, { cache: "no-store" });
+        const data = await res.json();
+
+        listeners.textContent = data.listeners || data.ulistener || 0;
+        bitrate.textContent = data.bitrate || "0";
+
+        if (data.art) albumArt.src = data.art;
+
+        const song = data.title || data.songtitle || "";
+
+        let artistName = "Unknown";
+        let titleName = song;
+
+        if (song.includes(" - ")) {
+            const p = song.split(" - ");
+            artistName = p[0];
+            titleName = p.slice(1).join(" - ");
+        }
+
+        artist.textContent = artistName;
+        title.textContent = titleName;
+
+    } catch (e) {
+        artist.textContent = "Offline";
+        title.textContent = "No data";
+    }
+}
+
+// ================= AUTO REFRESH =================
+setInterval(() => {
+    fetchMeta();
+}, 5000);
+
+// ================= INIT =================
+setServer("main");
+
+});
+
+
+// --- PROTECT SCRIPT ---
+
+
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+document.onkeydown = function(e) {
+
+if(e.keyCode == 123) return false; // F12
+
+if(e.ctrlKey && e.shiftKey && e.keyCode == 73) return false; // CTRL+SHIFT+I
+
+if(e.ctrlKey && e.shiftKey && e.keyCode == 74) return false; // CTRL+SHIFT+J
+
+if(e.ctrlKey && e.keyCode == 85) return false; // CTRL+U
+
+};
+
+
+</script>
+</body>
+</html>

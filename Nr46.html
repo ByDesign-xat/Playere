@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="RO">
+<head>
+<meta charset="UTF-8">
+<title>Radio LaFamilia</title>
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+:root{
+--neon:#0078ff;
+--glow:0 0 20px var(--neon),0 0 40px rgba(57,255,20,0.3);
+}
+
+body{
+margin:0;
+background:transparent;
+font-family:Arial;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.player{
+width:650px;
+height:470px;
+background:#000;
+border-radius:20px;
+display:flex;
+flex-direction:column;
+align-items:center;
+box-shadow:var(--glow);
+border:1px solid var(--neon);
+position:relative;
+transition:0.4s;
+}
+
+.title{
+margin-top:10px;
+color:var(--neon);
+font-size:28px;
+font-weight:bold;
+text-shadow:0 0 10px var(--neon);
+}
+
+.colors{
+position:absolute;
+top:10px;
+right:12px;
+display:flex;
+gap:6px;
+}
+
+.color{
+width:15px;
+height:15px;
+border-radius:50%;
+cursor:pointer;
+border:2px solid white;
+}
+
+.black{background:#000;}
+.red{background:#8B0000;}
+.blue{background:#a60079;}
+.purple{background:#9d6800;}
+.green{background:#006400;}
+
+.info{
+margin-top:10px;
+display:grid;
+grid-template-columns:1fr 1fr 1fr;
+gap:8px;
+width:90%;
+}
+
+.box{
+border:1px solid var(--neon);
+padding:6px;
+color:white;
+text-align:center;
+background:#111;
+border-radius:6px;
+font-size:12px;
+
+box-shadow:0 0 10px rgba(0,120,255,0.3);
+
+transition:0.3s;
+}
+
+.box:hover{
+transform:translateY(-2px);
+box-shadow:0 0 15px var(--neon);
+}
+
+.box h3{
+margin:0;
+font-size:10px;
+color:var(--neon);
+}
+
+.turntable{
+margin-top:10px;
+}
+
+#vinyl{
+width:140px;
+height:140px;
+border-radius:50%;
+box-shadow:0 0 30px var(--neon);
+}
+
+.spin{
+animation:spin 4s linear infinite;
+}
+
+@keyframes spin{
+from{transform:rotate(0)}
+to{transform:rotate(360deg)}
+}
+
+.controls{
+margin-top:10px;
+display:flex;
+gap:10px;
+align-items:center;
+}
+
+button{
+background:black;
+color:var(--neon);
+border:2px solid var(--neon);
+padding:6px 14px;
+cursor:pointer;
+box-shadow:0 0 10px var(--neon);
+font-size:12px;
+}
+
+.volume-wrap{
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+#volume{
+-webkit-appearance:none;
+appearance:none;
+width:140px;
+height:6px;
+border-radius:20px;
+background:linear-gradient(to right,var(--neon) 100%,#333 0%);
+outline:none;
+cursor:pointer;
+box-shadow:0 0 10px var(--neon);
+transition:0.3s;
+}
+
+/* WEBKIT */
+
+#volume::-webkit-slider-thumb{
+-webkit-appearance:none;
+appearance:none;
+width:18px;
+height:18px;
+border-radius:50%;
+background:var(--neon);
+border:2px solid white;
+box-shadow:0 0 15px var(--neon);
+cursor:pointer;
+transition:0.3s;
+}
+
+#volume::-webkit-slider-thumb:hover{
+transform:scale(1.2);
+box-shadow:0 0 25px var(--neon);
+}
+
+/* FIREFOX */
+
+#volume::-moz-range-thumb{
+width:18px;
+height:18px;
+border:none;
+border-radius:50%;
+background:var(--neon);
+box-shadow:0 0 15px var(--neon);
+cursor:pointer;
+}
+
+/* procent */
+
+#volValue{
+color:var(--neon);
+font-weight:bold;
+font-size:13px;
+width:40px;
+text-shadow:0 0 10px var(--neon);
+}
+
+.clockbox{
+margin-top:10px;
+display:grid;
+grid-template-columns:1fr 1fr 1fr;
+gap:8px;
+width:90%;
+}
+
+.logo{
+margin-top:8px;
+}
+
+.logo img{
+max-width:120px;
+}
+
+.socials{
+margin-top:15px;
+display:flex;
+justify-content:center;
+align-items:center;
+gap:22px;
+width:100%;
+position:absolute;
+bottom:35px;
+left:50%;
+transform:translateX(-50%);
+}
+
+.social{
+position:relative;
+width:47px;
+height:47px;
+display:flex;
+align-items:center;
+justify-content:center;
+border-radius:50%;
+color:#0078ff;
+border:2px solid #0078ff;
+text-decoration:none;
+font-size:18px;
+box-shadow:0 0 12px #0078ff;
+transition:0.35s ease;
+overflow:visible;
+}
+
+/* glow interior */
+
+.social::before{
+content:"";
+position:absolute;
+width:0%;
+height:0%;
+background:#0078ff;
+border-radius:50%;
+transition:0.4s;
+z-index:0;
+}
+
+/* icon */
+
+.social i{
+position:relative;
+z-index:1;
+transition:0.3s;
+}
+
+/* hover */
+
+.social:hover{
+transform:translateY(-5px) scale(1.08);
+box-shadow:
+0 0 15px #0078ff,
+0 0 35px #0078ff;
+color:white;
+border-color:white;
+}
+
+.social:hover::before{
+width:120%;
+height:120%;
+}
+
+.social:hover i{
+color:white;
+text-shadow:0 0 10px white;
+}
+
+
+/* tooltip */
+
+/* tooltip sub icon */
+
+.tooltip{
+position:absolute;
+top:55px;
+background:#0078ff;
+color:white;
+padding:6px 12px;
+border-radius:8px;
+font-size:12px;
+font-weight:bold;
+opacity:0;
+visibility:hidden;
+transform:translateY(-10px);
+transition:0.35s ease;
+white-space:nowrap;
+box-shadow:0 0 15px #0078ff;
+}
+
+/* sageata sus */
+
+.tooltip::after{
+content:"";
+position:absolute;
+left:50%;
+transform:translateX(-50%);
+bottom:100%;
+border-width:6px;
+border-style:solid;
+border-color:transparent transparent #0078ff transparent;
+}
+
+/* hover */
+
+.social:hover .tooltip{
+opacity:1;
+visibility:visible;
+transform:translateY(0);
+}
+
+#listeners{
+font-size:20px;
+font-weight:bold;
+color:#ffffff;
+
+text-shadow:
+0 0 10px var(--neon),
+0 0 20px var(--neon);
+
+padding:6px 0;
+
+letter-spacing:1px;
+}
+
+
+</style>
+
+</head>
+
+<body>
+
+<div class="player" id="player">
+
+<div class="colors">
+<div class="color black" onclick="setColor('#000')"></div>
+<div class="color red" onclick="setColor('#8B0000')"></div>
+<div class="color blue" onclick="setColor('#a60079')"></div>
+<div class="color purple" onclick="setColor('#9d6800')"></div>
+<div class="color green" onclick="setColor('#006400')"></div>
+</div>
+
+<div class="title" id="radioName">Radio LaFamilia</div>
+
+<div class="info">
+
+<div class="box">
+<h3>ARTIST</h3>
+<div id="artist">-</div>
+</div>
+
+<div class="box">
+<h3>TITLU</h3>
+<div id="song">-</div>
+</div>
+
+<div class="box">
+<h3>ASCULTATORI</h3>
+<div id="listeners" style="color:#ffffff;font-weight:bold">0</div>
+</div>
+
+</div>
+
+<div class="turntable">
+<img id="vinyl" src="https://xatimg.com/image/oacvd5ltA14X.png">
+</div>
+
+<div class="controls">
+
+<button id="play">PLAY</button> <input type="range" id="volume" min="0" max="1" step="0.01" value="1"><div id="volValue">100%</div> <button id="stop">STOP</button>
+
+</div>
+
+<div class="clockbox">
+
+<div class="box">
+<h3>ORA</h3>
+<div id="clock"></div>
+</div>
+
+<div class="box">
+<h3>DATA</h3>
+<div id="date"></div>
+</div>
+
+<div class="box">
+<h3>STATUS</h3>
+<div id="statusText" style="color:red;font-weight:bold">
+OFFLINE
+</div>
+
+</div>
+
+
+<div class="socials">
+
+<a href="#" target="_blank" class="social">
+<span class="tooltip">Facebook</span>
+<i class="fab fa-facebook-f"></i>
+</a>
+
+<a href="#" target="_blank" class="social">
+<span class="tooltip">Site</span>
+<i class="fa-brands fa-chrome"></i>
+</a>
+
+<a href="#" target="_blank" class="social">
+<span class="tooltip">Chat</span>
+<i class="fa-solid fa-comment"></i>
+</a>
+
+<a href="#" target="_blank" class="social">
+<span class="tooltip">Listen</span>
+<i class="fa-solid fa-headset"></i>
+</a>
+
+</div>
+
+
+
+</div>
+
+<script>
+
+const RADIO_NAME="Radio LaFamilia"
+const STREAM="https://radio.sonicpanel.ro:10922/stream"
+const STATS="https://radio.sonicpanel.ro:10922/stats?json=1"
+
+function setColor(color){
+document.getElementById("player").style.background=color;
+}
+
+const audio=new Audio(STREAM)
+
+const play=document.getElementById("play")
+const stop=document.getElementById("stop")
+const volume=document.getElementById("volume")
+const vinyl=document.getElementById("vinyl")
+
+audio.volume=1
+
+play.onclick=async()=>{
+
+checkProtection()
+
+try{
+
+await audio.play()
+
+vinyl.classList.add("spin")
+
+let status=document.getElementById("statusText")
+
+status.innerText="ONLINE"
+
+status.style.color="#39ff14"
+
+status.style.textShadow="0 0 10px #39ff14"
+
+}catch{
+
+alert("Faceți clic din nou pentru a porni radioul")
+
+}
+
+}
+
+stop.onclick=()=>{
+
+audio.pause()
+
+audio.currentTime=0
+
+vinyl.classList.remove("spin")
+
+let status=document.getElementById("statusText")
+
+status.innerText="OFFLINE"
+
+status.style.color="red"
+
+status.style.textShadow="0 0 10px red"
+
+}
+
+function updateVolumeUI(){
+
+audio.volume=volume.value
+
+let percent=Math.round(volume.value*100)
+
+document.getElementById("volValue").innerText=
+percent+"%"
+
+/* culoare progres */
+
+volume.style.background=
+`linear-gradient(to right,
+var(--neon) ${percent}%,
+#333 ${percent}%)`
+
+}
+
+volume.oninput=updateVolumeUI
+
+updateVolumeUI()
+
+/* CLOCK */
+
+function updateClock(){
+
+const d=new Date()
+
+clock.innerText=d.toLocaleTimeString("ro-RO")
+date.innerText=d.toLocaleDateString("ro-RO")
+
+}
+
+setInterval(updateClock,1000)
+updateClock()
+
+/* STATS */
+
+function statsCB(data){
+
+checkProtection()
+
+if(!data)return
+
+listeners.innerText=data.currentlisteners||0
+
+if(data.songtitle){
+
+let p=data.songtitle.split(" - ")
+
+artist.innerText=p[0]||""
+song.innerText=p[1]||p[0]
+
+fetchCover(data.songtitle)
+
+}
+
+}
+
+function updateStats(){
+
+let s=document.createElement("script")
+
+s.src=STATS+"&callback=statsCB&r="+Math.random()
+
+document.body.appendChild(s)
+
+setTimeout(()=>s.remove(),4000)
+
+}
+
+setInterval(updateStats,8000)
+updateStats()
+
+/* COVER */
+
+function fetchCover(track){
+
+let s=document.createElement("script")
+
+s.src="https://itunes.apple.com/search?term="+encodeURIComponent(track)+"&media=music&limit=1&callback=coverCB"
+
+document.body.appendChild(s)
+
+setTimeout(()=>s.remove(),4000)
+
+}
+
+function coverCB(data){
+
+if(data.results && data.results.length>0){
+
+vinyl.src=data.results[0].artworkUrl100.replace("100x100","600x600")
+
+}else{
+
+vinyl.src="https://xatimg.com/image/oacvd5ltA14X.png"
+
+}
+
+}
+
+/* PROTECTION */
+
+function lockPlayer(reason){
+
+player.innerHTML="<div style='display:flex;align-items:center;justify-content:center;height:100%;font-size:22px;color:red;text-align:center'>PLAYER LOCK &copy; Copyright - ByDesign<br>"+reason+"</div>"
+
+}
+
+function checkProtection(){
+
+if(document.title!==RADIO_NAME){
+lockPlayer("TITULU MODIFICAT")
+}
+
+let display=document.getElementById("radioName")
+
+if(!display || display.textContent.trim()!==RADIO_NAME){
+lockPlayer("NUMELE POSTULUI DE RADIO A FOST SCHIMBAT")
+}
+
+if(!STREAM.includes("radio.sonicpanel.ro")){
+lockPlayer("STREAM MODIFICAT")
+}
+
+if(!STATS.includes("radio.sonicpanel.ro")){
+lockPlayer("STATS MODIFICAT")
+}
+
+}
+
+/* iniciar proteção */
+
+setTimeout(checkProtection,4000)
+setInterval(checkProtection,5000)
+
+// --- PROTECT SCRIPT ---
+
+
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+document.onkeydown = function(e) {
+
+if(e.keyCode == 123) return false; // F12
+
+if(e.ctrlKey && e.shiftKey && e.keyCode == 73) return false; // CTRL+SHIFT+I
+
+if(e.ctrlKey && e.shiftKey && e.keyCode == 74) return false; // CTRL+SHIFT+J
+
+if(e.ctrlKey && e.keyCode == 85) return false; // CTRL+U
+
+};
+
+
+</script>
+
+</body>
+</html>
+

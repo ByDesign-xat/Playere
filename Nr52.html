@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>ByDesign</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --glow-color: #bc13fe;
+            --text-color: #00f2ff;
+        }
+
+        /* PROTEZIONE CSS: Blocca selezione testo e trascinamento immagini */
+        * {
+            -webkit-user-select: none;  /* Safari */
+            -ms-user-select: none;      /* IE 10+ */
+            user-select: none;          /* Standard */
+            -webkit-user-drag: none;    /* Blocca trascinamento immagini */
+        }
+
+        body {
+            margin: 0; padding: 0;
+            background: black;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; color: white; overflow: hidden;
+        }
+
+        .dashboard {
+            width: 728px; height: 486px;
+            background: linear-gradient(-45deg, #1a0b2e, #4b0082, #0d0221, #191970);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            border: 3px solid var(--glow-color);
+            box-shadow: 0 0 30px rgba(188, 19, 254, 0.6);
+            position: relative; padding: 15px;
+            box-sizing: border-box; border-radius: 20px;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .fading-title {
+            margin: 0;
+            font-size: 30px;
+            letter-spacing: 5px;
+            font-weight: 900;
+            text-align: center;
+            background: linear-gradient(to right, #ff0055, #00f2ff, #bc13fe, #ffae00, #ff0055);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+            animation: rainbow 3s linear infinite, fadeTitle 4s ease-in-out infinite;
+        }
+
+        @keyframes fadeTitle {
+            0%, 100% { opacity: 0; transform: translateY(-5px); }
+            50% { opacity: 1; transform: translateY(0); }
+        }
+
+        .marquee-container {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--text-color);
+            padding: 5px; margin-bottom: 10px;
+            overflow: hidden; white-space: nowrap; border-radius: 8px;
+        }
+
+        #marqueeText {
+            display: inline-block; padding-left: 100%;
+            animation: marquee 15s linear infinite;
+            color: var(--text-color); font-weight: bold; font-size: 14px;
+            text-shadow: 0 0 5px var(--text-color);
+        }
+
+        .header-marquee {
+            width: 300px;
+            margin: 0 auto 10px auto;
+            overflow: hidden;
+            white-space: nowrap;
+            color: var(--text-color);
+            font-size: 13px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .header-marquee span {
+            display: inline-block;
+            padding-left: 100%;
+            animation: marquee 10s linear infinite;
+        }
+
+        @keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
+
+        .audio-player {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px; padding: 10px 20px;
+            display: flex; align-items: center; gap: 15px; margin-bottom: 20px;
+            height: 60px;
+        }
+
+        .play-btn {
+            background: var(--glow-color); border: none; color: white;
+            width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
+            font-size: 18px; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 15px var(--glow-color);
+            transition: 0.3s;
+        }
+
+        .play-btn:hover { transform: scale(1.1); }
+		
+		.play-btn i {
+         font-size: 16px;
+        }
+
+        .visualizer { display: flex; align-items: flex-end; gap: 3px; width: 250px; height: 35px; }
+        .bar { flex: 1; background: linear-gradient(to top, #bc13fe, #00f2ff, #ff0055); height: 15%; border-radius: 2px; transition: height 0.1s; }
+
+        .volume-slider { 
+             width: 180px; 
+             accent-color: var(--text-color); 
+             cursor: pointer;
+        }
+
+        .main-content { 
+             display: grid; 
+             grid-template-columns: 170px 1fr 170px; 
+             gap: 15px; 
+             height: 230px; 
+             align-items: center;
+        }
+
+        .box { 
+             background: rgba(0, 0, 0, 0.4); 
+             border: 1px solid rgba(255, 255, 255, 0.1); 
+             border-radius: 12px; 
+             padding: 10px; 
+             display: flex; 
+             flex-direction: column; 
+             align-items: center; 
+             justify-content: center;
+             height: 100%;
+        }
+
+        .side-gif {
+            width: 100%; height: 130px; object-fit: cover; 
+            border-radius: 6px; border: 1px solid var(--text-color);
+        }
+
+        .avatar-circle {
+            width: 140px; height: 140px;
+            border-radius: 50%;
+            border: 4px solid #111;
+            margin-bottom: 10px;
+            box-shadow: 0 0 20px var(--text-color);
+            background-size: cover; background-position: center;
+            background-image: url('https://xatimg.com/image/oacvd5ltA14X.png');
+            animation: rotate-vinyl 5s linear infinite;
+            animation-play-state: paused;
+        }
+
+        @keyframes rotate-vinyl { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .multicolor-text {
+            font-weight: bold; font-size: 17px; text-transform: uppercase;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #ff0055, #00f2ff, #bc13fe, #ffae00, #ff0055);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: rainbow 3s linear infinite;
+            background-size: 200% auto;
+            text-align: center;
+        }
+		
+		
+.volume-box{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-left:auto;
+
+    background:rgba(255,255,255,0.08);
+    padding:8px 12px;
+    border-radius:12px;
+
+    border:1px solid rgba(255,255,255,0.15);
+
+    box-shadow:0 0 10px rgba(0,242,255,0.15);
+}
+
+.volume-icon{
+    color:var(--text-color);
+    font-size:18px;
+    width:22px;
+    text-align:center;
+
+    text-shadow:0 0 8px var(--text-color);
+
+    transition:0.3s;
+}
+
+#volumePercent{
+    min-width:45px;
+
+    color:#fff;
+    font-size:13px;
+    font-weight:bold;
+
+    text-shadow:0 0 5px var(--text-color);
+}
+
+.volume-slider{
+    width:140px;
+    cursor:pointer;
+}
+
+.volume-slider {
+    -webkit-appearance: none;
+    width: 140px;
+    height: 6px;
+    border-radius: 10px;
+    background: linear-gradient(to right, #00f2ff, #bc13fe);
+    outline: none;
+    cursor: pointer;
+}
+
+/* CERC (thumb) */
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+
+    background: #fff;
+    border: 2px solid var(--text-color);
+
+    box-shadow: 0 0 10px var(--text-color);
+
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.volume-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+/* Firefox */
+.volume-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+
+    background: #fff;
+    border: 2px solid var(--text-color);
+
+    box-shadow: 0 0 10px var(--text-color);
+
+    cursor: pointer;
+}
+		
+.listeners-box{
+    margin: 8px auto;
+    text-align: center;
+
+    background: rgba(0,0,0,0.5);
+    border: 1px solid rgba(0,242,255,0.3);
+
+    padding: 6px 10px;
+    border-radius: 10px;
+
+    color: var(--text-color);
+    font-size: 12px;
+    font-weight: bold;
+
+    width: fit-content;
+
+    box-shadow: 0 0 10px rgba(0,242,255,0.2);
+}
+
+.listeners-box i{
+    margin-right: 6px;
+    color: #bc13fe;
+}
+
+#listenersCount {
+    transition: 0.3s;
+}
+
+.listeners-box {
+    animation: pulseLive 2s infinite;
+}
+
+@keyframes pulseLive {
+    0% { box-shadow: 0 0 10px rgba(0,242,255,0.2); }
+    50% { box-shadow: 0 0 20px rgba(188,19,254,0.5); }
+    100% { box-shadow: 0 0 10px rgba(0,242,255,0.2); }
+}
+
+        @keyframes rainbow { to { background-position: 200% center; } }
+    </style>
+</head>
+<body oncontextmenu="return false;"> <!-- Disabilita Tasto Destro -->
+
+    <div class="dashboard">
+        <div class="marquee-container">
+            <div id="marqueeText">Loading...</div>
+        </div>
+
+        <div class="header">
+            <h1 class="fading-title">ℜ𝔞𝔡𝔦𝔬 𝔏𝔞𝔉𝔞𝔪𝔦𝔩𝔦𝔞</h1>
+            <div class="header-marquee">
+                <span>🎧 ★★★ Asculți cele mai bune hituri muzicale ★★★ 🎧</span>
+            </div>
+        </div>
+
+        <div class="audio-player">
+            <button class="play-btn" id="masterPlay" onclick="togglePlay()">
+            <i class="fa-solid fa-play" id="playIcon"></i>
+            </button>
+            <div class="visualizer" id="visualizer"></div>
+<div class="volume-box">
+
+    <i class="fa-solid fa-volume-high volume-icon" id="volumeIcon"></i>
+
+    <input
+        type="range"
+        class="volume-slider"
+        min="0"
+        max="100"
+        value="100"
+        id="volumeControl"
+    >
+
+    <span id="volumePercent">100%</span>
+
+</div>
+        </div>
+
+        <div class="main-content">
+            <div class="box">
+                <div class="multicolor-text" id="multiTime">--:--</div>
+                <img src="https://xatimg.com/image/w1NnqBu9Jj1p.gif" class="side-gif">
+            </div>
+
+            <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+                <div class="avatar-circle" id="coverArt"></div>
+				<div class="track-scroll">
+                <div id="currentTrackLabel" style="font-size: 9px; color: #fff; font-weight: bold; background: rgba(0,0,0,0.6); padding: 4px 8px; border-radius: 4px; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Loading...</div>
+            </div>
+			<div class="listeners-box">
+    <i class="fa-solid fa-users"></i>
+    <span id="listenersCount">0</span> Listen
+            </div>
+			</div>
+
+            <div class="box">
+                <div class="multicolor-text" id="multiDate">--------</div>
+                <img src="https://xatimg.com/image/w1NnqBu9Jj1p.gif" class="side-gif">
+            </div>
+        </div>
+    </div>
+
+    <audio id="myAudio" src="https://radio.sonicpanel.ro:10922/stream" crossorigin="anonymous"></audio>
+
+    <script>
+
+
+        const audio = document.getElementById('myAudio');
+        const playBtn = document.getElementById('masterPlay');
+        const coverArt = document.getElementById('coverArt');
+        const marquee = document.getElementById('marqueeText');
+        const currentTrackLabel = document.getElementById('currentTrackLabel');
+        const visualizer = document.getElementById('visualizer');
+        const volumeControl = document.getElementById('volumeControl');
+        const multiTime = document.getElementById('multiTime');
+        const multiDate = document.getElementById('multiDate');
+		const volumeIcon = document.getElementById('volumeIcon');
+        const volumePercent = document.getElementById('volumePercent');
+		const playIcon = document.getElementById('playIcon');
+		const listenersCount = document.getElementById('listenersCount');
+                
+        let lastSong = "";
+        let isPlaying = false;
+
+        for (let i = 0; i < 20; i++) {
+            const bar = document.createElement('div');
+            bar.className = 'bar';
+            visualizer.appendChild(bar);
+        }
+        const bars = document.querySelectorAll('.bar');
+
+        function animateVisualizer() {
+            if (!isPlaying) {
+                bars.forEach(bar => bar.style.height = '15%');
+                return;
+            }
+            const vol = volumeControl.value / 100;
+            bars.forEach(bar => {
+                const h = (Math.random() * 85 + 15) * vol;
+                bar.style.height = h + '%';
+            });
+            requestAnimationFrame(animateVisualizer);
+        }
+
+async function updateMetadata() {
+    try {
+        const now = new Date();
+
+        multiTime.innerText = now.toLocaleTimeString('ro-RO', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+        multiDate.innerText = now.toLocaleDateString('ro-RO', {
+            weekday: 'short',
+            day: 'numeric',
+            month: 'short'
+        }).toUpperCase();
+
+        const response = await fetch(
+            "https://radio.sonicpanel.ro:10922/currentsong?sid=1"
+        );
+
+        const text = await response.text();
+
+        if (!text) return;
+
+        let artist = "RADIO";
+        let title = "LIVE STREAM";
+
+        if (text.includes(" - ")) {
+            const parts = text.split(" - ");
+            artist = parts[0].trim();
+            title = parts.slice(1).join(" - ").trim();
+        } else {
+            title = text.trim();
+        }
+
+        const track = `${artist.toUpperCase()} - ${title.toUpperCase()}`;
+
+        if (track !== lastSong) {
+
+            lastSong = track;
+
+            marquee.innerText = "★★★ LIVE : " + track + " ★★★";
+
+            currentTrackLabel.innerText = track;
+
+            try {
+
+                const itunes = await fetch(
+                    `https://itunes.apple.com/search?term=${encodeURIComponent(track)}&limit=1`
+                );
+
+                const itunesData = await itunes.json();
+
+                if (
+                    itunesData.results &&
+                    itunesData.results.length > 0
+                ) {
+
+                    let artwork =
+                        itunesData.results[0].artworkUrl100;
+
+                    artwork = artwork.replace(
+                        "100x100",
+                        "600x600"
+                    );
+
+                    coverArt.style.backgroundImage =
+                        `url('${artwork}')`;
+
+                } else {
+
+                    coverArt.style.backgroundImage =
+                        "url('https://xatimg.com/image/oacvd5ltA14X.png')";
+                }
+
+            } catch {
+
+                coverArt.style.backgroundImage =
+                    "url('https://xatimg.com/image/oacvd5ltA14X.png')";
+            }
+        }
+
+    } catch (err) {
+
+        console.log("Eroare metadata:", err);
+
+        marquee.innerText =
+            "★★★ RADIO LAFAMILIA LIVE ★★★";
+    }
+}
+
+function togglePlay() {
+    if (audio.paused) {
+
+        audio.volume = volumeControl.value / 100;
+        audio.play();
+
+        isPlaying = true;
+
+        playIcon.className = "fa-solid fa-stop"; // sau fa-pause
+        playBtn.style.background = "#ff0055";
+
+        coverArt.style.animationPlayState = "running";
+        animateVisualizer();
+
+    } else {
+
+        audio.pause();
+        audio.src = "https://radio.sonicpanel.ro:10922/stream";
+
+        isPlaying = false;
+
+        playIcon.className = "fa-solid fa-play";
+
+        playBtn.style.background = "#bc13fe";
+
+        coverArt.style.animationPlayState = "paused";
+    }
+}
+
+function updateVolumeUI(value){
+
+    audio.volume = value / 100;
+
+    volumePercent.innerText = value + "%";
+
+    if(value == 0){
+
+        volumeIcon.className =
+            "fa-solid fa-volume-xmark volume-icon";
+
+    }
+    else if(value <= 50){
+
+        volumeIcon.className =
+            "fa-solid fa-volume-low volume-icon";
+
+    }
+    else{
+
+        volumeIcon.className =
+            "fa-solid fa-volume-high volume-icon";
+    }
+}
+
+volumeControl.addEventListener('input', (e) => {
+
+    const value = e.target.value;
+
+    updateVolumeUI(value);
+    updateSliderStyle(value);
+
+});
+
+updateSliderStyle(volumeControl.value);
+
+
+function updateSliderStyle(value){
+    volumeControl.style.background =
+        `linear-gradient(to right,
+        #00f2ff 0%,
+        #bc13fe ${value}%,
+        rgba(255,255,255,0.1) ${value}%)`;
+}
+
+        setInterval(updateMetadata, 5000);
+        updateMetadata();
+		
+		
+async function updateListeners() {
+    try {
+
+        const res = await fetch(
+            "https://radio.sonicpanel.ro:10922/stats?sid=1&json=1"
+        );
+
+        const data = await res.json();
+
+        let listeners = 0;
+
+        // SHOUTcast v2 (cel mai comun)
+        if (data?.currentlisteners !== undefined) {
+            listeners = data.currentlisteners;
+        }
+
+        // unele servere folosesc asta
+        else if (data?.uniquelisteners !== undefined) {
+            listeners = data.uniquelisteners;
+        }
+
+        // fallback stream info
+        else if (data?.streams?.[0]?.currentlisteners !== undefined) {
+            listeners = data.streams[0].currentlisteners;
+        }
+
+        listenersCount.innerText = listeners;
+
+    } catch (e) {
+        console.log("SHOUTcast listeners error:", e);
+        listenersCount.innerText = "0";
+    }
+}
+
+setInterval(updateListeners, 3000);
+updateListeners();
+	
+</script>
+
+<script>	
+/* ── Bloqueo de herramientas de desarrollador ── */
+(function(){
+  // Bloquear F12, Ctrl+Shift+I/J/U, Ctrl+U
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'F12') { e.preventDefault(); return false; }
+    if(e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' ||
+       e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) {
+      e.preventDefault(); return false;
+    }
+    if(e.ctrlKey && (e.key === 'U' || e.key === 'u')) {
+      e.preventDefault(); return false;
+    }
+  }, true);
+
+  // Clic derecho: mensaje personalizado dentro del reproductor, bloqueado fuera
+  (function(){
+    var tip = document.createElement('div');
+    tip.id = 'ctx-tip';
+    tip.textContent = '\u00A92026 ByDesign';
+    tip.style.cssText = [
+      'position:fixed',
+      'z-index:99999',
+      'background:rgba(10,10,10,0.93)',
+      'color:#fff',
+      'font-family:Inter,Helvetica Neue,Helvetica,Arial,sans-serif',
+      'font-size:12px',
+      'font-weight:600',
+      'letter-spacing:.3px',
+      'padding:9px 14px',
+      'border-radius:8px',
+      'border:1px solid rgba(255,255,255,0.12)',
+      'box-shadow:0 6px 20px rgba(0,0,0,0.6)',
+      'pointer-events:none',
+      'opacity:0',
+      'transition:opacity .18s ease',
+      'max-width:280px',
+      'line-height:1.45',
+      'white-space:normal',
+      'text-align:center'
+    ].join(';');
+    document.body.appendChild(tip);
+
+    var hideTimer = null;
+    function hideTip(){ tip.style.opacity = '0'; }
+
+    document.addEventListener('contextmenu', function(e){
+      e.preventDefault();
+      var ipod = document.getElementById('ipod');
+      if(ipod && ipod.contains(e.target)){
+        var x = e.clientX + 12, y = e.clientY + 12;
+        tip.style.left = x + 'px';
+        tip.style.top  = y + 'px';
+        tip.style.opacity = '1';
+        requestAnimationFrame(function(){
+          var r = tip.getBoundingClientRect();
+          if(r.right  > window.innerWidth  - 8) tip.style.left = (window.innerWidth  - r.width  - 16) + 'px';
+          if(r.bottom > window.innerHeight - 8) tip.style.top  = (window.innerHeight - r.height - 16) + 'px';
+        });
+        if(hideTimer) clearTimeout(hideTimer);
+        hideTimer = setTimeout(hideTip, 2800);
+      } else {
+        hideTip();
+      }
+      return false;
+    }, true);
+
+    document.addEventListener('click',  hideTip, true);
+    document.addEventListener('scroll', hideTip, true);
+  })();
+
+  // Detección de DevTools desactivada: en iframes y embeds (xat, webs externas)
+  // outerWidth/outerHeight no reflejan la ventana real y disparan un falso positivo
+  // que ejecuta document.body.innerHTML='' borrando el reproductor.
+})();
+
+
+// --- PROTECT SCRIPT ---
+
+
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+document.onkeydown = function(e) {
+
+if(e.keyCode == 123) return false; // F12
+
+if(e.ctrlKey && e.shiftKey && e.keyCode == 73) return false; // CTRL+SHIFT+I
+
+if(e.ctrlKey && e.shiftKey && e.keyCode == 74) return false; // CTRL+SHIFT+J
+
+if(e.ctrlKey && e.keyCode == 85) return false; // CTRL+U
+
+};
+</script>
+</body>
+</html>

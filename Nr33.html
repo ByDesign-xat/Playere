@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<title>ByDesign</title>
+
+<style>
+  .bar{width:4px;height:5px;background:#00acee;border-radius:2px;transition:.2s;}
+  .playing .bar{animation:equalize .6s infinite ease-in-out;}
+
+  .playing .bar:nth-child(1){animation-delay:.1s;}
+  .playing .bar:nth-child(2){animation-delay:.2s;}
+  .playing .bar:nth-child(3){animation-delay:.3s;}
+  .playing .bar:nth-child(4){animation-delay:.4s;}
+  .playing .bar:nth-child(5){animation-delay:.5s;}
+  .playing .bar:nth-child(6){animation-delay:.6s;}
+
+  @keyframes equalize{
+    0%,100%{height:5px;}
+    50%{height:20px;}
+  }
+
+  @keyframes flyUp{
+    0%{transform:translateY(0);opacity:0;}
+    15%{opacity:.7;}
+    100%{transform:translateY(-400px);opacity:0;}
+  }
+
+  .heart{position:absolute;pointer-events:none;animation:flyUp 4s linear forwards;}
+  .playing-border{border-color:#1db954!important;box-shadow:0 0 15px rgba(29,185,84,0.4)!important;}
+  
+@keyframes marqueeMove {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.scroll {
+  display:inline-block;
+  padding-left:100%;
+  animation: marqueeMove 10s linear infinite;
+  white-space: nowrap;
+  will-change: transform;
+}
+
+#sonic_title {
+  position: relative;
+}
+
+#sonic_title::before,
+#sonic_title::after {
+  content:"";
+  position:absolute;
+  top:0;
+  width:30px;
+  height:100%;
+  z-index:2;
+}
+
+#sonic_title::before {
+  left:0;
+  background:linear-gradient(to right,#121212,transparent);
+}
+
+#sonic_title::after {
+  right:0;
+  background:linear-gradient(to left,#121212,transparent);
+}
+
+.fade-text {
+  opacity: 1;
+  transition: opacity 0.6s ease;
+}
+
+.fade-out {
+  opacity: 0;
+}
+
+.eq-bar {
+  width:4px;
+  height:5px;
+  background:#0056b3;
+  border-radius:2px;
+  transition:height 0.1s ease;
+  opacity:0.9;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: rgba(0,86,179,0.2);
+  border-radius: 10px;
+  outline: none;
+}
+
+/* TRACK (partea albastră umplută) */
+input[type="range"]::-webkit-slider-runnable-track {
+  height: -5px;
+  background: linear-gradient(90deg, #0056b3, #00acee);
+  border-radius: 10px;
+}
+
+/* BUTON (thumb / cercul) */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+
+  width: 16px;
+  height: 16px;
+  border-radius: 60%;   /* 🔥 rotund perfect */
+  background: #00acee;  /* 🔵 albastru din player */
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 10px rgba(0,172,238,0.6);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+/* Firefox support */
+input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #00acee;
+  border: 2px solid #fff;
+  box-shadow: 0 0 10px rgba(0,172,238,0.6);
+  cursor: pointer;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: rgba(0,86,179,0.2);
+  border-radius: 10px;
+  outline: none;
+}
+
+/* IMPORTANT: centrarea thumb-ului */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #00acee;
+  border: 2px solid #fff;
+  box-shadow: 0 0 10px rgba(0,172,238,0.6);
+  cursor: pointer;
+
+  margin-top: 0px; /* 🔥 FIX CHEIE */
+  position: relative;
+}
+
+/* Firefox */
+input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #00acee;
+  border: 2px solid #fff;
+  box-shadow: 0 0 10px rgba(0,172,238,0.6);
+  cursor: pointer;
+}
+
+
+</style>
+</head>
+
+<body style="margin:0;background:#121212;color:white;font-family:Arial;">
+
+<div id="dashboard"
+     style="width:728px;height:486px;background:#121212;font-family:'Inter','Segoe UI',Arial,sans-serif;border:8px solid #0056b3;overflow:hidden;display:flex;flex-direction:column;color:#fff;position:relative;border-radius:20px;box-shadow:0 0 20px rgba(0,86,179,0.5),0 20px 50px rgba(0,0,0,0.6);box-sizing:border-box;">
+
+  <audio id="radio-player" src="https://radio.sonicpanel.ro:10922/stream" preload="none" crossorigin="anonymous"></audio>
+
+  <!-- HEARTS -->
+  <div id="heart-container"
+       style="position:absolute;width:100%;height:100%;pointer-events:none;z-index:10;"></div>
+
+  <!-- HEADER (METADATA NOW) -->
+<div style="display:flex;flex-direction:column;overflow:hidden;width:100%;">
+  
+<div id="sonic_title"
+     style="
+      width:100%;
+      height:40px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      padding-top:15px;
+      font-weight:700;
+      color:#00acee;
+      font-size:14px;
+      text-shadow:0 0 6px rgba(0,172,238,0.4);
+     ">
+
+  <span id="sonic_track" class="fade-text">Loading radio...</span>
+
+</div>
+
+</div>
+
+  <!-- MAIN -->
+  <div style="display:flex;flex:1;padding:20px;gap:20px;background:linear-gradient(180deg,#121212 0%,#080808 100%);position:relative;z-index:1;">
+
+    <!-- LEFT -->
+    <div style="flex:0 0 300px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#181818;border-radius:15px;border:1px solid #282828;box-shadow:inset 0 0 20px rgba(0,0,0,0.4);">
+
+      <!-- TITLE MOVED HERE -->
+      <span style="font-weight:900;font-size:16px;color:#00acee;letter-spacing:1px;text-shadow:0 0 8px rgba(0,172,238,0.4);margin-bottom:10px;">
+        𝕽𝖆𝖉𝖎𝖔 𝕷𝖆𝕱𝖆𝖒𝖎𝖑𝖎𝖆
+      </span>
+
+      <div id="img-container"
+           style="width:230px;height:230px;background:#000;border-radius:12px;border:2px solid #0056b3;overflow:hidden;box-shadow:0 10px 25px rgba(0,0,0,0.5);transition:.5s;">
+
+        <img src="https://xatimg.com/image/oacvd5ltA14X.png"
+             style="width:100%;height:100%;object-fit:cover;">
+      </div>
+
+      <div style="margin-top:15px;text-align:center;">
+        <div id="status-text" style="font-weight:bold;font-size:18px;color:#fff;">
+          Radio Stop 🤍
+        </div>
+
+        <div id="equalizer"
+             style="display:flex;align-items:flex-end;justify-content:center;gap:3px;height:20px;margin-top:10px;">
+          <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+          <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div style="flex:1;display:flex;flex-direction:column;gap:15px;">
+
+      <!-- STATS -->
+      <div style="display:flex;gap:12px;">
+
+        <div style="flex:1;background:rgba(0,172,238,0.1);padding:12px;border-radius:10px;border:1px solid rgba(0,172,238,0.2);">
+          <small style="color:#00acee;font-size:10px;font-weight:800;">Ascultatori</small>
+          <script id='sonic_js' data-port='8132' src='https://radio.sonicpanel.ro/cp/widgets.js?r=674'></script>
+          <div style="font-size:20px;font-weight:bold;display:flex;align-items:baseline;gap:5px;">
+            <div id="sonic_listeners"></div>
+            <span style="font-size:12px;color:#666;">Live</span>
+          </div>
+        </div>
+
+        <div style="flex:1;background:rgba(0,86,179,0.1);padding:12px;border-radius:10px;border:1px solid rgba(0,86,179,0.3);">
+          <small style="color:#00acee;font-size:10px;font-weight:800;">Bpm</small>
+          <div style="font-size:20px;font-weight:bold;display:flex;align-items:baseline;gap:5px;">
+            <div id="sonic_bitrate"></div>
+            <span style="font-size:12px;color:#666;">kbps</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- PLAYER -->
+      <div style="background:#181818;padding:20px;border-radius:15px;border:1px solid #282828;flex:1;display:flex;flex-direction:column;justify-content:center;">
+
+<canvas id="visualizer"
+        style="width:100%;height:50px;background:transparent;border-radius:10px;margin-bottom:15px;">
+</canvas>
+
+
+        <div style="display:flex;gap:12px;margin-bottom:25px;">
+          <button onclick="playRadio()"
+                  style="flex:1;padding:12px;background:#0056b3;color:#fff;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">
+            ▶ Play
+          </button>
+
+          <button onclick="stopRadio()"
+                  style="flex:1;padding:12px;background:#333;color:#fff;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">
+            ■ Stop
+          </button>
+        </div>
+
+<label style="font-size:11px;color:#888;font-weight:bold;margin-bottom:5px;display:flex;justify-content:space-between;">
+  <span>VOLUME MASTER</span>
+  <span id="vol-percent">100%</span>
+</label>
+
+        <input type="range" min="0" max="1" step="0.01" value="1"
+               oninput="updateVolume(this.value)"
+               style="width:100%;accent-color:#0056b3;">
+
+        <!-- DATE + CLOCK MOVED HERE -->
+        <div style="margin-top:15px;text-align:center;">
+          <div id="clock"
+               style="font-size:22px;font-family:monospace;font-weight:bold;color:#fff;">
+            00:00:00
+          </div>
+
+          <div id="current-date"
+               style="font-size:10px;color:#666;text-transform:uppercase;margin-top:3px;">
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+<!-- JAVASCRIPT -->
+<script>
+  const player = document.getElementById('radio-player');
+  const statusText = document.getElementById('status-text');
+  const eq = document.getElementById('equalizer');
+  const imgContainer = document.getElementById('img-container');
+  const heartContainer = document.getElementById('heart-container');
+  let heartInterval;
+  
+
+let audioCtx;
+let analyser;
+let source;
+let dataArray;
+let canvas, ctx;
+
+function initVisualizer(){
+  if(audioCtx) return;
+
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  analyser = audioCtx.createAnalyser();
+
+  analyser.fftSize = 256;
+
+  source = audioCtx.createMediaElementSource(player);
+  source.connect(analyser);
+  analyser.connect(audioCtx.destination);
+
+  dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+  canvas = document.getElementById("visualizer");
+  ctx = canvas.getContext("2d");
+
+  resizeCanvas();
+  drawWave();
+}
+
+function resizeCanvas(){
+  canvas.width = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+}
+window.addEventListener("resize", resizeCanvas);
+
+function drawWave(){
+  requestAnimationFrame(drawWave);
+
+  if(!analyser) return;
+
+  analyser.getByteTimeDomainData(dataArray);
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = "#0056b3";
+  ctx.shadowBlur = 10;
+  ctx.shadowColor = "#0056b3";
+
+  ctx.beginPath();
+
+  let sliceWidth = canvas.width / dataArray.length;
+  let x = 0;
+
+  for(let i = 0; i < dataArray.length; i++){
+    let v = dataArray[i] / 128.0;
+    let y = v * canvas.height / 2;
+
+    if(i === 0){
+      ctx.moveTo(x, y);
+    } else {
+      ctx.lineTo(x, y);
+    }
+
+    x += sliceWidth;
+  }
+
+  ctx.lineTo(canvas.width, canvas.height / 2);
+  ctx.stroke();
+}
+
+function playRadio(){
+  player.play();
+
+  initVisualizer(); // 🔥 pornim wave
+
+  statusText.innerText="Radio Play ❤️";
+  statusText.style.color="#1db954";
+  eq.classList.add('playing');
+  imgContainer.classList.add('playing-border');
+
+  if(!heartInterval) heartInterval=setInterval(createHeart,400);
+}
+
+function stopRadio(){
+  player.pause();
+
+  statusText.innerText="Radio Stop 🤍";
+  statusText.style.color="#fff";
+}
+
+  function createHeart(){
+    const heart=document.createElement('div');
+    heart.className='heart';
+    heart.innerText=Math.random()>0.3?'🤍':'💙';
+    heart.style.left=(Math.random()*80+10)+'%';
+    heart.style.bottom='10%';
+    heartContainer.appendChild(heart);
+    setTimeout(()=>heart.remove(),4000);
+  }
+
+  function updateVolume(v){
+  player.volume = v;
+
+  const percent = Math.round(v * 100);
+  document.getElementById("vol-percent").innerText = percent + "%";
+}
+
+  function updateClock(){
+    const now=new Date();
+    document.getElementById('clock').innerText=
+      now.toLocaleTimeString('ro-RO',{hour12:false});
+    document.getElementById('current-date').innerText=
+      now.toLocaleDateString('ro-RO',{weekday:'long',day:'numeric',month:'long'});
+  }
+
+  setInterval(updateClock,1000);
+  updateClock();
+  
+function setSong(text){
+  const el = document.getElementById("sonic_track");
+
+  // fade out
+  el.classList.add("fade-out");
+
+  setTimeout(() => {
+    el.innerText = "🎵 " + text;
+
+    // fade in
+    el.classList.remove("fade-out");
+  }, 300);
+}
+
+function updateMetadata(){
+  fetch("https://radio.sonicpanel.ro:10922/stats?sid=1&type=json")
+    .then(r => r.json())
+    .then(data => {
+
+      console.log("RADIO DATA:", data);
+
+      let raw =
+        data?.song ||
+        data?.title ||
+        data?.current_song ||
+        data?.np ||
+        "";
+
+      if(!raw) raw = "Radio Live";
+
+      setSong(raw);
+
+    })
+    .catch(() => setSong("Radio Live"));
+}
+
+setSong("Loading radio...");
+updateMetadata();
+setInterval(updateMetadata, 4000);
+
+
+
+// --- PROTECT SCRIPT ---
+
+
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+document.onkeydown = function(e) {
+
+if(e.keyCode == 123) return false; // F12
+
+if(e.ctrlKey && e.shiftKey && e.keyCode == 73) return false; // CTRL+SHIFT+I
+
+if(e.ctrlKey && e.shiftKey && e.keyCode == 74) return false; // CTRL+SHIFT+J
+
+if(e.ctrlKey && e.keyCode == 85) return false; // CTRL+U
+
+};
+  
+</script>
+</div>
+</body>
+</html>

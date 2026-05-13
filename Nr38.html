@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infernale Player - Snake Edition Full Real</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            overflow: hidden; background-color: black;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .snake-border {
+            position: relative;
+            width: 778px; height: 528px;
+            background-image: url('https://xatimg.com/image/oacvd5ltA14X.png');
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+            clip-path: polygon(5% 0%, 95% 0%, 100% 10%, 100% 90%, 95% 100%, 5% 100%, 0% 90%, 0% 10%);
+        }
+        .snake-border::before {
+            content: '';
+            position: absolute;
+            width: 150%; height: 150%;
+            background: conic-gradient(#ff4500 0deg, #ffffff 90deg, #ff4500 180deg, #ffffff 270deg, #ff4500 360deg);
+            animation: rotateSnake 4s linear infinite;
+        }
+        @keyframes rotateSnake { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        
+        .infernale-container {
+            width: 750px; height: 500px;
+            position: relative; background: #000; z-index: 1;
+            clip-path: polygon(5% 0%, 95% 0%, 100% 10%, 100% 90%, 95% 100%, 5% 100%, 0% 90%, 0% 10%);
+        }
+        #v-source { width: 100%; height: 100%; object-fit: cover; }
+        
+.monitor-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+    box-sizing: border-box;
+    pointer-events: none;
+    z-index: 2;
+}
+		
+
+        /* WIDGET LOCANDINA */
+        #info-locandina {
+            position: absolute; top: 20px; right: 30px; width: 220px;
+            background: rgba(0, 0, 0, 0.95); border: 2px solid #ff4500; border-radius: 10px; padding: 12px;
+            color: #ffcc00; font-size: 0.75rem; opacity: 0; transform: scale(0.8); 
+            transition: 0.4s; z-index: 100; pointer-events: none; box-shadow: 0 0 20px #ff4500;
+        }
+        #info-locandina.show { opacity: 1; transform: scale(1); }
+        #loc-title { color: #ff0000; font-size: 0.85rem; margin-bottom: 5px; display: block; border-bottom: 1px solid #444; font-weight: bold; }
+
+#woofer-container {
+    width: 350px;
+    height: 30px;
+    border: 3px solid #ff0000;
+    border-radius: 15%;
+    overflow: hidden;
+    background: #000;
+    box-shadow: 0 0 15px #ff0000;
+
+    position: absolute;
+
+    /* 🔥 AICI îl controlezi tu */
+    top: 20px;
+    left: 200px;
+
+    z-index: 50;
+}	
+#main-cover {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+	background-image: url('https://xatimg.com/image/oacvd5ltA14X.png');
+    animation: spin-round 8s linear infinite;
+
+    position: relative;
+
+    z-index: 2;
+}
+		
+        @keyframes spin-round { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+.bottom-ui {
+    position: absolute;
+    bottom: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+
+    width: 90%;
+    background: rgba(0, 0, 0, 0.85);
+    border: 1px solid #ff4500;
+    border-radius: 15px;
+    overflow: hidden;
+
+    pointer-events: auto;
+    z-index: 5;
+}
+
+.monitor-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    padding: 20px;
+    box-sizing: border-box;
+
+    pointer-events: none;
+    z-index: 2;
+}
+
+
+        .controls { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 10px; }
+        .btn, .trigger-btn {
+            background: rgba(139, 0, 0, 0.3); border: 1px solid #ff4500; color: #ffcc00;
+            padding: 5px 10px; cursor: pointer; font-size: 0.7rem; border-radius: 5px; font-weight: bold;
+            transition: 0.2s;
+        }
+        .btn:hover, .trigger-btn:hover { background: #ff4500; color: #000; }
+
+        .marquee-box { background: rgba(0, 0, 0, 0.95); border-top: 1px solid #ff0000; padding: 6px 0; overflow: hidden; }
+        #track-name { 
+            display: inline-block; white-space: nowrap; color: #ff4500; font-weight: bold;
+            animation: scroll-internal 15s linear infinite; padding-left: 100%; font-size: 0.85rem;
+        }
+        @keyframes scroll-internal { 0% { transform: translateX(0%); } 100% { transform: translateX(-100%); } }
+
+        #vol-slider { -webkit-appearance: none; width: 100px; height: 4px; background: #444; border-radius: 5px; outline: none; }
+        #vol-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; background: #ff4500; border-radius: 50%; cursor: pointer; }
+		
+#visualizer {
+    position: absolute;
+    bottom: 105px;  /* 🔥 AICI îl cobori */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 70px;
+    z-index: 5;
+}
+
+#date-bottom{
+    font-family: monospace;
+    letter-spacing: 1px;
+    color: #ff4500;
+    font-size: 2.0rem;
+    font-weight: 600;
+}
+
+#clock-bottom {
+   font-family: monospace;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+
+#radio-name {
+    text-align: center;
+    font-size: 2.0rem;
+    font-weight: bold;
+    color: #ff4500;
+    padding: 6px;
+    letter-spacing: 2px;
+    text-shadow: 0 0 8px #ff4500;
+}
+@keyframes radioPulse {
+    0% {
+        text-shadow: 0 0 5px #ff4500, 0 0 10px #ff4500;
+        transform: scale(1);
+        opacity: 0.9;
+    }
+    50% {
+        text-shadow: 0 0 15px #ff4500, 0 0 30px #ff0000;
+        transform: scale(1.05);
+        opacity: 1;
+    }
+    100% {
+        text-shadow: 0 0 5px #ff4500, 0 0 10px #ff4500;
+        transform: scale(1);
+        opacity: 0.9;
+    }
+}
+
+#radio-name {
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #ff4500;
+    padding: 6px;
+    letter-spacing: 2px;
+
+    animation: radioPulse 1.8s infinite ease-in-out;
+}
+
+
+    </style>
+</head>
+<body>
+
+    <div class="snake-border">
+        <div class="infernale-container">
+          <video id="v-source" loop playsinline autoplay muted src="https://bydesign-xat.github.io/Index/LoveHeart.mp4"></video>  
+            
+            <div id="info-locandina">
+                <b id="loc-title"></b>
+                <div id="loc-text" style="line-height: 1.4;"></div>
+            </div>
+
+            <div class="monitor-content">
+                <div id="woofer-container">
+                 <div id="radio-name">★ Radio LaFamilia ★</div> 
+                </div>
+				
+				<canvas id="visualizer"></canvas>
+
+                <div class="bottom-ui">
+                    <div class="controls">
+<div id="date-bottom" style="
+    text-align:center;
+    font-size:0.7rem;
+    color:#ffcc00;
+    padding:5px;
+    opacity:0.9;
+"></div>
+                        <button class="trigger-btn" onclick="mostraAstro()">🔮 HOROSCOP</button>
+                        <button id="pBtn" class="btn">START</button>
+                        <input type="range" id="vol-slider" min="0" max="1" step="0.05" value="1">
+                        <button onclick="location.reload()" class="btn">STOP</button>
+                        <button class="trigger-btn" onclick="mostraMeteo()">🌡️ METEO</button>
+<div id="clock-bottom" style="
+    text-align:center;
+    font-size:0.75rem;
+    color:#ffcc00;
+    padding:2px 5px;
+    opacity:0.95;
+    font-family: monospace;
+"></div>
+                    </div>
+                    <div class="marquee-box">
+                        <div id="track-name"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <audio id="audio-stream" crossorigin="anonymous"></audio>
+
+    <script>
+    const S_URL = "https://radio.sonicpanel.ro:10922/;";
+    const STATS_URL = "https://radio.sonicpanel.ro:10922/stats?sid=1&json=1&callback=?";
+    const DEF_COV = "https://xatimg.com/image/oacvd5ltA14X.png";
+
+    const aud = document.getElementById("audio-stream");
+    const pBtn = document.getElementById("pBtn");
+    const tName = document.getElementById("track-name");
+    const mCov = document.getElementById("main-cover");
+    const woofer = document.getElementById("woofer-container");
+    const vid = document.getElementById("v-source");
+    const locandina = document.getElementById("info-locandina");
+
+    let isP = false, aCtx, anls, dArr;
+	let ac, an, src, da;
+const cv = document.getElementById("visualizer");
+const ct = cv.getContext("2d");
+
+    function updateInfo() {
+        $.getJSON(STATS_URL, function(data) {
+            if (data && data.songtitle) {
+                const title = data.songtitle.toUpperCase();
+                if (tName.innerText !== `🎵 ${title} 🎵`) {
+                    tName.innerText = `🎵 ${title} 🎵`;
+                    $.getJSON("https://itunes.apple.com/search?term=" + encodeURIComponent(title) + "&limit=1&callback=?", function(res) {
+                        const img = res.results[0] ? res.results[0].artworkUrl100.replace('100x100', '500x500') : DEF_COV;
+                        $(mCov).fadeOut(500, function() {
+                            $(this).css('background-image', 'url(' + img + ')').fadeIn(500);
+                        });
+                    });
+                }
+            } else { tName.innerText = ""; }
+        });
+    }
+    setInterval(updateInfo, 2000);
+
+    async function mostraMeteo() {
+        try {
+            const response = await fetch('https://wttr.in/?format=j1');
+            const data = await response.json();
+            const area = data.nearest_area[0].areaName[0].value;
+            const temp = data.current_condition[0].temp_C;
+            const desc = data.current_condition[0].lang_it ? data.current_condition[0].lang_it[0].value : data.current_condition[0].weatherDesc[0].value;
+            
+            document.getElementById("loc-title").innerText = `🌡️ METEO: ${area.toUpperCase()}`;
+            document.getElementById("loc-text").innerHTML = `Temp: ${temp}°C<br>Cer: ${desc}<br>Umiditate: ${data.current_condition[0].humidity}%`;
+        } catch (e) {
+            document.getElementById("loc-title").innerText = "🌡️ METEO";
+            document.getElementById("loc-text").innerText = "Serviziu Indisponibil.";
+        }
+        triggerLoc();
+    }
+	
+	const now = new Date();
+
+const dataRom = now.toLocaleDateString("ro-RO", {
+    weekday: "long",
+    day: "2-digit",
+    month: "long",
+});
+
+function updateClock() {
+    const now = new Date();
+
+    const time = now.toLocaleTimeString("ro-RO", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+    });
+
+    document.getElementById("clock-bottom").innerText =
+        `${time}`;
+}
+
+setInterval(updateClock, 1000);
+updateClock();
+
+document.getElementById("date-bottom").innerText =
+    `${dataRom}`;
+
+async function mostraAstro() {
+    try {
+        const signMap = {
+    1:"berbec",      // aries
+    2:"taur",        // taurus
+    3:"gemeni",      // gemini
+    4:"rac",         // cancer
+    5:"leu",         // leo
+    6:"fecioară",    // virgo
+    7:"balanță",     // libra
+    8:"scorpion",    // scorpio
+    9:"săgetător",   // sagittarius
+    10:"capricorn",  // capricorn
+    11:"vărsător",   // aquarius
+    12:"pești"       // pisces
+};
+
+        const m = new Date().getMonth() + 1;
+        const sign = signMap[m];
+
+        document.getElementById("loc-title").innerText = "🔮 HOROSCOP...";
+        document.getElementById("loc-text").innerText = "Se încarcă...";
+
+        // 🔥 FIX CORS
+        const res = await fetch(`https://api.allorigins.win/raw?url=https://ohmanda.com/api/horoscope/${sign}`);
+        const data = await res.json();
+
+        let text = data?.horoscope || "Today is a good day.";
+
+        // 🔥 mic rewrite română
+        text = text
+            .replace(/today/gi, "astăzi")
+            .replace(/you/gi, "tu")
+            .replace(/your/gi, "tău")
+            .replace(/will/gi, "vei");
+
+        text = text.charAt(0).toUpperCase() + text.slice(1) + " 🔮";
+
+        document.getElementById("loc-title").innerText =
+            `🔮 HOROSCOP ${sign.toUpperCase()}`;
+
+        document.getElementById("loc-text").innerText =
+            text;
+
+    } catch (e) {
+        document.getElementById("loc-title").innerText = "🔮 HOROSCOP";
+        document.getElementById("loc-text").innerText =
+            "Serviciu indisponibil momentan.";
+    }
+
+    triggerLoc();
+}
+
+    function triggerLoc() {
+        locandina.classList.add("show");
+        setTimeout(() => locandina.classList.remove("show"), 8000);
+    }
+
+pBtn.onclick = async () => {
+    if (isP) {
+        isP = false;
+        aud.pause();
+        pBtn.innerText = "START";
+        return;
+    }
+
+    isP = true;
+    pBtn.disabled = true;
+
+    vid.muted = false;
+    vid.play();
+
+    // pornește direct live (fără countdown)
+    setTimeout(() => {
+        pBtn.disabled = false;
+        pBtn.innerText = "START";
+        vid.muted = true;
+        startStream();
+		animateEQ();
+        updateInfo();
+    }, 300); // mic delay doar ca să pornească video corect
+};
+
+async function startStream() {
+    if (!ac) {
+        ac = new (window.AudioContext || window.webkitAudioContext)();
+        an = ac.createAnalyser();
+        an.fftSize = 256;
+
+        da = new Uint8Array(an.frequencyBinCount);
+
+        const source = ac.createMediaElementSource(aud);
+        source.connect(an);
+        an.connect(ac.destination);
+    }
+
+    aud.src = S_URL;
+    aud.play();
+    drawEQ();   // 🔥 IMPORTANT
+}
+
+
+
+    document.getElementById("vol-slider").oninput = (e) => aud.volume = e.target.value;
+	
+function rewriteHoroscope(text) {
+    // simplu AI-like rewrite (pattern based)
+    let t = text.toLowerCase();
+
+    // transformări de stil
+    t = t.replace(/you may/g, "astăzi ai șansa să");
+    t = t.replace(/you will/g, "vei");
+    t = t.replace(/be careful/g, "ai grijă");
+    t = t.replace(/opportunity/g, "o oportunitate interesantă");
+    t = t.replace(/love/g, "dragoste");
+    t = t.replace(/energy/g, "energie pozitivă");
+    t = t.replace(/today/g, "astăzi");
+    t = t.replace(/try to/g, "încearcă să");
+    t = t.replace(/it is time to/g, "este momentul să");
+
+    // capitalizare + stil
+    t = t.charAt(0).toUpperCase() + t.slice(1);
+
+    // final radio vibe
+    return t + " 🔮";
+}
+
+
+
+function drawEQ() {
+    requestAnimationFrame(drawEQ);
+
+    if (!an) return;
+
+    an.getByteFrequencyData(da);
+
+    const width = cv.width = cv.offsetWidth;
+    const height = cv.height = cv.offsetHeight;
+
+    ct.clearRect(0, 0, width, height);
+
+    const bars = 80;
+    const step = Math.floor(da.length / bars);
+    const barWidth = width / bars;
+
+    for (let i = 0; i < bars; i++) {
+
+        let value = da[i * step];
+        let percent = value / 255;
+
+        // 🔥 smoothing REAL (asta face diferența)
+        let barHeight = (percent * height);
+        barHeight = barHeight < 2 ? 2 : barHeight;
+
+        let x = i * barWidth;
+        let y = height - barHeight;
+
+        // 🔥 gradient Spotify-style (ROȘU → PORTOCALIU → GALBEN)
+        let gradient = ct.createLinearGradient(0, 0, 0, height);
+        gradient.addColorStop(0, "#ff4500");
+        gradient.addColorStop(0.4, "#ffcc00");
+        gradient.addColorStop(1, "#FF0000");
+
+        ct.fillStyle = gradient;
+
+        // 🔥 bare subțiri ca Spotify
+        ct.fillRect(x, y, barWidth * 0.35, barHeight);
+    }
+
+    // woofer smooth
+    let avg = da.reduce((a,b)=>a+b,0)/da.length;
+    woofer.style.transform = `scale(${1 + avg/400})`;
+}
+
+
+// --- PROTECT SCRIPT ---
+
+
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+document.onkeydown = function(e) {
+
+if(e.keyCode == 123) return false; // F12
+
+if(e.ctrlKey && e.shiftKey && e.keyCode == 73) return false; // CTRL+SHIFT+I
+
+if(e.ctrlKey && e.shiftKey && e.keyCode == 74) return false; // CTRL+SHIFT+J
+
+if(e.ctrlKey && e.keyCode == 85) return false; // CTRL+U
+
+};
+
+</script>
+</body>
+</html>

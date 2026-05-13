@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        :root { 
+            --wood: #a35a30; 
+            --neon: #00f2ff; 
+            --orange: #ff6600; 
+            --steel: linear-gradient(to right, #777, #eee, #fff, #eee, #777); 
+            --chrome: radial-gradient(circle at 30% 30%, #fff, #999, #333); 
+        }
+
+        body {
+            background: transparent;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            font-family: sans-serif;
+        }
+
+        #main-c {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 550px;
+        }
+
+        #radio-body {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            scale: 0.9;
+            filter: drop-shadow(0 0 10px rgba(0,0,0,0.5));
+        }
+
+        .spk-box { 
+            width: 155px;
+            height: 155px;
+            background: var(--wood);
+            border-radius: 20px; 
+            border: 3px solid var(--neon);
+            display: flex;
+            justify-content: center;
+            align-items: center; 
+            box-shadow: 0 0 15px var(--neon), inset 0 0 20px rgba(0,0,0,0.4); 
+        }
+
+        .spk-in {
+            width: 135px;
+            height: 135px;
+            background: #0a0a0a;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+
+        .o-rim {
+            position: absolute;
+            width: 115px;
+            height: 115px;
+            border: 7px solid var(--neon);
+            border-radius: 50%;
+            z-index: 1;
+            box-shadow: 0 0 10px var(--orange);
+        }
+
+        .woofer { 
+            width: 95px;
+            height: 95px;
+            background: repeating-radial-gradient(
+                circle,
+                #222 0,
+                #222 5px,
+                #333 6px,
+                #444 10px,
+                #ff660022 11px,
+                #222 15px
+            );
+            border-radius: 50%;
+            z-index: 2;
+            border: 4px solid #050505;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: 0.05s;
+        }
+
+        .c-dome {
+            width: 28px;
+            height: 28px;
+            background: var(--chrome);
+            border-radius: 50%;
+            border: 1px solid #777;
+            box-shadow: 0 0 8px rgba(255,255,255,0.3);
+        }
+
+        #ctrl {
+            width: 240px;
+            height: 160px;
+            background: var(--wood);
+            border: 3px solid var(--neon);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 5px;
+            box-shadow: 0 0 15px var(--neon), inset 0 0 20px rgba(0,0,0,0.4);
+            position: relative;
+        }
+
+        #nick-tag {
+            position: absolute;
+			width: 262px;
+            height: 40px;
+			border: 2px solid var(--neon);
+			align-items: center;
+            top: -48px;
+			left: -5px;
+            font-size: 30px;
+            font-weight: bold;
+            color: var(--neon);
+            text-shadow: 0 0 8px var(--neon);
+            letter-spacing: 2px;
+        }
+
+        .vu-c {
+            display: flex;
+            gap: 8px;
+            margin-top: 5px;
+        }
+
+        .vu {
+            width: 80px;
+            height: 50px;
+            background: #000;
+            border-radius: 4px;
+            position: relative;
+            border: 2px solid #444;
+            overflow: hidden;
+            box-shadow: inset 0 0 15px var(--neon);
+        }
+
+        .ndl {
+            width: 1.5px;
+            height: 35px;
+            background: #f00;
+            position: absolute;
+            bottom: -3px;
+            left: 50%;
+            transform-origin: bottom center;
+            box-shadow: 0 0 5px #f00;
+        }
+
+        .btns {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 0 8px;
+            margin-top: 12px;
+        }
+
+        .c-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            color: #fff;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+		
+		.c-btn1 {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            color: #fff;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        #boom {
+            background: #000001;
+            box-shadow: 0 0 12px var(--neon);
+        }
+
+        #extra {
+            background: #000001;
+            box-shadow: 0 0 12px var(--neon);
+        }
+
+        #p-btn {
+            cursor: pointer;
+            padding: 5px 12px;
+            background: #111;
+            color: #fff;
+            border: 2px solid var(--neon);
+            border-radius: 5px;
+            font-size: 11px;
+            font-weight: bold;
+            box-shadow: 0 0 8px var(--neon);
+        }
+
+        #v-sl {
+            -webkit-appearance: none;
+            width: 130px;
+            height: 4px;
+            background: #111;
+            margin-top: 10px;
+            border: 1px solid var(--neon);
+            border-radius: 5px;
+            box-shadow: 0 0 5px var(--neon);
+        }
+
+        #v-sl::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            background: var(--neon);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--neon);
+        }
+
+        #st-t {
+            width: 30px;
+            height: 35px;
+			margin-top: -9px; /* ajustează între -2px și -10px */
+            background: var(--steel);
+            border: 2px solid var(--neon);
+            box-shadow: 0 0 10px var(--neon);
+            z-index: 0;
+        }
+
+        #st-b {
+            width: 400px;
+            height: 120px;
+            background: #0a0a0a;
+            border-radius: 20px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border: 3px solid var(--neon);
+            box-shadow: 0 0 20px var(--neon);
+        }
+
+        .cv-c {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 3px solid var(--neon);
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+            background-image: url('https://xatimg.com/image/oacvd5ltA14X.png');
+            animation: spin 8s linear infinite;
+            animation-play-state: paused;
+            box-shadow: 0 0 15px var(--neon);
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        #t-box {
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--neon);
+            padding: 5px;
+            border-radius: 8px;
+            margin-top: 0px;
+            width: 85%;
+            box-shadow: 0 0 15px var(--neon);
+        }
+
+        marquee {
+            color: var(--neon);
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-shadow: 0 0 5px var(--neon);
+        }
+		
+		#t-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+		
+		#vol-p {
+    color: var(--neon);
+    font-weight: bold;
+    text-shadow: 0 0 8px var(--neon);
+}
+
+#v-sl {
+    background: linear-gradient(to right, var(--neon) 0%, var(--neon) 100%, #111 100%);
+}
+
+.vu-num{
+    position: absolute;
+    top: 4px;
+    right: 35px;
+    font-size: 10px;
+    font-weight: bold;
+    color: var(--neon);
+    text-shadow: 0 0 6px var(--neon);
+    z-index: 5;
+    font-family: monospace;
+}
+
+#eq-wrap{
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    gap:10px;
+    height:90px;
+    width:140px;
+}
+
+.eq-band{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-end;
+    width:16px;
+}
+
+.eq-band span{
+    font-size:7px;
+    color:var(--neon);
+    text-shadow:0 0 5px var(--neon);
+    font-weight:bold;
+    margin-bottom:6px;
+}
+
+.eq{
+    writing-mode: bt-lr;
+    -webkit-appearance: slider-vertical;
+    appearance: slider-vertical;
+
+    width:16px;
+    height:60px;
+
+    background:#111;
+    border:1px solid var(--neon);
+    border-radius:10px;
+    box-shadow:0 0 5px var(--neon);
+
+    cursor:pointer;
+}
+
+.eq::-webkit-slider-thumb{
+    -webkit-appearance:none;
+
+    width:12px;
+    height:12px;
+
+    border-radius:50%;
+    background:var(--neon);
+
+    box-shadow:0 0 10px var(--neon);
+}
+
+#nick-tag{
+    animation: nickFlash 2s infinite;
+}
+
+@keyframes nickFlash{
+    0%{
+        opacity: 1;
+        text-shadow: 0 0 5px var(--neon), 0 0 10px var(--neon);
+        filter: brightness(1);
+    }
+    50%{
+        opacity: 0.1;
+        text-shadow: 0 0 15px var(--neon), 0 0 30px var(--neon);
+        filter: brightness(1.5);
+    }
+    100%{
+        opacity: 1;
+        text-shadow: 0 0 5px var(--neon), 0 0 10px var(--neon);
+        filter: brightness(1);
+    }
+}
+
+.eq-val{
+    margin-top:-5px;
+    font-size:9px;
+    font-weight:bold;
+    color:var(--neon);
+    text-shadow:0 0 6px var(--neon);
+    font-family:monospace;
+    min-height:12px;
+	position: relative;
+    top: 10px;
+}
+
+#eq-reset{
+    margin-top:0px;
+    padding:6px 5px;
+
+    background:#111;
+    color:var(--neon);
+
+    border:1px solid var(--neon);
+    border-radius:8px;
+
+    font-size:10px;
+    font-weight:bold;
+
+    cursor:pointer;
+
+    box-shadow:0 0 8px var(--neon);
+    text-shadow:0 0 6px var(--neon);
+
+    transition:0.2s;
+}
+
+#eq-reset:hover{
+    transform:scale(1.08);
+    box-shadow:0 0 15px var(--neon);
+}
+
+    </style>
+</head>
+
+<body>
+
+<div id="main-c">
+
+    <div id="radio-body">
+        <div class="spk-box">
+            <div class="spk-in">
+                <div class="o-rim"></div>
+                <div id="wL" class="woofer">
+                    <div class="c-dome"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="ctrl">
+            <div id="nick-tag">Radio LaFamilia</div>
+
+            <div class="vu-c">
+                <div class="vu">
+                     <div class="vu-num" id="vL">0</div>
+                     <div id="nL" class="ndl"></div>
+                  </div>
+                <div class="vu">
+                     <div class="vu-num" id="vR">0</div>
+                     <div id="nR" class="ndl"></div>
+                  </div>
+            </div>
+
+            <div class="btns">
+                <div id="boom" class="c-btn">Color</div>
+                <button id="p-btn">START</button>
+                <div id="extra" class="c-btn1">Bass</div>
+            </div>
+
+            <input type="range" id="v-sl" min="0" max="1" step="0.01" value="1">
+			<div id="vol-p">100%</div>
+        </div>
+
+        <div class="spk-box">
+            <div class="spk-in">
+                <div class="o-rim"></div>
+                <div id="wR" class="woofer">
+                    <div class="c-dome"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="st-t"></div>
+
+<div id="st-b">
+
+    <div id="cS" class="cv-c"></div>
+
+    <div id="eq-wrap">
+
+        <div class="eq-band">
+            <span>64</span> 
+            <input type="range" class="eq" data-band="0" min="-20" max="20" value="0">
+			<div class="eq-val">0</div>
+        </div>
+
+        <div class="eq-band">
+            <span>125</span>
+            <input type="range" class="eq" data-band="1" min="-20" max="20" value="0">
+			<div class="eq-val">0</div>
+        </div>
+
+        <div class="eq-band">
+            <span>500</span>
+            <input type="range" class="eq" data-band="2" min="-20" max="20" value="0">
+			<div class="eq-val">0</div>
+        </div>
+
+        <div class="eq-band">
+            <span>1K</span>
+            <input type="range" class="eq" data-band="3" min="-20" max="20" value="0">
+			<div class="eq-val">0</div>
+        </div>
+
+        <div class="eq-band">
+            <span>4K</span>
+            <input type="range" class="eq" data-band="4" min="-20" max="20" value="0">
+			<div class="eq-val">0</div>
+        </div>
+
+        <div class="eq-band">
+            <span>8K</span>
+            <input type="range" class="eq" data-band="5" min="-20" max="20" value="0">
+			<div class="eq-val">0</div>
+        </div>
+
+    </div>
+
+    <div id="cD" class="cv-c"></div>
+
+</div>
+
+<button id="eq-reset">RESET EQ</button>
+
+    <div id="t-box">
+        <marquee id="t-m" scrollamount="4">
+            Încărcare...
+        </marquee>
+    </div>
+
+</div>
+
+<audio id="aud" crossorigin="anonymous"></audio>
+
+<script>
+const S = "https://radio.sonicpanel.ro:10922/;",
+      ST = "https://radio.sonicpanel.ro:10922/stats?sid=1&json=1&callback=?";
+
+const def = "https://xatimg.com/image/oacvd5ltA14X.png";
+
+const aud = document.getElementById("aud");
+
+let sourceNode,
+    eqFilters = [];
+let bassFilter = null;
+let bassOn = false;
+let isP = false,
+    aX,
+    an,
+    dY,
+    mI;
+
+// BOOM color switch
+$("#boom").click(function () {
+    const c = [
+        '#00f2ff',
+        '#ff00ff',
+        '#00ff00',
+        '#ffff00',
+        '#ff0000',
+        '#ffffff',
+        '#ffa500'
+    ];
+
+    document.documentElement.style.setProperty(
+        '--neon',
+        c[Math.floor(Math.random() * c.length)]
+    );
+});
+
+$("#extra").click(function () {
+
+    bassOn = !bassOn;
+
+    if (bassFilter) {
+        bassFilter.gain.value = bassOn ? 13 : 0;
+    }
+
+    $(this).css("color", bassOn ? "red" : "#fff");
+    $(this).text(bassOn ? "Bass" : "Bass");
+});
+// Volume control
+$("#v-sl").on("input", function () {
+    aud.volume = $(this).val();
+});
+
+$("#v-sl").on("input", function () {
+
+    let val = $(this).val() * 100;
+
+    aud.volume = $(this).val();
+
+    $("#vol-p").text(Math.round(val) + "%");
+
+    this.style.background = `linear-gradient(to right, var(--neon) ${val}%, #111 ${val}%)`;
+});
+
+// Play / Stop button
+
+$("#p-btn").click(function () {
+
+    if (!isP) {
+        aud.src = S;
+        aud.play();
+
+        $(this).text("STOP").css("color", "red");
+        $(".cv-c").css("animation-play-state", "running");
+
+        isP = true;
+        initViz();
+
+    } else {
+
+        aud.pause();
+        aud.src = "";
+
+        $(this).text("START").css("color", "#fff");
+        $(".cv-c").css("animation-play-state", "paused");
+
+        isP = false;
+    }
+	
+});
+
+
+// Update metadata / song info
+function uM() {
+    $.getJSON(ST, function (d) {
+        if (d.songtitle) {
+            let s = d.songtitle.toUpperCase();
+            $("#t-m").text(s);
+
+            $.getJSON(
+                "https://itunes.apple.com/search?term=" + encodeURIComponent(s) + "&limit=1&callback=?",
+                function (r) {
+
+                    let img = "https://xatimg.com/image/oacvd5ltA14X.png";
+
+                    if (r.results && r.results[0] && r.results[0].artworkUrl100) {
+                        img = r.results[0].artworkUrl100.replace('100x100', '400x400');
+                    }
+
+                    $(".cv-c").css("background-image", "url(" + img + ")");
+                }
+            );
+        }
+    });
+}
+
+// Audio visualizer init
+function initViz() {
+
+    if (!aX) {
+
+        aX = new (window.AudioContext || window.webkitAudioContext)();
+
+        an = aX.createAnalyser();
+        an.fftSize = 128;
+
+        dY = new Uint8Array(an.frequencyBinCount);
+
+        sourceNode = aX.createMediaElementSource(aud);
+
+        // BASS FILTER
+        bassFilter = aX.createBiquadFilter();
+        bassFilter.type = "lowshelf";
+        bassFilter.frequency.value = 100;
+        bassFilter.gain.value = 0;
+
+        // EQ
+        const freqs = [64,125,500,1000,4000,8000];
+
+        eqFilters = freqs.map(freq => {
+
+            const filter = aX.createBiquadFilter();
+
+            filter.type = "peaking";
+            filter.frequency.value = freq;
+            filter.Q.value = 1;
+            filter.gain.value = 0;
+
+            return filter;
+        });
+
+        // AUDIO CHAIN
+        sourceNode.connect(bassFilter);
+
+        bassFilter.connect(eqFilters[0]);
+
+        for(let i=0;i<eqFilters.length-1;i++){
+            eqFilters[i].connect(eqFilters[i+1]);
+        }
+
+        eqFilters[eqFilters.length-1].connect(an);
+
+        an.connect(aX.destination);
+    }
+
+    loop();
+}
+
+// Animation loop
+function loop() {
+
+    if (isP) {
+
+        requestAnimationFrame(loop);
+
+        an.getByteFrequencyData(dY);
+
+        let b = dY.slice(0, 10).reduce((a, v) => a + v) / 10;
+
+        $(".woofer").css(
+            "transform",
+            `scale(${1 + (b / 500)})`
+        );
+
+        let v = dY.reduce((a, v) => a + v) / dY.length;
+		let vuVal = Math.round(v);
+
+           $("#vL").text(vuVal);
+           $("#vR").text(vuVal);
+
+        $("#nL").css(
+            "transform",
+            `rotate(${(v / 4.2) + (Math.random() * 5)}deg)`
+        );
+
+        $("#nR").css(
+            "transform",
+            `rotate(${-( (v / 4.2) + (Math.random() * 5) )}deg)`
+        );
+    }
+}
+$(document).on("input", ".eq", function () {
+
+    const band = $(this).data("band");
+    const val = parseFloat($(this).val());
+
+    if(eqFilters[band]){
+        eqFilters[band].gain.value = val;
+    }
+
+    let txt = val > 0 ? "+" + val : val;
+
+    $(this).siblings(".eq-val").text(txt);
+});
+
+$("#eq-reset").click(function () {
+
+    $(".eq").each(function () {
+
+        $(this).val(0);
+
+        const band = $(this).data("band");
+
+        if(eqFilters[band]){
+            eqFilters[band].gain.value = 0;
+        }
+
+        $(this).siblings(".eq-val").text("0");
+    });
+});
+
+uM();
+setInterval(uM, 1000);
+
+
+
+// --- PROTECT SCRIPT ---
+
+
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+document.onkeydown = function(e) {
+
+if(e.keyCode == 123) return false; // F12
+
+if(e.ctrlKey && e.shiftKey && e.keyCode == 73) return false; // CTRL+SHIFT+I
+
+if(e.ctrlKey && e.shiftKey && e.keyCode == 74) return false; // CTRL+SHIFT+J
+
+if(e.ctrlKey && e.keyCode == 85) return false; // CTRL+U
+
+};
+</script>
+</body>
+</html>
