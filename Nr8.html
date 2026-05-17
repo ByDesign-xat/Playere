@@ -164,7 +164,7 @@ video{
 
     <div id="mini-cover"></div>
     <div id="artist">Încărcare...</div>
-    <div id="title">CÎncărcare...</div>
+    <div id="title">Încărcare...</div>
 
     <canvas id="equalizer"></canvas>
     <div>Ascultatori: <span id="listeners">..</span></div>
@@ -203,7 +203,6 @@ const listeners=document.getElementById("listeners");
 const clock=document.getElementById("clock");
 const dateEl=document.getElementById("date");
 
-let audio,audioCtx,analyser,dataArray,playing=false,autorizado=ambienteAutorizado();
 
 /* RELÓGIO */
 function updateClock(){
@@ -254,18 +253,6 @@ playBtn.onclick=async()=>{
  if(!audio){
   audio=new Audio(STREAM);
   audio.crossOrigin="anonymous";
-
-  if(!autorizado){
-    audio.volume=0;
-    playBtn.textContent="🔒 PROTEGIDO";
-    playBtn.style.background="#444";
-    playBtn.style.cursor="not-allowed";
-    artist.textContent="PLAYER PROTEGIDO";
-    title.textContent="Uso não autorizado";
-    cover.style.animationPlayState="paused";
-  }else{
-    audio.volume=volume.value;
-  }
 
   audioCtx=new (window.AudioContext||window.webkitAudioContext)();
   analyser=audioCtx.createAnalyser();
