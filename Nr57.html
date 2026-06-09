@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ByDesign</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+.player-body-xat * {
+  box-sizing: border-box;
+}
+.player-body-xat {
+  margin: 0;
+  padding: 0;
+  background-color: transparent;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  overflow: hidden;
+}
+.container {
+  width: 100%;
+  max-width: 700px;
+  padding: 10px;
+  text-align: center;
+}
+
+/* CONTENITORE SCONE CORNICE ANIMATA SNAKE ARCOBALENO */
+.video-wrapper {
+  position: relative;
+  width: 100%;
+  border-radius: 15px;
+  overflow: hidden;
+  background: #000 url("https://xatimg.com/image/wgTd0fKqRdqA.png") no-repeat
+    center center;
+  background-size: cover;
+  box-shadow:
+    0 0 35px #ff007f,
+    0 0 15px #7f00ff;
+  padding: 4px;
+}
+
+/* EFFETTO SNAKE BORDER CON GRADIENTE ARCOBALENO */
+.video-wrapper::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(
+    from 0deg,
+    #ff0000,
+    #ff7f00,
+    #ffff00,
+    #00ff00,
+    #00ffff,
+    #0000ff,
+    #8b00ff,
+    #ff007f,
+    #ff0000
+  );
+  animation: snakeRotate 6s linear infinite;
+  z-index: 0;
+}
+
+/* MASCHERA INTERNA PER CREARE LA LINEA SOTTILE */
+.inner-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  z-index: 1;
+  display: block;
+}
+
+@keyframes snakeRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+video {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+  position: relative;
+  z-index: 1;
+}
+
+/* FILIGRANE PERSONALIZZATE */
+.ghost-watermark-diablo {
+  position: absolute;
+  top: 15px;
+  left: 20px;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  pointer-events: none;
+  z-index: 18;
+  color: rgba(255, 255, 255, 0.02);
+  mix-blend-mode: overlay;
+  user-select: none;
+}
+.ghost-watermark-cartaio {
+  position: absolute;
+  top: 45px;
+  left: 20px;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  pointer-events: none;
+  z-index: 18;
+  color: rgba(255, 255, 255, 0.015);
+  mix-blend-mode: overlay;
+  user-select: none;
+}
+
+/* EFFETTO BOOM */
+.boom-box-fixed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 15;
+  pointer-events: none;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.boom-box-fixed.active {
+  opacity: 1;
+}
+.boom-rays-overlay {
+  width: 250%;
+  height: 250%;
+  flex-shrink: 0;
+  background: repeating-conic-gradient(
+    from 0deg,
+    rgba(255, 0, 127, 0) 0deg 15deg,
+    rgba(255, 0, 127, 0.22) 15deg 30deg,
+    rgba(0, 240, 255, 0) 30deg 45deg,
+    rgba(0, 240, 255, 0.22) 45deg 60deg,
+    rgba(127, 0, 255, 0) 60deg 75deg,
+    rgba(127, 0, 255, 0.22) 75deg 90deg
+  );
+}
+.boom-box-fixed.active .boom-rays-overlay {
+  animation: spinRays 25s linear infinite;
+}
+@keyframes spinRays {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* LOCANDINE INFO */
+.info-locandina {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  width: 80%;
+  max-width: 400px;
+  background: rgba(11, 12, 16, 0.95);
+  border: 2px solid #00ffff;
+  box-shadow: 0 0 30px rgba(0, 255, 255, 0.6);
+  border-radius: 12px;
+  padding: 20px;
+  z-index: 30;
+  backdrop-filter: blur(8px);
+  transition:
+    transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    opacity 0.3s ease;
+  opacity: 0;
+  pointer-events: none;
+  display: none;
+}
+.info-locandina.active {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+  pointer-events: auto;
+  display: block;
+}
+
+.cover-fullscreen-locandina {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.95);
+  z-index: 35;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transform: scale(0.95);
+  pointer-events: none;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+  padding: 20px;
+}
+.cover-fullscreen-locandina.active {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+.cover-image-container {
+  width: 240px;
+  height: 240px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 25px rgba(179, 0, 255, 0.8);
+  border: 2px solid #b300ff;
+  margin-bottom: 15px;
+  cursor: pointer;
+}
+.cover-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.locandina-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding-bottom: 8px;
+  margin-bottom: 15px;
+  width: 100%;
+}
+.locandina-title {
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.close-locandina {
+  cursor: pointer;
+  font-size: 22px;
+  font-weight: bold;
+  color: #ff0055;
+  transition: transform 0.2s;
+}
+.close-locandina:hover {
+  transform: scale(1.2);
+}
+
+/* COLONNA CONTROLLI VERTICALE INVISIBILE */
+.side-controls-vertical {
+  position: absolute;
+  top: 40%;
+  right: 15px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 25;
+  gap: 15px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.vert-ctrl-btn {
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+}
+.vert-ctrl-btn:hover {
+  transform: scale(1.15);
+}
+.vert-ctrl-btn svg {
+  width: 16px;
+  height: 16px;
+  fill: currentcolor;
+}
+
+.b-play {
+  color: #00ffff;
+  border: 1px solid #00ffff;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+}
+.b-stop {
+  color: #ff0055;
+  border: 1px solid #ff0055;
+  box-shadow: 0 0 10px rgba(255, 0, 85, 0.3);
+}
+
+/* SLIDER IN VERTICALE */
+.vol-slider-vertical {
+  writing-mode: vertical-lr;
+  direction: rtl;
+  appearance: slider-vertical;
+  width: 10px;
+  height: 110px;
+  accent-color: #ff007f;
+  cursor: pointer;
+  filter: drop-shadow(0 0 5px rgba(255, 0, 127, 0.8));
+}
+
+/* MENU DEI CERCHETTI INVISIBILE */
+.neon-menu-container {
+  position: absolute;
+  bottom: 12px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 10px;
+  z-index: 20;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+/* REATTIVITÀ AL PASSAGGIO DEL MOUSE */
+.inner-content:hover .neon-menu-container,
+.inner-content:hover .side-controls-vertical {
+  opacity: 1;
+}
+
+.neon-ball {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+  position: relative;
+}
+.neon-ball:hover {
+  transform: scale(1.15) translateY(-4px);
+}
+.neon-ball svg {
+  width: 24px;
+  height: 24px;
+  fill: currentcolor;
+}
+.neon-ball::after {
+  content: attr(data-title);
+  position: absolute;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%) scale(0);
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  white-space: nowrap;
+  border: 1px solid currentcolor;
+  transition: transform 0.15s ease;
+  pointer-events: none;
+  opacity: 0;
+}
+.neon-ball:hover::after {
+  transform: translateX(-50%) scale(1);
+  opacity: 1;
+}
+
+.c-red {
+  color: #ff0055;
+  border-color: #ff0055;
+  box-shadow:
+    0 0 12px #ff0055,
+    inset 0 0 6px #ff0055;
+}
+.c-pink {
+  color: #ff66cc;
+  border-color: #ff66cc;
+  box-shadow:
+    0 0 12px #ff66cc,
+    inset 0 0 6px #ff66cc;
+}
+.c-blue {
+  color: #0099ff;
+  border-color: #0099ff;
+  box-shadow:
+    0 0 12px #0099ff,
+    inset 0 0 6px #0099ff;
+}
+.c-yellow {
+  color: #ffcc00;
+  border-color: #ffcc00;
+  box-shadow:
+    0 0 12px #ffcc00,
+    inset 0 0 6px #ffcc00;
+}
+.c-orange {
+  color: #ff6600;
+  border-color: #ff6600;
+  box-shadow:
+    0 0 12px #ff6600,
+    inset 0 0 6px #ff6600;
+}
+.c-purple {
+  color: #b300ff;
+  border-color: #b300ff;
+  box-shadow:
+    0 0 12px #b300ff,
+    inset 0 0 6px #b300ff;
+}
+.c-cyan {
+  color: #00ffff;
+  border-color: #00ffff;
+  box-shadow:
+    0 0 12px #00ffff,
+    inset 0 0 6px #00ffff;
+}
+
+.volume-box{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+}
+
+.volume-percent{
+    min-width:50px;
+    text-align:center;
+    font-size:12px;
+    font-weight:bold;
+    color:#00ffff;
+    padding:4px 8px;
+    border-radius:8px;
+    border:1px solid #00ffff;
+    background:rgba(0,0,0,.6);
+    box-shadow:0 0 12px rgba(0,255,255,.5);
+}
+
+.vol-slider-vertical{
+    appearance:none;
+    width:8px;
+    height:120px;
+    border-radius:10px;
+    background:linear-gradient(
+        to top,
+        #ff0055,
+        #ff6600,
+        #ffcc00,
+        #00ffff
+    );
+    cursor:pointer;
+}
+
+.vol-slider-vertical::-webkit-slider-thumb{
+    appearance:none;
+    width:18px;
+    height:18px;
+    border-radius:50%;
+    background:#fff;
+    border:2px solid #00ffff;
+    box-shadow:
+        0 0 10px #00ffff,
+        0 0 20px #00ffff;
+    cursor:pointer;
+}
+
+.vol-slider-vertical::-moz-range-thumb{
+    width:18px;
+    height:18px;
+    border-radius:50%;
+    background:#fff;
+    border:2px solid #00ffff;
+}
+
+</style>
+</head>
+<body class="player-body-xat">
+
+    <div class="container">
+        <div class="video-wrapper">
+            <div class="inner-content">
+                
+                <!-- LE TUE FILIGRANE IDENTIFICATE IN TRASPARENZA -->
+                <div class="ghost-watermark-diablo">ByDesign</div>
+                <div class="ghost-watermark-cartaio">Fondos</div>
+                
+                <div class="boom-box-fixed" id="boomContainer">
+                    <div class="boom-rays-overlay"></div>
+                </div>
+
+                <!-- FINESTRE DELLE INFO INTERATTIVE -->
+                <div class="info-locandina" id="locandina">
+                    <div class="locandina-header">
+                        <span class="locandina-title" id="locandinaTitle">Title</span>
+                        <span class="close-locandina" onclick="closeLocandina()">&times;</span>
+                    </div>
+                    <div class="locandina-body" id="locandinaBody">Synchronization...</div>
+                </div>
+
+                <div class="cover-fullscreen-locandina" id="coverLocandina">
+                    <div class="locandina-header">
+                        <span class="locandina-title" style="color: #b300ff;">Cover Art Album</span>
+                        <span class="close-locandina" onclick="closeCoverLocandina()">&times;</span>
+                    </div>
+                    <div class="cover-image-container" onclick="closeCoverLocandina()">
+                        <img id="trackCoverImg" src="https://xatimg.com/image/oacvd5ltA14X.png" alt="Cover Art">
+                    </div>
+                    <div id="coverTrackName" style="font-weight: bold; color: #fff; font-size: 15px;">Loading...</div>
+                    <div id="coverArtistName" style="color: #b300ff; font-size: 13px; margin-top: 4px;">Loading...</div>
+                </div>
+
+                <!-- Sfondo Video Loop Ragazza -->
+                <video autoplay loop muted playsinline id="bgVideo">
+                    <source src="https://bydesign-xat.github.io/Index/Dj-eitza.mp4" type="video/mp4">
+                </video>
+
+                <!-- COLONNA CONTROLLI VERTICALE INTERNA -->
+                <div class="side-controls-vertical">
+                    <div class="vert-ctrl-btn b-play" onclick="controlRadio('play')" title="PLAY">
+                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    </div>
+                    
+<div class="volume-box">
+    <input type="range"
+           id="volumeSlider"
+           class="vol-slider-vertical"
+           min="0"
+           max="100"
+           value="100"
+           oninput="setRadioVolume(this.value)">
+           
+    <div class="volume-percent" id="volumePercent">100%</div>
+</div>
+                    
+                    <div class="vert-ctrl-btn b-stop" onclick="controlRadio('stop')" title="STOP">
+                        <svg viewBox="0 0 24 24"><path d="M6 6h12v12H6z"/></svg>
+                    </div>
+                </div>
+
+                <!-- MENU INTERATTIVO 7 CERCHETTI -->
+                <div class="neon-menu-container">
+                    <div class="neon-ball c-red" data-title="DATA" onclick="showDynamicInfo('datario')">
+                        <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm-5-7h-4v4h4v-4z"/></svg>
+                    </div>
+                    <div class="neon-ball c-pink" data-title="HOROSCOPE" onclick="showDynamicInfo('oroscopo')">
+                        <svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>
+                    </div>
+                    <div class="neon-ball c-blue" data-title="CITY" onclick="showDynamicInfo('citta')">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                    </div>
+                    <div class="neon-ball c-yellow" data-title="METEO" onclick="showDynamicInfo('meteo')">
+                        <svg viewBox="0 0 24 24"><path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79 1.42-1.41zM4 10.5H1v2h3v-2zm9-7.5h-2v3h2V3zm7.45 3.91l-1.41-1.41-1.79 1.79 1.41 1.41 1.79-1.79zm-3.21 13.75A5.51 5.51 0 0 1 10.5 18c0-2.32 1.43-4.3 3.46-5.1a6.45 6.45 0 0 0-.46 2.35c0 3.33 2.54 6.07 5.75 6.47l.5-3.47z"/></svg>
+                    </div>
+                    <div class="neon-ball c-orange" data-title="TITLES" onclick="showDynamicInfo('playlist')">
+                        <svg viewBox="0 0 24 24"><path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zm17-6v8c0 1.66-1.34 3-3 3s-3-1.34-3-3 1.34-3 3-3c.57 0 1.1.17 1.55.45V6h5v4h-3.55z"/></svg>
+                    </div>
+                    <div class="neon-ball c-purple" data-title="COVER" onclick="showDynamicInfo('notifiche')">
+                        <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+                    </div>
+                    <div class="neon-ball c-cyan" data-title="BOOM FX" onclick="showDynamicInfo('impostazioni')">
+                        <svg viewBox="0 0 24 24"><path d="M12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6zM12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8.009 8.009 0 0 1-8 8z"/></svg>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- Stream Audio Manuale al 100% -->
+        <audio id="backboneRadio" crossorigin="anonymous" src="https://radio.sonicpanel.ro:10922/;"></audio>
+    </div>
+
+    <script>
+        const locandina = document.getElementById('locandina');
+        const locandinaTitle = document.getElementById('locandinaTitle');
+        const locandinaBody = document.getElementById('locandinaBody');
+        const coverLocandina = document.getElementById('coverLocandina');
+        const boomContainer = document.getElementById('boomContainer');
+        const radio = document.getElementById('backboneRadio');
+        
+        const trackCoverImg = document.getElementById('trackCoverImg');
+        const coverTrackName = document.getElementById('coverTrackName');
+        const coverArtistName = document.getElementById('coverArtistName');
+        
+        let clockInterval = null;
+        let realSongTitle = "Loading...";
+        let realArtistName = "Loading...";
+
+        let userData = { city: "Detection...", status: "pending" };
+        function lookupUserGeotarget() {
+            const script = document.createElement('script');
+            script.src = 'https://ipinfo.io/json?callback=handleGeoResponse';
+            document.body.appendChild(script);
+        }
+
+        window.handleGeoResponse = function(response) {
+            if (response && response.city) {
+                userData.city = response.city;
+                userData.status = "success";
+            } else {
+                userData.city = "Loading...";
+            }
+        };
+
+        // FUNZIONE REALE: LEGGE I VERI DATI DAL PANNELLO DELLA TUA RADIO
+        function getRealRadioMetadata(callback) {
+            $.ajax({
+                url: 'https://radio.sonicpanel.ro:10922/stats?json=1',
+                dataType: 'jsonp',
+                jsonp: 'callback',
+                timeout: 3000,
+                success: function(data) {
+                    if (data && data.songtitle) {
+                        let fullTitle = data.songtitle;
+                        let parts = fullTitle.split(' - ');
+                        if (parts.length > 1) {
+                            realArtistName = parts[0].trim();
+                            realSongTitle = parts.slice(1).join(' - ').trim();
+                        } else {
+                            realArtistName = "Loading...";
+                            realSongTitle = fullTitle;
+                        }
+                    }
+                    if(callback) callback();
+                },
+                error: function() {
+                    $.ajax({
+                        url: 'https://radio.sonicpanel.ro:10922/7.html',
+                        dataType: 'text',
+                        success: function(text) {
+                            if(text && text.includes(',')) {
+                                let info = text.split(',');
+                                if(info.length >= 7 && info[6]) {
+                                    let fullTitle = info[6].trim();
+                                    let parts = fullTitle.split(' - ');
+                                    if (parts.length > 1) {
+                                        realArtistName = parts[0].trim();
+                                        realSongTitle = parts.slice(1).join(' - ').trim();
+                                    } else {
+                                        realArtistName = "Loading...";
+                                        realSongTitle = fullTitle;
+                                    }
+                                }
+                            }
+                            if(callback) callback();
+                        },
+                        error: function() {
+                            realArtistName = "Loading...";
+                            realSongTitle = "Loading...";
+                            if(callback) callback();
+                        }
+                    });
+                }
+            });
+        }
+
+        function controlRadio(action) {
+            if (action === 'play') {
+                radio.play().catch(e => console.log("Avviato"));
+            } else if (action === 'stop') {
+                radio.pause();
+            }
+        }
+
+function setRadioVolume(val) {
+    radio.volume = val / 100;
+    document.getElementById("volumePercent").innerText = val + "%";
+}
+
+        function closeLocandina() {
+            $('#locandina').removeClass('active');
+            boomContainer.classList.remove('active');
+            if (clockInterval) clearInterval(clockInterval);
+        }
+
+        function closeCoverLocandina() {
+            $('#coverLocandina').removeClass('active');
+        }
+
+        function showDynamicInfo(type) {
+            if (clockInterval) clearInterval(clockInterval);
+            boomContainer.classList.remove('active');
+            $('#locandina').removeClass('active');
+
+            const colors = {
+                datario: '#ff0055', oroscopo: '#ff66cc', citta: '#0099ff',
+                meteo: '#ffcc00', playlist: '#ff6600', notifiche: '#b300ff', impostazioni: '#00ffff'
+            };
+            
+            locandina.style.borderColor = colors[type];
+            locandina.style.boxShadow = '0 0 30px ' + colors[type];
+            locandinaTitle.style.color = colors[type];
+
+            if (type === 'datario') {
+                locandinaTitle.textContent = "TRACK DATA";
+                function updateLocandinaClock() {
+                    const now = new Date();
+                    locandinaBody.innerHTML = '<div style="font-size: 20px; font-weight: bold; color: #fff;">' + now.toLocaleString() + '</div>';
+                }
+                updateLocandinaClock();
+                clockInterval = setInterval(updateLocandinaClock, 1000);
+                $('#locandina').addClass('active');
+
+            } else if (type === 'oroscopo') {
+                locandinaTitle.textContent = "MONTHLY HOROSCOPE";
+                
+                const dataOggi = new Date();
+                const giorno = dataOggi.getDate();
+                const mese = dataOggi.getMonth() + 1;
+                
+                let segno = "";
+                let predizione = "";
+
+                if ((mese == 12 && giorno >= 22) || (mese == 1 && giorno <= 19)) {
+                    segno = "CAPRICORN ♑";
+                    predizione = "This month, your determination is sky-high. Big projects are coming up, so stay focused.!";
+                } else if ((mese == 1 && giorno >= 20) || (mese == 2 && giorno <= 18)) {
+                    segno = "Aquarius ♒";
+                    predizione = "Creativity and energy are at their peak. The stars advise you to be bold and listen to your favorite music!";
+                } else if ((mese == 2 && giorno >= 19) || (mese == 3 && giorno <= 20)) {
+                    segno = "Pisces ♓";
+                    predizione = "A month full of insights and strong emotions. Let yourself be carried away by the rhythm and follow your heart.";
+                } else if ((mese == 3 && giorno >= 21) || (mese == 4 && giorno <= 19)) {
+                    segno = "Aries ♈";
+                    predizione = "Pure energy! You're unstoppable right now. This is a great time to take action and achieve your goals.";
+                } else if ((mese == 4 && giorno >= 20) || (mese == 5 && giorno <= 20)) {
+                    segno = "Taurus ♉";
+                    predizione = "Stability and relaxation are at the heart of the month. Enjoy the little pleasures and recharge your batteries.";
+                } else if ((mese == 5 && giorno >= 21) || (mese == 6 && giorno <= 20)) {
+                    segno = "Gemini ♊";
+                    predizione = "A super social month packed with exciting news. New encounters and stimulating connections are in the air!";
+                } else if ((mese == 6 && giorno >= 21) || (mese == 7 && giorno <= 22)) {
+                    segno = "Cancer ♋";
+                    predizione = "The stars protect your feelings. A magical atmosphere and great intuition in your choices.";
+                } else if ((mese == 7 && giorno >= 23) || (mese == 8 && giorno <= 22)) {
+                    segno = "Leo ♌";
+                    predizione = "You're the star of the month! Magnetic charm and guaranteed personal success.";
+                } else if ((mese == 8 && giorno >= 23) || (mese == 9 && giorno <= 22)) {
+                    segno = "Virgo ♍";
+                    predizione = "This is an ideal month for organizing and planning for the future. Fortune will reward your precision.";
+                } else if ((mese == 9 && giorno >= 23) || (mese == 10 && giorno <= 22)) {
+                    segno = "Libra ♎";
+                    predizione = "Harmony and beauty will guide your days. An excellent time for love and art.";
+                } else if ((mese == 10 && giorno >= 23) || (mese == 11 && giorno <= 21)) {
+                    segno = "Scorpio ♏";
+                    predizione = "An intense and mysterious month. Your determination will help you overcome any obstacle.";
+                } else if ((mese == 11 && giorno >= 22) || (mese == 12 && giorno <= 21)) {
+                    segno = "-Sagittarius ♐";
+                    predizione = "A thirst for adventure and contagious optimism. Expand your horizons and try new things!";
+                }
+
+                locandinaBody.innerHTML = `
+                    <div style="padding: 5px; text-align: center;">
+                        <h3 style="color: #fff; margin: 0 0 10px 0; font-size: 22px; letter-spacing: 1px;">${segno}</h3>
+                        <p style="font-size: 15px; color: #ff66cc; font-weight: 500; line-height: 1.4; margin: 0;">${predizione}</p>
+                        <span style="font-size: 11px; color: #888; display: block; margin-top: 15px;">Automatically updated in real time</span>
+                    </div>
+                `;
+                $('#locandina').addClass('active');
+
+            } else if (type === 'citta') {
+                locandinaTitle.textContent = "METEO";
+                locandinaBody.innerHTML = '<div style="font-size: 22px; font-weight: bold; color: #fff;">Detection...</div>';
+                $('#locandina').addClass('active');
+
+            } else if (type === 'meteo') {
+                locandinaTitle.textContent = "Meteo Live";
+                locandinaBody.innerHTML = '<div style="font-size: 18px; color: #fff;">Situation at ' + userData.city + ': Detection... ✨☀️</div>';
+                $('#locandina').addClass('active');
+
+            } else if (type === 'playlist') {
+                locandinaTitle.textContent = "TRACK";
+                locandinaBody.innerHTML = '<div style="color: #aaa; font-size: 13px;">Reading panel...</div>';
+                $('#locandina').addClass('active');
+                
+                getRealRadioMetadata(function() {
+                    locandinaBody.innerHTML = '<div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 6px; border-left: 3px solid #ff6600;"><span style="font-size: 11px; color: #ff6600; display: block; font-weight: bold;">🔴 LIVE NOW:</span><strong style="color: #fff; font-size: 15px;">' + realSongTitle + '</strong><br><span style="color: #aaa; font-size: 13px;">' + realArtistName + '</span></div>';
+                });
+
+            } else if (type === 'notifiche') {
+                getRealRadioMetadata(function() {
+                    coverTrackName.textContent = realSongTitle;
+                    coverArtistName.textContent = realArtistName;
+                    
+                    let searchTerms = encodeURIComponent(realArtistName + " " + realSongTitle);
+                    fetch('https://itunes.apple.com/search?term=' + searchTerms + '&limit=1')
+                    .then(r => r.json())
+                    .then(d => {
+                        if (d.results && d.results[0]) {
+                            let highResCover = d.results[0].artworkUrl100.replace('100x100bb', '800x800bb');
+                            $('#trackCoverImg').attr('src', highResCover);
+                        } else {
+                            // FOTO SOSTITUTIVA PERSONALIZZATA SE ITUNES NON TROVA L'ALBUM
+                            $('#trackCoverImg').attr('src', 'https://xatimg.com/image/oacvd5ltA14X.png');
+                        }
+                        $('#coverLocandina').addClass('active');
+                    })
+                    .catch(e => {
+                        $('#trackCoverImg').attr('src', 'https://xatimg.com/image/oacvd5ltA14X.png');
+                        $('#coverLocandina').addClass('active');
+                    });
+                });
+
+            } else if (type === 'impostazioni') {
+                locandinaTitle.textContent = "BOOM EFFECT";
+                locandinaBody.innerHTML = '<p>⚡ Matrix Attiva & Laser attivati!</p>';
+                boomContainer.classList.add('active');
+                $('#locandina').addClass('active');
+            }
+        }
+		
+		window.addEventListener('DOMContentLoaded', () => {
+    radio.volume = 1.0;
+    radio.play().catch(() => {});
+});
+
+document.addEventListener("click", function () {
+    radio.play().catch(() => {});
+}, { once: true });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            lookupUserGeotarget();
+            radio.volume = 1.0;
+            getRealRadioMetadata();
+            setInterval(getRealRadioMetadata, 5000);
+        });
+    </script>
+</body>
+</html>
