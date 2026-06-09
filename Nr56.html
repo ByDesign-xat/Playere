@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ByDesign</title>
+    <style>
+@import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&display=swap');
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.radio-container-wrapper {
+  position: relative;
+  width: 650px;
+  height: 650px;
+  background: #050107;
+  border-radius: 40px;
+  padding: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 50px rgba(255, 0, 51, 0.5);
+  animation: superGlow 4s ease-in-out infinite alternate;
+}
+
+.radio-container-wrapper::before {
+  content: "";
+  position: absolute;
+  top: -60%;
+  left: -60%;
+  width: 220%;
+  height: 220%;
+  background: conic-gradient(
+    transparent,
+    rgba(138, 0, 255, 0.4),
+    #ff0033,
+    #ff0033,
+    transparent 50%
+  );
+  animation: rotate 3s linear infinite;
+  z-index: 1;
+}
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.radio-body-650 {
+  width: 100%;
+  height: 100%;
+  background-color: #050107;
+  border-radius: 34px;
+  position: relative;
+  overflow: hidden;
+  font-family: "Syncopate", sans-serif;
+  z-index: 2;
+}
+
+.cover-wrapper {
+  position: relative;
+  width: 380px;
+  height: 380px;
+  margin: 40px auto 10px;
+  z-index: 10;
+  transition: all 0.2s ease;
+}
+
+.main-video,
+.art-gambe-img {
+  width: 380px !important;
+  height: 380px !important;
+  border-radius: 30px;
+  object-fit: cover;
+  border: 2px solid rgba(255, 0, 51, 0.4);
+  box-shadow: 0 0 40px rgba(255, 0, 0, 0.7);
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: opacity 0.5s ease;
+}
+
+.art-gambe-img {
+  opacity: 0;
+  background-size: cover;
+  background-position: center;
+  z-index: 11;
+  background-image: url("https://xatimg.com/image/oacvd5ltA14X.png");
+}
+
+.mode-cover .art-gambe-img {
+  opacity: 1;
+}
+.mode-cover #skull-vid {
+  opacity: 0;
+}
+
+.video-round {
+  border-radius: 50% !important;
+  transform: scale(0.85);
+}
+
+.text-container {
+  text-align: center;
+  padding: 0 30px;
+  position: relative;
+  z-index: 20;
+}
+.radio-status {
+  color: #ff0033;
+  font-size: 14px;
+  letter-spacing: 5px;
+  text-shadow: 0 0 10px #ff0033;
+  margin-bottom: 10px;
+  height: 20px;
+  font-weight: bold;
+}
+
+.song-marquee {
+  width: 100%;
+  background: rgba(5, 1, 8, 0.9);
+  padding: 12px 0;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 0, 51, 0.3);
+}
+.gradient-text {
+  background: linear-gradient(90deg, #fff, #ff0033, #8a00ff, #fff);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 4s linear infinite;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.dashboard-panel {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 25px;
+  padding: 0 5px;
+}
+.control-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 68px;
+  cursor: pointer;
+}
+.dot-link {
+  width: 24px;
+  height: 24px;
+  background-color: #050208;
+  border-radius: 50%;
+  transition: all 0.2s;
+  margin-bottom: 6px;
+  border: 3px solid transparent;
+}
+.label-text {
+  font-size: 8px;
+  color: #55445c;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+.active-dot {
+  background-color: currentColor !important;
+  box-shadow: 0 0 20px currentColor;
+  transform: scale(1.15);
+}
+.active-label {
+  color: #fff !important;
+  text-shadow: 0 0 8px #fff;
+}
+
+/* Colori dei 9 cerchi */
+.c-1 {
+  border-color: #ff0000;
+  color: #ff0000;
+}
+.c-2 {
+  border-color: #ff7700;
+  color: #ff7700;
+}
+.c-3 {
+  border-color: #ffdd00;
+  color: #ffdd00;
+}
+.c-4 {
+  border-color: #00ff00;
+  color: #00ff00;
+}
+.c-5 {
+  border-color: #00ffff;
+  color: #00ffff;
+}
+.c-6 {
+  border-color: #0077ff;
+  color: #0077ff;
+}
+.c-7 {
+  border-color: #8800ff;
+  color: #8800ff;
+}
+.c-8 {
+  border-color: #ffffff;
+  color: #ffffff;
+}
+.c-9 {
+  border-color: #ff0033;
+  color: #ff0033;
+} /* Colore STOP */
+
+.real-visualizer {
+  width: 100%;
+  height: 180px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.vis-on {
+  opacity: 0.9;
+}
+.inferno-on {
+  animation: shake 0.1s infinite;
+  filter: saturate(2.5);
+}
+@keyframes shake {
+  0% {
+    transform: translate(1px, 1px);
+  }
+  50% {
+    transform: translate(-1px, -1px);
+  }
+}
+
+</style>
+</head>
+<body ondblclick="resetEverything()">
+
+<div class="radio-container-wrapper" id="master-fx">
+    <div class="radio-body-650" id="main-click-area">
+        <div class="cover-wrapper" id="video-box">
+            <video class="main-video" id="skull-vid" autoplay loop muted playsinline>
+                <source src="https://bydesign-xat.github.io/Index/Robot.mp4" type="video/mp4">
+            </video>
+            <div class="art-gambe-img" id="art-gambe"></div>
+        </div>
+
+        <div class="text-container">
+            <div id="status-display" class="radio-status">READY TO STREAM</div>
+            <div class="song-marquee">
+                <marquee behavior="scroll" direction="left" scrollamount="6">
+                    <span id="title-gambe" class="gradient-text">LOADING...</span>
+                </marquee>
+            </div>
+            
+            <div class="dashboard-panel">
+                <div class="control-unit" id="btn-oro"><div class="dot-link c-1"></div><span class="label-text">HORO</span></div>
+                <div class="control-unit" id="btn-data"><div class="dot-link c-2"></div><span class="label-text">DATA</span></div>
+                <div class="control-unit" id="btn-city"><div class="dot-link c-3"></div><span class="label-text" id="lbl-city">CITY</span></div>
+                <div class="control-unit" id="btn-cov"><div class="dot-link c-4"></div><span class="label-text">COVR</span></div>
+                <div class="control-unit" id="btn-eq"><div class="dot-link c-5"></div><span class="label-text">EQ</span></div>
+                <div class="control-unit" id="btn-boom"><div class="dot-link c-6"></div><span class="label-text">BOOM</span></div>
+                <div class="control-unit" id="btn-list"><div class="dot-link c-7"></div><span class="label-text" id="lbl-list">LIST</span></div>
+                <div class="control-unit" id="btn-vrap"><div class="dot-link c-8"></div><span class="label-text">VRAP</span></div>
+                <div class="control-unit" id="btn-stop"><div class="dot-link c-9"></div><span class="label-text">STOP</span></div>
+            </div>
+        </div>
+        
+        <canvas id="visualizer" class="real-visualizer"></canvas>
+        <audio id="radio-stream" crossorigin="anonymous"><source src="https://radio.sonicpanel.ro:10922/;" type="audio/mpeg"></audio>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    const audio = document.getElementById('radio-stream');
+    const canvas = document.getElementById('visualizer');
+    const ctx = canvas.getContext('2d');
+    let audioCtx, analyser, source, dataArray, boomMode = false;
+
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioCtx.createAnalyser();
+            source = audioCtx.createMediaElementSource(audio);
+            source.connect(analyser); analyser.connect(audioCtx.destination);
+            analyser.fftSize = 64; dataArray = new Uint8Array(analyser.frequencyBinCount);
+            canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
+            draw();
+        }
+        // Fa ripartire lo stream se era stato svuotato dallo stop
+        if (!audio.src || audio.src === window.location.href) {
+            audio.src = "https://radio.sonicpanel.ro:10922/;";
+            audio.load();
+        }
+        audio.play();
+    }
+
+    function resetEverything() {
+        $('.dot-link').removeClass('active-dot'); $('.label-text').removeClass('active-label');
+        $('#visualizer').removeClass('vis-on'); $('#master-fx').removeClass('inferno-on');
+        $('#skull-vid').removeClass('video-round'); $('#art-gambe').removeClass('video-round');
+        $('#video-box').removeClass('mode-cover').css('transform', 'scale(1)');
+        boomMode = false;
+        $('#lbl-city').text('CITT'); $('#lbl-list').text('LIST'); $('#status-display').text('SYSTEM RESET');
+    }
+
+    $('.control-unit').on('click', function(e) {
+        e.preventDefault(); e.stopPropagation();
+        const id = $(this).attr('id');
+        const dot = $(this).find('.dot-link');
+        const label = $(this).find('.label-text');
+
+        // LOGICA STOP (Al clic ferma tutto e svuota lo stream)
+        if(id === 'btn-stop') {
+            audio.pause();
+            audio.src = ""; // Ferma il download dei dati
+            audio.load();
+            resetEverything();
+            $('#status-display').text('STREAM STOPPED');
+            return;
+        }
+
+        // Se clicchi un qualsiasi altro tasto, attiva l'audio
+        initAudio();
+
+        if (dot.hasClass('active-dot')) {
+            dot.removeClass('active-dot'); label.removeClass('active-label');
+            if(id === 'btn-city') label.text('CITT');
+            if(id === 'btn-list') label.text('LIST');
+            if(id === 'btn-cov') $('#video-box').removeClass('mode-cover'); 
+            if(id === 'btn-eq') $('#visualizer').removeClass('vis-on');
+            if(id === 'btn-boom') { boomMode = false; $('#skull-vid').removeClass('video-round'); $('#art-gambe').removeClass('video-round'); $('#video-box').css('transform', 'scale(1)'); }
+            if(id === 'btn-vrap') $('#master-fx').removeClass('inferno-on');
+            $('#status-display').text('OFF');
+            return;
+        }
+
+        dot.addClass('active-dot'); label.addClass('active-label');
+
+        if(id === 'btn-city') {
+            label.text('...');
+            $.get("https://ipapi.co/json/?nocache=" + Math.random(), function(res) {
+                const c = res.city ? res.city.toUpperCase() : "ONLINE";
+                label.text(c); $('#status-display').text("USER CITY: " + c);
+            }).fail(function() {
+                $.get("https://ip-api.com/json", function(res2) {
+                    const c2 = res2.city ? res2.city.toUpperCase() : "RILEVATA";
+                    label.text(c2); $('#status-display').text("LOCATION: " + c2);
+                });
+            });
+        }
+
+        if(id === 'btn-list') {
+            label.text('...');
+            $.getJSON("https://radio.sonicpanel.ro:10922/stats?sid=1&json=1&callback=?", function(data) {
+                const n = data.uniquelisteners || data.currentlisteners || data.listeners || "1";
+                label.text(n + ' LIVE'); 
+                $('#status-display').text("LISTEN ONLINE: " + n);
+            }).fail(function() {
+                label.text('1 LIVE');
+                $('#status-display').text("LISTEN ONLINE: ..");
+            });
+        }
+
+        if(id === 'btn-cov') $('#video-box').addClass('mode-cover'); 
+        if(id === 'btn-eq') $('#visualizer').addClass('vis-on');
+        if(id === 'btn-boom') { boomMode = true; $('#skull-vid').addClass('video-round'); $('#art-gambe').addClass('video-round'); }
+        if(id === 'btn-vrap') $('#master-fx').addClass('inferno-on');
+        if(id === 'btn-oro') $('#status-display').text("LOADING..");
+        if(id === 'btn-data') $('#status-display').text(new Date().toLocaleDateString('en-EN').toUpperCase());
+    });
+
+    $('#main-click-area').click(function() { initAudio(); });
+
+    function draw() {
+        requestAnimationFrame(draw);
+        if(!audioCtx) return;
+        analyser.getByteFrequencyData(dataArray);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const barWidth = (canvas.width / dataArray.length) * 2.5; let x = 0;
+        let sum = 0;
+        for (let i = 0; i < dataArray.length; i++) {
+            let h = (dataArray[i] / 255) * canvas.height * 0.9;
+            sum += dataArray[i];
+            ctx.fillStyle = '#ff0033'; ctx.fillRect(x, canvas.height - h, barWidth - 4, h); x += barWidth;
+        }
+        if (boomMode) {
+            let avg = sum / dataArray.length;
+            let s = 0.85 + (avg / 255) * 0.6;
+            $('#video-box').css('transform', `scale(${s})`);
+        }
+    }
+
+    function updateInfo() {
+        $.getJSON("https://radio.sonicpanel.ro:10922/stats?sid=1&json=1&callback=?", function(data) {
+            if (data && data.songtitle) {
+                const newTitle = data.songtitle.toUpperCase();
+                if ($('#title-gambe').text() !== newTitle) {
+                    $('#title-gambe').text(newTitle);
+                    $.ajax({
+                        url: "https://itunes.apple.com/search",
+                        dataType: "jsonp",
+                        data: { term: newTitle, limit: 1 },
+                        success: function(res) {
+                            if (res.results && res.results.length > 0) {
+                                const img = res.results[0].artworkUrl100.replace('100x100', '600x600');
+                                $('#art-gambe').css('background-image', 'url(' + img + ')');
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+    setInterval(updateInfo, 5000); updateInfo();
+</script>
+</body>
+</html>
